@@ -5,6 +5,11 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NyraEmulationSystem", "NyraEmulationSystem\NyraEmulationSystem.vcxproj", "{3BDB3CD9-30BC-4DCF-A45C-10EB92CD0923}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestNESHeader", "TestNESHeader\TestNESHeader.vcxproj", "{CB71241F-EEE0-4E77-A231-0D4F205DC23F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3BDB3CD9-30BC-4DCF-A45C-10EB92CD0923} = {3BDB3CD9-30BC-4DCF-A45C-10EB92CD0923}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,6 +20,10 @@ Global
 		{3BDB3CD9-30BC-4DCF-A45C-10EB92CD0923}.Debug|Win32.Build.0 = Debug|Win32
 		{3BDB3CD9-30BC-4DCF-A45C-10EB92CD0923}.Release|Win32.ActiveCfg = Release|Win32
 		{3BDB3CD9-30BC-4DCF-A45C-10EB92CD0923}.Release|Win32.Build.0 = Release|Win32
+		{CB71241F-EEE0-4E77-A231-0D4F205DC23F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CB71241F-EEE0-4E77-A231-0D4F205DC23F}.Debug|Win32.Build.0 = Debug|Win32
+		{CB71241F-EEE0-4E77-A231-0D4F205DC23F}.Release|Win32.ActiveCfg = Release|Win32
+		{CB71241F-EEE0-4E77-A231-0D4F205DC23F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
