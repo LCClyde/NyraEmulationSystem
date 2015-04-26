@@ -57,6 +57,7 @@
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4512</DisableSpecificWarnings>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -76,6 +77,7 @@ xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\libs /D /E /Q /Y</Comman
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4512</DisableSpecificWarnings>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -91,11 +93,13 @@ xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\libs /D /E /Q /Y</Comman
     <ClInclude Include="..\..\..\include\nes\Cartridge.h" />
     <ClInclude Include="..\..\..\include\nes\Header.h" />
     <ClInclude Include="..\..\..\include\nes\Memory.h" />
+    <ClInclude Include="..\..\..\include\nes\MemoryMap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Cartridge.cpp" />
     <ClCompile Include="..\..\..\source\Header.cpp" />
     <ClCompile Include="..\..\..\source\Memory.cpp" />
+    <ClCompile Include="..\..\..\source\MemoryMap.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

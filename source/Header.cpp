@@ -99,26 +99,20 @@ Header::Header(const std::vector<uint8_t>& binary) :
 std::ostream& operator<<(std::ostream& os,
                          const Header& header)
 {
+    std::string yesNo[2] = {"No", "Yes"};
+    std::string mirroring[2] = {"HORIZONTAL", "VERTICAL"};
+
     os << "NES Identifier:      " << header.getNESIdentifier()
        << "\nProg Size:           " << header.getProgRomSize()
        << "\nChr Rom Size:        " << header.getChrRomSize()
        << "\nMapper Number:       " << header.getMapperNumber()
-       << "\nFour Screen Mode:    " << header.getIsFourScreenMode()
-       << "\nTrainer:             " << header.getHasTrainer()
-       << "\nBattery Back:        " << header.getHasBatteryBack()
-       << "\nMirroring:           ";
-
-    if (header.getMirroring() == Header::VERTICAL)
-    {
-        os << "VERITICAL";
-    }
-    else
-    {
-        os << "HORIZONTAL";
-    }
-    os << "\nPlayChoice-10:       " << header.getIsPlayChoice10()
-       << "\nVS System:           " << header.getIsVsUnisystem()
-       << "\nNES 2.0:             " << header.getIsNes2_0();
+       << "\nFour Screen Mode:    " << yesNo[header.getIsFourScreenMode()]
+       << "\nTrainer:             " << yesNo[header.getHasTrainer()]
+       << "\nBattery Back:        " << yesNo[header.getHasBatteryBack()]
+       << "\nMirroring:           " << mirroring[header.getMirroring()]
+       << "\nPlayChoice-10:       " << yesNo[header.getIsPlayChoice10()]
+       << "\nVS System:           " << yesNo[header.getIsVsUnisystem()]
+       << "\nNES 2.0:             " << yesNo[header.getIsNes2_0()];
     return os;
 }
 }

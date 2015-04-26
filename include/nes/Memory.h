@@ -40,7 +40,6 @@ namespace nes
  *  TODO: Should this have logic to throw when an index is out of bounds?
  *  TODO: Support Memory other than 8 bit.
  */
-template <typename T>
 class Memory
 {
 public:
@@ -56,14 +55,9 @@ public:
      *  \param takeOwnership - If this is true the RAM class will handle
      *         freeing this buffer.
      */
-    Memory(T* buffer,
+    Memory(const uint8_t* buffer,
            size_t size,
-           bool takeOwnership = false) :
-        mBufferInternal(takeOwnership ? buffer : nullptr),
-        mBuffer(buffer),
-        mSize(size)
-    {
-    }
+           bool takeOwnership = false);
 
     /*
      *  \func - Destructor
@@ -82,7 +76,7 @@ public:
      *  \throw - If this is called from a ROM object, it will throw.
      */
     virtual void writeByte(size_t address,
-                           uint8_t value) = 0;
+                           uint8_t value);
 
     /*
      *  \func - readByte
@@ -108,9 +102,18 @@ public:
         return ((readByte(address + 1) << 8 | readByte(address)));
     }
 
+    /*
+     *  \func - getSize
+     *  \brief - Returns the size of the memory buffer.
+     */
+    inline size_t getSize() const
+    {
+        return mSize;
+    }
+
 protected:
-    const std::unique_ptr<T[]> mBufferInternal;
-    T* const mBuffer;
+    const std::unique_ptr<const uint8_t[]> mBufferInternal;
+    const uint8_t* const mBuffer;
     const size_t mSize;
 };
 
@@ -118,15 +121,24 @@ protected:
  *  \class - RAM
  *  \brief - Exposes 8 bit random access memory.
  */
-class RAM : public Memory<uint8_t>
+class RAM : public Memory
 {
 public:
+    /*
+     *  \func - Constructor (const buffer)
+     *  \brief - Creates a RAM object from an existing buffer. To allow the
+     *           the buffer to be writeable this does a copy of the buffer.
+     *
+     *  \param buffer - The buffer for the RAM.
+     *  \param size - The size of the buffer.
+     */
+    RAM(const uint8_t* buffer,
+        size_t size);
+
     /*
      *  \func - Constructor (buffer)
      *  \brief - Creates a RAM object from an existing buffer. The RAM object
      *           does not take ownership unless you tell it to do so.
-     *           This will accept the buffer as is. It will not modify any
-     *           values until explicitly told to do so.
      *
      *  \param buffer - The buffer for the RAM.
      *  \param size - The size of the buffer.
@@ -144,6 +156,7 @@ public:
      *           Memory will start zero'd out.
      *
      *  \param size - The size in bytes of the memory.
+     *  \TODO: Make this threadsafe
      */
     RAM(size_t size);
 
@@ -157,41 +170,20 @@ public:
     inline void writeByte(size_t address,
                           uint8_t value)
     {
-        mBuffer[address] = value;
+        mRAMBuffer[address] = value;
     }
+
+private:
+    uint8_t* const mRAMBuffer;
 };
 
 /*
- *  \class - ROM
- *  \brief - Exposes 8 bit read only memory.
+ *  \type - ROM
+ *  \brief - ROM is the identical to a default Memory object. This is here
+ *           (rather than just naming Memory ROM) to avoid confusing
+ *           when you polymorph between Memory and RAM.
  */
-class ROM : public Memory<const uint8_t>
-{
-public:
-    /*
-     *  \func - Constructor (buffer)
-     *  \brief - Creates a ROM object from an existing buffer. The ROM object
-     *           does not take ownership unless you tell it to do so.
-     *           This will accept the buffer as is.
-     *
-     *  \param buffer - The buffer for the ROM.
-     *  \param size - The size of the buffer.
-     *  \param takeOwnership - If this is true the RAM class will handle
-     *         freeing this buffer.
-     */
-    ROM(const uint8_t* buffer,
-        size_t size,
-        bool takeOwnership = false);
-
-    /*
-     *  \func - writeByte
-     *  \brief - ROM does not implement this function.
-     *
-     *  \throw - Calling will function will throw.
-     */
-     void writeByte(size_t address,
-                    uint8_t value);
-};
+typedef Memory ROM;
 }
 }
 #endif
