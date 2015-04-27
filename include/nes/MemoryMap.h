@@ -27,6 +27,7 @@
 #include <stdint.h>
 #include <map>
 #include <nes/Memory.h>
+#include <nes/CPUHelper.h>
 
 namespace nyra
 {
@@ -79,26 +80,20 @@ public:
      *           in ROM.
      *
      *  \param address - The global address of the op.
-     *  \param opcode[OUTPUT] - Will contain the opcode.
-     *  \param arg1[OUTPUT] - Will contain the value after the opcode
-     *  \param arg2[OUTPUT] - Will contain the value after arg1.
-     *  \param dword[OUTPUT] - Will contain the dword after the opcode.
+     *  \param args[OUTPUT] - The output for all op arg information.
      */
     inline void getOpInfo(size_t address,
-                          uint8_t& opcode,
-                          uint8_t& arg1,
-                          uint8_t& arg2,
-                          uint16_t& dword)
+                          CPUArgs& args)
     {
         RamMap::iterator iter = getMemoryBank(address);
-        opcode = iter->second->readByte(address);
-        arg1 = iter->second->readByte(address + 1);
-        arg2 = iter->second->readByte(address + 2);
+        args.opcode = iter->second->readByte(address);
+        args.arg1 = iter->second->readByte(address + 1);
+        args.arg2 = iter->second->readByte(address + 2);
 
         // TODO: Is it safe to get the dword in this way? Should we instead
         //       call MemoryMap::readShort as this has extra statements to
         //       protect against going out of bounds in a memory bank.
-        dword = iter->second->readShort(address + 1);
+        args.darg = iter->second->readShort(address + 1);
     }
 
     /*

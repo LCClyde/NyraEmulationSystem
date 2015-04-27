@@ -21,65 +21,55 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#ifndef __NYRA_NES_CARTRIDGE_H__
-#define __NYRA_NES_CARTRIDGE_H__
+#ifndef __NYRA_NES_CPU_H__
+#define __NYRA_NES_CPU_H__
 
-#include <string>
-#include <vector>
-#include <memory>
-#include <nes/Header.h>
-#include <nes/Memory.h>
+#include <stdint.h>
+#include <nes/MemoryMap.h>
+#include <nes/CPUHelper.h>
+#include <nes/OpCode.h>
+#include <nes/Disassembly.h>
 
 namespace nyra
 {
 namespace nes
 {
 /*
- *  \class - Cartridge
- *  \brief - Handles parsing and storing all information obtained from a
- *           NES cartridge (or in our case a NES rom file).
+ *  \class - CPU
+ *  \brief - Emulates the 6502 central processing unit. Run tick to process
+ *           an opcode.
+ *  TODO: This could be generalized for any CPU. It would need to be setup
+ *        to allow the number of bits to be set, probably through a template.
  */
-class Cartridge
+class CPU
 {
 public:
     /*
-     *  \type - ROMBanks
-     *  \brief - A vector of ROM objects. This is used to be able to
-     *           easily pass around several ROM objects in a form that is
-     *           usable in the emulator.
-     */
-    typedef std::vector<std::unique_ptr<ROM> > ROMBanks;
-
-    /*
-     *  \func - Constructor (pathname)
-     *  \brief - Creates a cartridge object from a file pathname.
+     *  \func - Constructor (address)
+     *  \brief - Creates a CPU object with a starting memory address.
      *
-     *  \param pathname - The full path of the file on disk.
+     *  \param startAddress - The location to start reading opcodes from.
      */
-    Cartridge(const std::string& pathname);
+    CPU(uint16_t startAddress);
 
     /*
-     *  \func - getHeader
-     *  \brief - Returns the information about the header in the cartridge.
+     *  \func - tick
+     *  \brief - Processes a single opcode.
+     *
+     *  \param memory - All the available memory as swappable banks.
+     *  \param disassembly [OPTIONAL] - Allows you pass in a disassembly
+     *         object which can then be used to view information about
+     *         the processed opcode.
+     *         Remove this to increase performance.
      */
-    const Header& getHeader() const
-    {
-        return mHeader;
-    }
-
-    /*
-     *  \func - getProgROM
-     *  \brief - Returns all known banks of the programming memory.
-     */
-    const ROMBanks& getProgROM() const
-    {
-        return mProgROM;
-    }
+    void tick(MemoryMap& memory,
+              Disassembly* disassembly = nullptr);
 
 private:
-    const std::vector<uint8_t> mFile;
-    const Header mHeader;
-    ROMBanks mProgROM;
+    CPURegisters mRegisters;
+    CPUInfo mInfo;
+    CPUArgs mArgs;
+    OpCodeArray mOpCodes;
 };
 }
 }

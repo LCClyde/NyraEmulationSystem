@@ -21,67 +21,33 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#ifndef __NYRA_NES_CARTRIDGE_H__
-#define __NYRA_NES_CARTRIDGE_H__
-
-#include <string>
-#include <vector>
-#include <memory>
-#include <nes/Header.h>
-#include <nes/Memory.h>
+#include <nes/CPU.h>
 
 namespace nyra
 {
 namespace nes
 {
-/*
- *  \class - Cartridge
- *  \brief - Handles parsing and storing all information obtained from a
- *           NES cartridge (or in our case a NES rom file).
- */
-class Cartridge
+/*****************************************************************************/
+CPU::CPU(uint16_t startAddress) :
+    mInfo(startAddress)
 {
-public:
-    /*
-     *  \type - ROMBanks
-     *  \brief - A vector of ROM objects. This is used to be able to
-     *           easily pass around several ROM objects in a form that is
-     *           usable in the emulator.
-     */
-    typedef std::vector<std::unique_ptr<ROM> > ROMBanks;
-
-    /*
-     *  \func - Constructor (pathname)
-     *  \brief - Creates a cartridge object from a file pathname.
-     *
-     *  \param pathname - The full path of the file on disk.
-     */
-    Cartridge(const std::string& pathname);
-
-    /*
-     *  \func - getHeader
-     *  \brief - Returns the information about the header in the cartridge.
-     */
-    const Header& getHeader() const
-    {
-        return mHeader;
-    }
-
-    /*
-     *  \func - getProgROM
-     *  \brief - Returns all known banks of the programming memory.
-     */
-    const ROMBanks& getProgROM() const
-    {
-        return mProgROM;
-    }
-
-private:
-    const std::vector<uint8_t> mFile;
-    const Header mHeader;
-    ROMBanks mProgROM;
-};
-}
+    allocateOpCodes(mOpCodes);
 }
 
-#endif
+/*****************************************************************************/
+void CPU::tick(MemoryMap& ram,
+               Disassembly* disassembly)
+{
+    ram.getOpInfo(mInfo.programCounter,
+                  mArgs);
+
+    if (disassembly)
+    {
+        *disassembly = Disassembly(*mOpCodes[mArgs.opcode],
+                                   mArgs,
+                                   mRegisters,
+                                   mInfo);
+    }
+}
+}
+}

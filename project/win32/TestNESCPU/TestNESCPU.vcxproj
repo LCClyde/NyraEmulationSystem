@@ -11,18 +11,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{3BDB3CD9-30BC-4DCF-A45C-10EB92CD0923}</ProjectGuid>
-    <RootNamespace>NyraEmulationSystem</RootNamespace>
+    <ProjectGuid>{6BDE7BC7-5C03-41A0-9531-AF6C8EE83768}</ProjectGuid>
+    <RootNamespace>TestNESCPU</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -39,33 +39,26 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)..\..\libs\$(Configuration)\</OutDir>
-    <TargetExt>.lib</TargetExt>
-    <IncludePath>$(SolutionDir)..\..\include;$(SolutionDir)..\..\..\include;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)</TargetName>
+    <OutDir>$(SolutionDir)..\..\bin\</OutDir>
+    <IncludePath>$(SolutionDir)..\..\..\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)..\..\libs\$(Configuration)\</OutDir>
-    <TargetExt>.lib</TargetExt>
-    <IncludePath>$(SolutionDir)..\..\include;$(SolutionDir)..\..\..\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)..\..\bin\</OutDir>
+    <IncludePath>$(SolutionDir)..\..\..\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4512</DisableSpecificWarnings>
-      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\..\libs\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>NyraCore.lib;NyraEmulationSystem.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
     </Link>
-    <PostBuildEvent>
-      <Command>xcopy $(SolutionDir)..\..\include\* $(SolutionDir)..\..\..\include /D /E /Q /Y
-xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\libs /D /E /Q /Y</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -74,40 +67,19 @@ xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\libs /D /E /Q /Y</Comman
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4512</DisableSpecificWarnings>
-      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\..\libs\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>NyraCore.lib;NyraEmulationSystem.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
     </Link>
-    <PostBuildEvent>
-      <Command>xcopy $(SolutionDir)..\..\include\* $(SolutionDir)..\..\..\include /D /E /Q /Y
-xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\libs /D /E /Q /Y</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\include\nes\Cartridge.h" />
-    <ClInclude Include="..\..\..\include\nes\CPU.h" />
-    <ClInclude Include="..\..\..\include\nes\CPUHelper.h" />
-    <ClInclude Include="..\..\..\include\nes\Disassembly.h" />
-    <ClInclude Include="..\..\..\include\nes\Header.h" />
-    <ClInclude Include="..\..\..\include\nes\Memory.h" />
-    <ClInclude Include="..\..\..\include\nes\MemoryMap.h" />
-    <ClInclude Include="..\..\..\include\nes\OpCode.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\source\Cartridge.cpp" />
-    <ClCompile Include="..\..\..\source\CPU.cpp" />
-    <ClCompile Include="..\..\..\source\CPUHelper.cpp" />
-    <ClCompile Include="..\..\..\source\Disassembly.cpp" />
-    <ClCompile Include="..\..\..\source\Header.cpp" />
-    <ClCompile Include="..\..\..\source\Memory.cpp" />
-    <ClCompile Include="..\..\..\source\MemoryMap.cpp" />
-    <ClCompile Include="..\..\..\source\OpCode.cpp" />
+    <ClCompile Include="run_nes_cpu.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
