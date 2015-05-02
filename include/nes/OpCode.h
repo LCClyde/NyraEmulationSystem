@@ -97,6 +97,24 @@ public:
         }
 
         /*
+         *  \func - getArg
+         *  \brief - Gets the argument.
+         */
+        inline uint16_t getArg() const
+        {
+            return mArg;
+        }
+
+        /*
+         *  \func - getValue
+         *  \brief - Gets the calculated value. This is mode independent.
+         */
+        inline uint8_t getValue() const
+        {
+            return mValue;
+        }
+
+        /*
          *  \func - getValue
          *  \brief - Processes a 2 byte value. This is defined in the
          *           specialized modes.
@@ -104,18 +122,17 @@ public:
          *  \param value - The value to use for processing.
          *  \param index - An addditional value used for processing
          *  \param memory - The filled out memory banks
-         *  \return - The correct output value.
          */
-        virtual uint16_t operator()(
-                uint16_t value,
-                uint16_t index,
-                MemoryMap& memory) = 0;
+        virtual void operator()(const CPUArgs& args,
+                                const CPURegisters& registers,
+                                const MemoryMap& memory,
+                                CPUInfo& info) = 0;
 
     protected:
         const bool mUsesArg1;
         const bool mUsesArg2;
-        uint16_t mParam1;
-        uint16_t mParam2;
+        uint16_t mArg;
+        uint8_t mValue;
     };
 
     /*
@@ -186,8 +203,7 @@ public:
     }
 
 protected:
-    virtual void op(const CPUArgs& args,
-                    CPURegisters& registers,
+    virtual void op(CPURegisters& registers,
                     CPUInfo& info,
                     MemoryMap& memory) = 0;
 

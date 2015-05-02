@@ -67,12 +67,12 @@ int main(int argc, char** argv)
         nes::Disassembly disassembly;
 
         // Run
-        for (size_t ii = 0; ii < 5003; ++ii)
+        for (size_t ii = 0; ii < 10000; ++ii)
         {
             try
             {
                 cpu.tick(memoryMap, &disassembly);
-                std::cout << disassembly << "\n";
+                //std::cout << disassembly << "\n";
             }
             catch (...)
             {
