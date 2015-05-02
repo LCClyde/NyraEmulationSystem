@@ -70,7 +70,7 @@ public:
      */
     inline void writeByte(size_t address, uint8_t value)
     {
-        RamMap::iterator iter = getMemoryBank(address);
+        RamMap::const_iterator iter = getMemoryBank(address);
         iter->second->writeByte(address, value);
     }
 
@@ -85,7 +85,7 @@ public:
     inline void getOpInfo(size_t address,
                           CPUArgs& args)
     {
-        RamMap::iterator iter = getMemoryBank(address);
+        RamMap::const_iterator iter = getMemoryBank(address);
         args.opcode = iter->second->readByte(address);
         args.arg1 = iter->second->readByte(address + 1);
         args.arg2 = iter->second->readByte(address + 2);
@@ -103,9 +103,9 @@ public:
      *  \param address - The global adddress to read from.
      *  \return - The value at that address.
      */
-    inline uint8_t readByte(size_t address)
+    inline uint8_t readByte(size_t address) const
     {
-        RamMap::iterator iter = getMemoryBank(address);
+        RamMap::const_iterator iter = getMemoryBank(address);
         return iter->second->readByte(address);
     }
 
@@ -118,10 +118,10 @@ public:
      *  \param address - The global adddress to read from.
      *  \return - The value at that address.
      */
-    inline uint16_t readShort(size_t address);
+    uint16_t readShort(size_t address) const;
 
 private:
-    RamMap::iterator getMemoryBank(size_t& address);
+    RamMap::const_iterator getMemoryBank(size_t& address) const;
 
     RamMap mMap;
 };

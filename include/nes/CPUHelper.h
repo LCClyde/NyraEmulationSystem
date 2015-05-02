@@ -38,6 +38,22 @@ namespace nes
 struct CPURegisters
 {
     /*
+     *  \enum - Status codes
+     *  \brief - Represents the possible bits on the status register.
+     */
+    enum
+    {
+        CARRY = 0,
+        ZERO,
+        INTERRUPT,
+        DECIMAL,
+        STACK,
+        IGNORE,
+        OFLOW,
+        SIGN
+    };
+
+    /*
      *  \func - Constructor
      *  \brief - Creates a CPURegisters object with zero'd out data.
      */

@@ -48,6 +48,8 @@ void CPU::tick(MemoryMap& ram,
                                    mRegisters,
                                    mInfo);
     }
+
+    (*mOpCodes[mArgs.opcode])(mArgs, mRegisters, mInfo, ram);
 }
 }
 }

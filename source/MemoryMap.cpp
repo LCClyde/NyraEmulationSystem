@@ -28,19 +28,20 @@ namespace nyra
 namespace nes
 {
 /*****************************************************************************/
-MemoryMap::RamMap::iterator MemoryMap::getMemoryBank(size_t& address)
+MemoryMap::RamMap::const_iterator MemoryMap::getMemoryBank(
+        size_t& address) const
 {
-    RamMap::iterator iter = mMap.upper_bound(address);
+    RamMap::const_iterator iter = mMap.upper_bound(address);
     --iter;
     address -= iter->first;
     return iter;
 }
 
 /*****************************************************************************/
-uint16_t MemoryMap::readShort(size_t address)
+uint16_t MemoryMap::readShort(size_t address) const
 {
     size_t modAddress = address;
-    RamMap::iterator iter = getMemoryBank(modAddress);
+    RamMap::const_iterator iter = getMemoryBank(modAddress);
     uint16_t ret = iter->second->readByte(modAddress);
 
     // Check if we are at the end of the bank

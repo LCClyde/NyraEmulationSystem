@@ -29,6 +29,7 @@
 #include <memory>
 #include <vector>
 #include <nes/CPUHelper.h>
+#include <nes/MemoryMap.h>
 
 namespace nyra
 {
@@ -101,22 +102,14 @@ public:
          *           specialized modes.
          *
          *  \param value - The value to use for processing.
+         *  \param programCounter - The value of the program counter
+         *  \param memory - The filled out memory banks
          *  \return - The correct output value.
          */
-        virtual uint16_t getValue(uint16_t ) const
-        {
-            return 0;
-        }
-
-        /*
-         *  \func - getValue
-         *  \brief - Processes a 1 byte value. This is defined in the
-         *           specialized modes.
-         *
-         *  \param value - The value to use for processing.
-         *  \return - The correct output value.
-         */
-        virtual uint8_t getValue(uint8_t ) const
+        virtual uint16_t operator()(
+                uint16_t,
+                MemoryMap& ,
+                uint16_t )
         {
             return 0;
         }
@@ -144,7 +137,7 @@ public:
            uint8_t opCode,
            uint8_t length,
            uint8_t time,
-           const Mode* mode);
+           Mode* mode);
 
     /*
      *  \func - Destructor
@@ -152,12 +145,10 @@ public:
      */
     virtual ~OpCode();
 
-    inline void operator()(const CPUArgs& args,
-                           CPURegisters& registers,
-                           CPUInfo& info) const
-    {
-        op(args, registers, info);
-    }
+    void operator()(const CPUArgs& args,
+                    CPURegisters& registers,
+                    CPUInfo& info,
+                    MemoryMap& memory);
 
     /*
      *  \func - getName
@@ -198,21 +189,22 @@ public:
 protected:
     virtual void op(const CPUArgs& args,
                     CPURegisters& registers,
-                    CPUInfo& info) const = 0;
+                    CPUInfo& info,
+                    MemoryMap& memory) = 0;
 
     const std::string mName;
     const std::string mExtendedName;
     const uint8_t mOpCode;
     const uint8_t mLength;
     const uint8_t mTime;
-    const std::unique_ptr<const Mode> mMode;
+    const std::unique_ptr<Mode> mMode;
 };
 
 /*
  *  \type - OpCodeArray
  *  \brief - An array of opcodes which can then be indexed for calling ops.
  */
-typedef std::vector<std::unique_ptr<const OpCode> > OpCodeArray;
+typedef std::vector<std::unique_ptr<OpCode> > OpCodeArray;
 
 /*
  *  \func - allocateOpCodes

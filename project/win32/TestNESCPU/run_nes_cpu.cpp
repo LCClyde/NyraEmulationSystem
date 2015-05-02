@@ -26,6 +26,8 @@
 #include <nes/Cartridge.h>
 #include <nes/CPU.h>
 #include <nes/Disassembly.h>
+#include <core/File.h>
+#include <core/StringUtils.h>
 
 using namespace nyra;
 
@@ -33,29 +35,58 @@ int main(int argc, char** argv)
 {
     try
     {
-        if (argc != 2)
+        if (argc != 3)
         {
-            std::cerr << "Usage: <" << argv[0] << "> <NES File>\n";
+            std::cerr << "Usage: <" << argv[0] << "> <NES File><NES Log>\n";
             return 1;
         }
-
+ 
         const std::string inputPathname = argv[1];
+        const std::string logPathname = argv[2];
 
+        // Read the log file
+        const std::vector<std::string> lines =
+                core::split(core::readFile(logPathname), "\n");
 
+        // Read the cart.
         const nes::Cartridge cart(inputPathname);
+
+        // Setup CPU
         nes::CPU cpu(0xC000);
 
+        // Setup memory
         nes::MemoryMap memoryMap;
-        nes::RAM ram(0x7F01);
-        nes::RAM zeroPage(0xFF);
+        nes::RAM ram(0x7F00);
+        nes::RAM zeroPage(0x100);
         memoryMap.setMemoryBank(0, zeroPage);
         memoryMap.setMemoryBank(0x0100, ram);
         memoryMap.setMemoryBank(0x8000, *(cart.getProgROM()[0]));
         memoryMap.setMemoryBank(0xC000, *(cart.getProgROM()[0]));
 
+        // Get dissembly
         nes::Disassembly disassembly;
-        cpu.tick(memoryMap, &disassembly);
-        std::cout << disassembly << "\n";
+
+        // Run
+        for (size_t ii = 0; ii < 5003; ++ii)
+        {
+            try
+            {
+                cpu.tick(memoryMap, &disassembly);
+            }
+            catch (...)
+            {
+                // Ignore
+            }
+
+            std::stringstream ss;
+            ss << disassembly;
+            if (ss.str() != lines[ii])
+            {
+                std::cout << "ERROR: " << ii << "\n" << ss.str()
+                          << "\n" << lines[ii] << "\n";
+                return 0;
+            }
+        }
     }
     catch (core::Exception& ex)
     {
