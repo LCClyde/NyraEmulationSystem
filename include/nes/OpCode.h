@@ -76,7 +76,7 @@ public:
          *  \param args - The args to use when dumping the information.
          *  \return - The formatted string.
          */
-        virtual std::string toString(const CPUArgs& args) const = 0;
+        virtual std::string toString() const = 0;
 
         /*
          *  \func - useArg1
@@ -102,21 +102,20 @@ public:
          *           specialized modes.
          *
          *  \param value - The value to use for processing.
-         *  \param programCounter - The value of the program counter
+         *  \param index - An addditional value used for processing
          *  \param memory - The filled out memory banks
          *  \return - The correct output value.
          */
         virtual uint16_t operator()(
-                uint16_t,
-                MemoryMap& ,
-                uint16_t )
-        {
-            return 0;
-        }
+                uint16_t value,
+                uint16_t index,
+                MemoryMap& memory) = 0;
 
     protected:
         const bool mUsesArg1;
         const bool mUsesArg2;
+        uint16_t mParam1;
+        uint16_t mParam2;
     };
 
     /*

@@ -72,6 +72,7 @@ int main(int argc, char** argv)
             try
             {
                 cpu.tick(memoryMap, &disassembly);
+                std::cout << disassembly << "\n";
             }
             catch (...)
             {
@@ -82,8 +83,8 @@ int main(int argc, char** argv)
             ss << disassembly;
             if (ss.str() != lines[ii])
             {
-                std::cout << "ERROR: " << ii << "\n" << ss.str()
-                          << "\n" << lines[ii] << "\n";
+                std::cout << "\n\n\nERROR: " << ii + 1 << "\n" << ss.str()
+                          << "\n" << lines[ii] << "\n\n\n\n\n";
                 return 0;
             }
         }

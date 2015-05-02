@@ -41,23 +41,6 @@ void compare(uint8_t value, uint8_t reg, std::bitset<8>& statusRegister)
 }
 
 /*****************************************************************************/
-void branch(bool branchOn,
-            uint16_t offset,
-            uint16_t& programCounter,
-            uint16_t& cycles)
-{
-    if (branchOn)
-    {
-        programCounter = offset;
-        cycles += 3;
-    }
-    else
-    {
-        programCounter += 2;
-    }
-}
-
-/*****************************************************************************/
 void setRegister(uint8_t value, uint8_t& reg, std::bitset<8>& statusRegister)
 {
     statusRegister[nyra::nes::CPURegisters::SIGN] = (value >= 0x80);
@@ -93,6 +76,36 @@ uint8_t popStack(nyra::nes::MemoryMap& ram, uint8_t& stackPointer)
 }
 
 /*****************************************************************************/
+// TODO: Most of the modes have extra unnecessary operations which are used to
+//       match a known debug string output. There needs to be a way to remove
+//       theses. Maybe with a #ifdef DEBUG or something similar.
+/*****************************************************************************/
+
+/*****************************************************************************/
+class ModeAccumulator : public nyra::nes::OpCode::Mode
+{
+public:
+    ModeAccumulator() :
+        nyra::nes::OpCode::Mode(false, false)
+    {
+    }
+
+    std::string toString() const
+    {
+        return "A";
+    }
+
+    uint16_t operator()(
+            uint16_t value,
+            uint16_t ,
+            nyra::nes::MemoryMap& )
+    {
+        return value;
+    }
+};
+
+/*****************************************************************************/
+template <bool OutputT>
 class ModeAbsolute : public nyra::nes::OpCode::Mode
 {
 public:
@@ -101,46 +114,22 @@ public:
     {
     }
 
-    std::string toString(const nyra::nes::CPUArgs& args) const
+    std::string toString() const
     {
-        return "$" + nyra::core::toHexString<uint16_t>(args.darg);
+        return "$" + nyra::core::toHexString<uint16_t>(mParam1);// + true ?
+        //        " =" + nyra::core::toHexString<uint8_t>(
+        //        static_cast<uint8_t>(mParam2)) : "";
     }
 
     uint16_t operator()(
             uint16_t value,
-            nyra::nes::MemoryMap& ,
-            uint16_t )
+            uint16_t ,
+            nyra::nes::MemoryMap& memory)
     {
-        return value;
+        mParam1 = value;
+        mParam2 = memory.readByte(value);
+        return mParam2;
     }
-};
-
-/*****************************************************************************/
-class ModeAbsoluteOutput : public nyra::nes::OpCode::Mode
-{
-public:
-    ModeAbsoluteOutput() :
-        nyra::nes::OpCode::Mode(true, true),
-        mParam(0)
-    {
-    }
-
-    std::string toString(const nyra::nes::CPUArgs& args) const
-    {
-        return "$" + nyra::core::toHexString<uint16_t>(args.darg) +
-                " = " + nyra::core::toHexString<uint8_t>(mParam);
-    }
-
-    uint16_t operator()(
-            uint16_t value,
-            nyra::nes::MemoryMap& memory,
-            uint16_t )
-    {
-        mParam = memory.readByte(value);
-        return mParam;
-    }
-
-    uint8_t mParam;
 };
 
 /*****************************************************************************/
@@ -148,27 +137,23 @@ class ModeRelative : public nyra::nes::OpCode::Mode
 {
 public:
     ModeRelative() :
-        nyra::nes::OpCode::Mode(true, false),
-        mParam(0)
+        nyra::nes::OpCode::Mode(true, false)
     {
     }
 
-    std::string toString(const nyra::nes::CPUArgs& ) const
+    std::string toString() const
     {
-        return "$" + nyra::core::toHexString<uint16_t>(mParam);
+        return "$" + nyra::core::toHexString<uint16_t>(mParam1);
     }
     
     uint16_t operator()(
             uint16_t value,
-            nyra::nes::MemoryMap& ,
-            uint16_t programCounter)
+            uint16_t programCounter,
+            nyra::nes::MemoryMap& )
     {
-        mParam = programCounter + static_cast<int8_t>(value) + 2;
-        return mParam;
+        mParam1 = programCounter + static_cast<int8_t>(value) + 2;
+        return mParam1;
     }
-
-private:
-    uint16_t mParam;
 };
 
 /*****************************************************************************/
@@ -176,29 +161,28 @@ class ModeZeroPage : public nyra::nes::OpCode::Mode
 {
 public:
     ModeZeroPage() :
-        nyra::nes::OpCode::Mode(true, false),
-        mParam(0)
+        nyra::nes::OpCode::Mode(true, false)
     {
     }
 
-    std::string toString(const nyra::nes::CPUArgs& args) const
+    std::string toString() const
     {
-        return "$" + nyra::core::toHexString<uint8_t>(args.arg1) + " = " + 
-                nyra::core::toHexString<uint8_t>(mParam);
+        return "$" + nyra::core::toHexString<uint8_t>(
+                static_cast<uint8_t>(mParam1)) + " = " + 
+                nyra::core::toHexString<uint8_t>(
+                static_cast<uint8_t>(mParam2));
     }
 
     uint16_t operator()(
             uint16_t value,
-            nyra::nes::MemoryMap& memory,
-            uint16_t )
+            uint16_t ,
+            nyra::nes::MemoryMap& memory)
     {
-        mParam = memory.readByte(value);
-        return mParam;
+        mParam1 = value;
+        mParam2 = memory.readByte(mParam1);
+        return mParam2;
 
     }
-
-private:
-    uint8_t mParam;
 };
 
 /*****************************************************************************/
@@ -210,17 +194,19 @@ public:
     {
     }
 
-    std::string toString(const nyra::nes::CPUArgs& args) const
+    std::string toString() const
     {
-        return "#$" + nyra::core::toHexString<uint8_t>(args.arg1);
+        return "#$" + nyra::core::toHexString<uint8_t>(
+                static_cast<uint8_t>(mParam1));
     }
 
     uint16_t operator()(
             uint16_t value,
-            nyra::nes::MemoryMap& ,
-            uint16_t )
+            uint16_t ,
+            nyra::nes::MemoryMap& )
     {
-        return value;
+        mParam1 = value;
+        return mParam1;
     }
 };
 
@@ -233,9 +219,17 @@ public:
     {
     }
 
-    std::string toString(const nyra::nes::CPUArgs& ) const
+    std::string toString() const
     {
         return "";
+    }
+
+    uint16_t operator()(
+            uint16_t ,
+            uint16_t ,
+            nyra::nes::MemoryMap& )
+    {
+        return 0;
     }
 };
 
@@ -277,7 +271,10 @@ private:
             nyra::nes::CPUInfo& info,
             nyra::nes::MemoryMap& memory)
     {
-        info.programCounter = (*mMode)(args.darg, memory, 0);
+        // Call this once to setup the mode information. We will not use
+        // it and it is just for correct debug output.
+        (*mMode)(args.darg, 0, memory);
+        info.programCounter = args.darg;
     }
 };
 
@@ -298,7 +295,7 @@ private:
             nyra::nes::CPUInfo& ,
             nyra::nes::MemoryMap& memory)
     {
-        setRegister(static_cast<uint8_t>((*mMode)(args.arg1, memory, 0)),
+        setRegister(static_cast<uint8_t>((*mMode)(args.arg1, 0, memory)),
                     registers.xIndex, registers.statusRegister);
     }
 };
@@ -320,7 +317,7 @@ private:
             nyra::nes::CPUInfo& ,
             nyra::nes::MemoryMap& memory)
     {
-        setRegister(static_cast<uint8_t>((*mMode)(args.arg1, memory, 0)),
+        setRegister(static_cast<uint8_t>((*mMode)(args.arg1, 0, memory)),
                     registers.yIndex, registers.statusRegister);
     }
 };
@@ -342,7 +339,7 @@ private:
             nyra::nes::CPUInfo& ,
             nyra::nes::MemoryMap& memory)
     {
-        setRegister(static_cast<uint8_t>((*mMode)(args.darg, memory, 0)),
+        setRegister(static_cast<uint8_t>((*mMode)(args.darg, 0, memory)),
                     registers.accumulator, registers.statusRegister);
     }
 };
@@ -365,7 +362,7 @@ private:
             nyra::nes::MemoryMap& memory)
     {
         // Save off the param value for proper printing
-        (*mMode)(args.arg1, memory, 0);
+        (*mMode)(args.arg1, 0, memory);
         memory.writeByte(args.arg1, registers.accumulator);
     }
 };
@@ -388,7 +385,7 @@ private:
             nyra::nes::MemoryMap& memory)
     {
         // Save off the param value for proper printing
-        (*mMode)(args.arg1, memory, 0);
+        (*mMode)(args.arg1, 0, memory);
         memory.writeByte(args.arg1, registers.xIndex);
     }
 };
@@ -399,7 +396,7 @@ class OpJSR : public nyra::nes::OpCode
 public:
     OpJSR() :
         nyra::nes::OpCode("JSR", "Jump to subroutine",
-                          0x20, 0, 6, new ModeAbsolute())
+                          0x20, 0, 6, new ModeAbsolute<false>())
     {
     }
 
@@ -409,11 +406,15 @@ private:
             nyra::nes::CPUInfo& info,
             nyra::nes::MemoryMap& memory)
     {
+        // Call this once to setup the mode information. We will not use
+        // it and it is just for correct debug output.
+        (*mMode)(args.darg, 0, memory);
+
         pushStack(((info.programCounter + 2) >> 8) & 0xFF,
                   memory, registers.stackPointer);
         pushStack((info.programCounter + 2) & 0xFF,
                   memory, registers.stackPointer);
-        info.programCounter = (*mMode)(args.darg, memory, 0);
+        info.programCounter = args.darg;
     }
 };
 
@@ -1078,9 +1079,6 @@ private:
             nyra::nes::CPUInfo& info,
             nyra::nes::MemoryMap& memory)
     {
-        branch(registers.statusRegister[nyra::nes::CPURegisters::SIGN],
-               (*mMode)(args.arg1, memory, info.programCounter),
-               info.programCounter, info.cycles);
     }
 };
 
@@ -1101,7 +1099,6 @@ private:
             nyra::nes::CPUInfo& ,
             nyra::nes::MemoryMap& memory)
     {
-        const size_t param = (*mMode)(args.arg1, memory, 0);
         registers.statusRegister[nyra::nes::CPURegisters::ZERO] =
                 (param & registers.accumulator) == 0;
         registers.statusRegister[nyra::nes::CPURegisters::OFLOW] =
@@ -1129,7 +1126,6 @@ private:
             nyra::nes::MemoryMap& memory)
     {
         const uint8_t param = static_cast<uint8_t>(
-                (*mMode)(args.arg1, memory, 0));
         compare(param, registers.accumulator, registers.statusRegister);
     }
 };
@@ -1152,7 +1148,6 @@ private:
             nyra::nes::MemoryMap& memory)
     {
         const uint8_t param = static_cast<uint8_t>(
-                (*mMode)(args.arg1, memory, 0));
         compare(param, registers.yIndex, registers.statusRegister);
     }
 };
@@ -1175,7 +1170,6 @@ private:
             nyra::nes::MemoryMap& memory)
     {
         const uint8_t param = static_cast<uint8_t>(
-                (*mMode)(args.arg1, memory, 0));
         compare(param, registers.xIndex, registers.statusRegister);
     }
 };
@@ -1197,7 +1191,6 @@ private:
             nyra::nes::CPUInfo& ,
             nyra::nes::MemoryMap& memory)
     {
-        const size_t param = (*mMode)(args.arg1, memory, 0);
         setRegister(param & registers.accumulator,
                     registers.accumulator,
                     registers.statusRegister);
@@ -1222,7 +1215,6 @@ private:
             nyra::nes::MemoryMap& memory)
     {
         const uint8_t param = static_cast<uint8_t>(
-                (*mMode)(args.arg1, memory, 0));
         setRegister(param | registers.accumulator,
                     registers.accumulator,
                     registers.statusRegister);
@@ -1247,7 +1239,6 @@ private:
             nyra::nes::MemoryMap& memory)
     {
         const uint8_t param = static_cast<uint8_t>(
-                (*mMode)(args.arg1, memory, 0));
         setRegister(param ^ registers.accumulator,
                     registers.accumulator,
                     registers.statusRegister);
@@ -1272,7 +1263,6 @@ private:
             nyra::nes::MemoryMap& memory)
     {
         const uint8_t param = static_cast<uint8_t>(
-                (*mMode)(args.arg1, memory, 0));
         add(param, registers);
     }
 };
@@ -1294,7 +1284,6 @@ private:
             nyra::nes::MemoryMap& memory)
     {
         const uint8_t param = static_cast<uint8_t>(
-                (*mMode)(args.arg1, memory, 0));
         add(~param, registers);
     }
 };
@@ -1322,7 +1311,6 @@ void allocateOpCodes(OpCodeArray& opCodes)
     opCodes[0x30].reset(new OpBMI());
     opCodes[0x38].reset(new OpSEC());
     opCodes[0x40].reset(new OpRTI());
-    opCodes[0x4C].reset(new OpJMP<ModeAbsolute>(0x4C));
     opCodes[0x48].reset(new OpPHA());
     opCodes[0x49].reset(new OpEOR<ModeImmediate>(0x49, 2, 2));
     opCodes[0x50].reset(new OpBVC());
@@ -1335,7 +1323,6 @@ void allocateOpCodes(OpCodeArray& opCodes)
     opCodes[0x86].reset(new OpSTX<ModeZeroPage>(0x86, 2, 3));
     opCodes[0x88].reset(new OpDEY());
     opCodes[0x8A].reset(new OpTXA());
-    opCodes[0x8E].reset(new OpSTX<ModeAbsoluteOutput>(0x8E, 3, 4));
     opCodes[0x90].reset(new OpBCC());
     opCodes[0x98].reset(new OpTYA());
     opCodes[0x9A].reset(new OpTXS());
@@ -1344,8 +1331,6 @@ void allocateOpCodes(OpCodeArray& opCodes)
     opCodes[0xA8].reset(new OpTAY());
     opCodes[0xA9].reset(new OpLDA<ModeImmediate>(0xA9, 2, 2));
     opCodes[0xAA].reset(new OpTAX());
-    opCodes[0xAD].reset(new OpLDA<ModeAbsoluteOutput>(0xAD, 3, 4));
-    opCodes[0xAE].reset(new OpLDX<ModeAbsoluteOutput>(0xAE, 3, 4));
     opCodes[0xB0].reset(new OpBCS());
     opCodes[0xB8].reset(new OpCLV());
     opCodes[0xBA].reset(new OpTSX());

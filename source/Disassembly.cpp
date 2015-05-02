@@ -90,7 +90,7 @@ std::ostream& operator<<(std::ostream& os,
     params = core::pad(params, ' ', 7, true);
     os << params
        << core::pad(data.mOpCode->getName() + " " +
-                    data.mOpCode->getMode().toString(data.mArgs),
+                    data.mOpCode->getMode().toString(),
                     ' ', 32, true)
        << "A:" << core::toHexString<uint8_t>(data.mRegisters.accumulator)
        << " X:" << core::toHexString<uint8_t>(data.mRegisters.xIndex)
