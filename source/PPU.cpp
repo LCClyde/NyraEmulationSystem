@@ -21,36 +21,46 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#include <nes/CPU.h>
+#include <nes/PPU.h>
+#include <limits>
+
+namespace
+{
+/*****************************************************************************/
+static const int16_t VBLANK_START = 241;
+static const int16_t VBLANK_END = -1;
+}
 
 namespace nyra
 {
 namespace nes
 {
 /*****************************************************************************/
-CPU::CPU(uint16_t startAddress) :
-    mInfo(startAddress)
+PPU::PPU() :
+    mScanline(std::numeric_limits<int16_t>::min())
 {
-    allocateOpCodes(mOpCodes);
 }
 
 /*****************************************************************************/
-void CPU::tick(PPURegisters& ppu,
-               MemoryMap& ram,
-               Disassembly* disassembly)
+void PPU::tick(const CPUInfo& info)
 {
-    ram.getOpInfo(mInfo.programCounter,
-                  mArgs);
-
-    if (disassembly)
+    // Check if we hit a new scanline
+    if (mScanline != info.scanLine)
     {
-        *disassembly = Disassembly(*mOpCodes[mArgs.opcode],
-                                   mArgs,
-                                   mRegisters,
-                                   mInfo);
-    }
+        switch (info.scanLine)
+        {
+        case VBLANK_START:
+            // Set the VBLANK flag
+            mRegisters.status[VBLANK] = true;
+            break;
+        case VBLANK_END:
+            // Set the VBLANK flag
+            mRegisters.status[VBLANK] = false;
+            break;
+        }
 
-    (*mOpCodes[mArgs.opcode])(mArgs, mRegisters, mInfo, ppu, ram);
+        mScanline = info.scanLine;
+    }
 }
 }
 }

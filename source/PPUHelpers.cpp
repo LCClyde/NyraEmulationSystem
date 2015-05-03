@@ -21,36 +21,19 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#include <nes/CPU.h>
+#include <nes/PPUHelpers.h>
 
 namespace nyra
 {
 namespace nes
 {
 /*****************************************************************************/
-CPU::CPU(uint16_t startAddress) :
-    mInfo(startAddress)
+PPURegisters::PPURegisters() :
+    statusAddress(0x2002),
+    controller(0),
+    mask(0),
+    status(0x10)
 {
-    allocateOpCodes(mOpCodes);
-}
-
-/*****************************************************************************/
-void CPU::tick(PPURegisters& ppu,
-               MemoryMap& ram,
-               Disassembly* disassembly)
-{
-    ram.getOpInfo(mInfo.programCounter,
-                  mArgs);
-
-    if (disassembly)
-    {
-        *disassembly = Disassembly(*mOpCodes[mArgs.opcode],
-                                   mArgs,
-                                   mRegisters,
-                                   mInfo);
-    }
-
-    (*mOpCodes[mArgs.opcode])(mArgs, mRegisters, mInfo, ppu, ram);
 }
 }
 }

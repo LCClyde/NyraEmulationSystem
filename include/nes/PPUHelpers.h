@@ -21,36 +21,46 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#include <nes/CPU.h>
+#ifndef __NYRA_NES_PPU_HELPERS_H__
+#define __NYRA_NES_PPU_HELPERS_H__
+
+#include <stdint.h>
+#include <bitset>
+#include <nes/Constants.h>
 
 namespace nyra
 {
 namespace nes
 {
-/*****************************************************************************/
-CPU::CPU(uint16_t startAddress) :
-    mInfo(startAddress)
+/*
+ *  \enum - Status Flags
+ *  \brief - Locations of flags for the PPUSTATUS variable.
+ */
+enum
 {
-    allocateOpCodes(mOpCodes);
-}
+    SPRITE_OVERFLOW = 5,
+    SPRITE_HIT_0,
+    VBLANK
+};
 
-/*****************************************************************************/
-void CPU::tick(PPURegisters& ppu,
-               MemoryMap& ram,
-               Disassembly* disassembly)
+/*
+ *  \class - PPURegisters
+ *  \brief - Holds the PPU specific register values.
+ */
+struct PPURegisters
 {
-    ram.getOpInfo(mInfo.programCounter,
-                  mArgs);
+    /*
+     *  \func - Constructor
+     *  \brief - Sets up a zero'd out registers struct.
+     */
+    PPURegisters();
 
-    if (disassembly)
-    {
-        *disassembly = Disassembly(*mOpCodes[mArgs.opcode],
-                                   mArgs,
-                                   mRegisters,
-                                   mInfo);
-    }
+    const size_t statusAddress;
 
-    (*mOpCodes[mArgs.opcode])(mArgs, mRegisters, mInfo, ppu, ram);
+    std::bitset<FLAG_SIZE> controller;
+    std::bitset<FLAG_SIZE> mask;
+    std::bitset<FLAG_SIZE> status;
+};
 }
 }
-}
+#endif

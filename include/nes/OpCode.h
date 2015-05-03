@@ -30,6 +30,7 @@
 #include <vector>
 #include <nes/CPUHelper.h>
 #include <nes/MemoryMap.h>
+#include <nes/PPUHelpers.h>
 
 namespace nyra
 {
@@ -116,12 +117,12 @@ public:
 
         /*
          *  \func - getValue
-         *  \brief - Processes a 2 byte value. This is defined in the
-         *           specialized modes.
+         *  \brief - Process all mode information
          *
-         *  \param value - The value to use for processing.
-         *  \param index - An addditional value used for processing
+         *  \param args - The input arguments to the mode.
+         *  \param registers - The current CPU registers
          *  \param memory - The filled out memory banks
+         *  \param info - The current CPU info struct.
          */
         virtual void operator()(const CPUArgs& args,
                                 const CPURegisters& registers,
@@ -161,9 +162,21 @@ public:
      */
     virtual ~OpCode();
 
+    /*
+     *  \func - operator(functor)
+     *  \brief - The main entry point to running an OpCode.
+     *
+     *  \param args - The evaluated input arguments. The OpCode
+     *         should use the modified mode arguments.
+     *  \param registers - The current CPU registers.
+     *  \param info - The current CPU info.
+     *  \param ppu - The current PPU registers.
+     *  \param memory - The current memory banks.
+     */
     void operator()(const CPUArgs& args,
                     CPURegisters& registers,
                     CPUInfo& info,
+                    PPURegisters& ppu,
                     MemoryMap& memory);
 
     /*
@@ -205,6 +218,7 @@ public:
 protected:
     virtual void op(CPURegisters& registers,
                     CPUInfo& info,
+                    PPURegisters& ppu,
                     MemoryMap& memory) = 0;
 
     const std::string mName;

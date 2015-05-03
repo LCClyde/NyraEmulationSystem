@@ -21,36 +21,20 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#include <nes/CPU.h>
+#ifndef __NYRA_NES_CONSTANTS_H__
+#define __NYRA_NES_CONSTANTS_H__
 
 namespace nyra
 {
 namespace nes
 {
-/*****************************************************************************/
-CPU::CPU(uint16_t startAddress) :
-    mInfo(startAddress)
-{
-    allocateOpCodes(mOpCodes);
+/*
+ *  \Constant - FLAG_SIZE
+ *  \brief - The number of flags in a register. For the 6502 these are
+ *            8 bit values.
+ */
+static const size_t FLAG_SIZE = 8;
+}
 }
 
-/*****************************************************************************/
-void CPU::tick(PPURegisters& ppu,
-               MemoryMap& ram,
-               Disassembly* disassembly)
-{
-    ram.getOpInfo(mInfo.programCounter,
-                  mArgs);
-
-    if (disassembly)
-    {
-        *disassembly = Disassembly(*mOpCodes[mArgs.opcode],
-                                   mArgs,
-                                   mRegisters,
-                                   mInfo);
-    }
-
-    (*mOpCodes[mArgs.opcode])(mArgs, mRegisters, mInfo, ppu, ram);
-}
-}
-}
+#endif

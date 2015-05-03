@@ -91,13 +91,18 @@ xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\libs /D /E /Q /Y</Comman
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\nes\Cartridge.h" />
+    <ClInclude Include="..\..\..\include\nes\Constants.h" />
     <ClInclude Include="..\..\..\include\nes\CPU.h" />
     <ClInclude Include="..\..\..\include\nes\CPUHelper.h" />
     <ClInclude Include="..\..\..\include\nes\Disassembly.h" />
     <ClInclude Include="..\..\..\include\nes\Header.h" />
     <ClInclude Include="..\..\..\include\nes\Memory.h" />
     <ClInclude Include="..\..\..\include\nes\MemoryMap.h" />
+    <ClInclude Include="..\..\..\include\nes\Mode6502.hpp" />
+    <ClInclude Include="..\..\..\include\nes\Op6502.hpp" />
     <ClInclude Include="..\..\..\include\nes\OpCode.h" />
+    <ClInclude Include="..\..\..\include\nes\PPU.h" />
+    <ClInclude Include="..\..\..\include\nes\PPUHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Cartridge.cpp" />
@@ -108,6 +113,8 @@ xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\libs /D /E /Q /Y</Comman
     <ClCompile Include="..\..\..\source\Memory.cpp" />
     <ClCompile Include="..\..\..\source\MemoryMap.cpp" />
     <ClCompile Include="..\..\..\source\OpCode.cpp" />
+    <ClCompile Include="..\..\..\source\PPU.cpp" />
+    <ClCompile Include="..\..\..\source\PPUHelpers.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

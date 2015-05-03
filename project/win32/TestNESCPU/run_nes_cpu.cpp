@@ -28,6 +28,7 @@
 #include <nes/Disassembly.h>
 #include <core/File.h>
 #include <core/StringUtils.h>
+#include <nes/PPU.h>
 
 using namespace nyra;
 
@@ -51,9 +52,6 @@ int main(int argc, char** argv)
         // Read the cart.
         const nes::Cartridge cart(inputPathname);
 
-        // Setup CPU
-        nes::CPU cpu(0xC000);
-
         // Setup memory
         nes::MemoryMap memoryMap;
         nes::RAM ram(0x7F00);
@@ -63,30 +61,31 @@ int main(int argc, char** argv)
         memoryMap.setMemoryBank(0x8000, *(cart.getProgROM()[0]));
         memoryMap.setMemoryBank(0xC000, *(cart.getProgROM()[0]));
 
+        // Setup CPU
+        nes::CPU cpu(memoryMap.readShort(0xFFFC));
+
+        // Setup PPU
+        nes::PPU ppu;
+
         // Get dissembly
         nes::Disassembly disassembly;
 
         // Run
-        for (size_t ii = 0; ii < 10000; ++ii)
+        //for (size_t ii = 0; ii < 10000; ++ii)
+        while (true)
         {
-            try
-            {
-                cpu.tick(memoryMap, &disassembly);
-                //std::cout << disassembly << "\n";
-            }
-            catch (...)
-            {
-                // Ignore
-            }
+            cpu.tick(ppu.getRegisters(), memoryMap, &disassembly);
 
-            std::stringstream ss;
+            ppu.tick(cpu.getInfo());
+
+            /*std::stringstream ss;
             ss << disassembly;
             if (ss.str() != lines[ii])
             {
                 std::cout << "\n\n\nERROR: " << ii + 1 << "\n" << ss.str()
                           << "\n" << lines[ii] << "\n\n\n\n\n";
                 return 0;
-            }
+            }*/
         }
     }
     catch (core::Exception& ex)

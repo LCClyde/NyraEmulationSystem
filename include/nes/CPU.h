@@ -29,6 +29,7 @@
 #include <nes/CPUHelper.h>
 #include <nes/OpCode.h>
 #include <nes/Disassembly.h>
+#include <nes/PPU.h>
 
 namespace nyra
 {
@@ -49,6 +50,8 @@ public:
      *  \brief - Creates a CPU object with a starting memory address.
      *
      *  \param startAddress - The location to start reading opcodes from.
+     *  TODO: Should this also have a version that takes in a MemoryMap and
+     *        resolves the startAddress itself?
      */
     CPU(uint16_t startAddress);
 
@@ -56,14 +59,25 @@ public:
      *  \func - tick
      *  \brief - Processes a single opcode.
      *
+     *  \param ppu - The registers that control the PPU.
      *  \param memory - All the available memory as swappable banks.
      *  \param disassembly [OPTIONAL] - Allows you pass in a disassembly
      *         object which can then be used to view information about
      *         the processed opcode.
      *         Remove this to increase performance.
      */
-    void tick(MemoryMap& memory,
+    void tick(PPURegisters& ppu,
+              MemoryMap& memory,
               Disassembly* disassembly = nullptr);
+
+    /*
+     *  \func - getInfo
+     *  \brief - Returns the CPU implementation info.
+     */
+    inline const CPUInfo& getInfo() const
+    {
+        return mInfo;
+    }
 
 private:
     CPURegisters mRegisters;

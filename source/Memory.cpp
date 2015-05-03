@@ -36,7 +36,7 @@ uint8_t* allocationTransitionBuffer(size_t size, const uint8_t* copyFrom)
     }
     else
     {
-        std::fill_n(ret, size, 0);
+        std::fill_n(ret, size, 0xFF);
     }
 
     return ret;

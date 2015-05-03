@@ -32,26 +32,27 @@ namespace nyra
 namespace nes
 {
 /*
+ *  \enum - Status codes
+ *  \brief - Represents the possible bits on the status register.
+ */
+enum
+{
+    CARRY = 0,
+    ZERO,
+    INTERRUPT,
+    DECIMAL,
+    STACK,
+    IGNORE,
+    OFLOW,
+    SIGN
+};
+
+/*
  *  \class - CPURegisters
  *  \brief - Holds the registers for a 6502 processor.
  */
 struct CPURegisters
 {
-    /*
-     *  \enum - Status codes
-     *  \brief - Represents the possible bits on the status register.
-     */
-    enum
-    {
-        CARRY = 0,
-        ZERO,
-        INTERRUPT,
-        DECIMAL,
-        STACK,
-        IGNORE,
-        OFLOW,
-        SIGN
-    };
 
     /*
      *  \func - Constructor

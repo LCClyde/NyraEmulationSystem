@@ -21,36 +21,52 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#include <nes/CPU.h>
+#ifndef __NYRA_NES_PPU_H__
+#define __NYRA_NES_PPU_H__
+
+#include <nes/PPUHelpers.h>
+#include <nes/CPUHelper.h>
 
 namespace nyra
 {
 namespace nes
 {
-/*****************************************************************************/
-CPU::CPU(uint16_t startAddress) :
-    mInfo(startAddress)
+/*
+ *  \class - PPU
+ *  \brief - The picture processing unit handles rendering the image to the
+ *           screen. In the actual NES this runs in parallel with the CPU.
+ *           This implemention instead will run sequentially until it catches
+ *           up to the CPU.
+ */
+class PPU
 {
-    allocateOpCodes(mOpCodes);
-}
+public:
+    /*
+     *  \func - Constructor
+     *  \brief - Sets a default internal structure for the PPU.
+     */
+    PPU();
 
-/*****************************************************************************/
-void CPU::tick(PPURegisters& ppu,
-               MemoryMap& ram,
-               Disassembly* disassembly)
-{
-    ram.getOpInfo(mInfo.programCounter,
-                  mArgs);
+    /*
+     *  \func - tick
+     *  \brief - Updates the PPU to match the CPU timing. ideally I think
+     *           we want this to be one scanline.
+     */
+    void tick(const CPUInfo& info);
 
-    if (disassembly)
+    /*
+     *  \func - getRegisters
+     *  \brief - Returns the current PPU register values.
+     */
+    inline PPURegisters& getRegisters()
     {
-        *disassembly = Disassembly(*mOpCodes[mArgs.opcode],
-                                   mArgs,
-                                   mRegisters,
-                                   mInfo);
+        return mRegisters;
     }
 
-    (*mOpCodes[mArgs.opcode])(mArgs, mRegisters, mInfo, ppu, ram);
+private:
+    PPURegisters mRegisters;
+    int16_t mScanline;
+};
 }
 }
-}
+#endif
