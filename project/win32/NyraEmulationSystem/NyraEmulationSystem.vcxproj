@@ -102,7 +102,7 @@ xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\libs /D /E /Q /Y</Comman
     <ClInclude Include="..\..\..\include\nes\Op6502.hpp" />
     <ClInclude Include="..\..\..\include\nes\OpCode.h" />
     <ClInclude Include="..\..\..\include\nes\PPU.h" />
-    <ClInclude Include="..\..\..\include\nes\PPUHelpers.h" />
+    <ClInclude Include="..\..\..\include\nes\PPUMemory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Cartridge.cpp" />
@@ -114,7 +114,7 @@ xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\libs /D /E /Q /Y</Comman
     <ClCompile Include="..\..\..\source\MemoryMap.cpp" />
     <ClCompile Include="..\..\..\source\OpCode.cpp" />
     <ClCompile Include="..\..\..\source\PPU.cpp" />
-    <ClCompile Include="..\..\..\source\PPUHelpers.cpp" />
+    <ClCompile Include="..\..\..\source\PPUMemory.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

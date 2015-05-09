@@ -30,15 +30,8 @@
 *.sdf
 *.suo
 
-/project/win32/NyraEmulationSystem/Debug
-/project/win32/NyraEmulationSystem/Release
-/project/win32/TestNESHeader/Debug
-/project/win32/TestNESHeader/Release
-/project/win32/TestNESCPU/Debug
-/project/win32/TestNESCPU/Release
-project/win32/NyraEmulationSystem/NyraEmulationSystem.vcxproj.user
-projects/win32/NyraEmulationSystem/NyraEmulationSystem.vcxproj.user
+Debug/
+Release/
+*.vcxproj.user
 *.ilk
 *.pdb
-project/win32/TestNESHeader/TestNESHeader.vcxproj.user
-project/win32/TestNESCPU/TestNESCPU.vcxproj.user

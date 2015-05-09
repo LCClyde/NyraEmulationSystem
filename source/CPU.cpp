@@ -35,8 +35,7 @@ CPU::CPU(uint16_t startAddress) :
 }
 
 /*****************************************************************************/
-void CPU::tick(PPURegisters& ppu,
-               MemoryMap& ram,
+void CPU::tick(MemoryMap& ram,
                Disassembly* disassembly)
 {
     ram.getOpInfo(mInfo.programCounter,
@@ -50,7 +49,7 @@ void CPU::tick(PPURegisters& ppu,
                                    mInfo);
     }
 
-    (*mOpCodes[mArgs.opcode])(mArgs, mRegisters, mInfo, ppu, ram);
+    (*mOpCodes[mArgs.opcode])(mArgs, mRegisters, mInfo, ram);
 }
 }
 }

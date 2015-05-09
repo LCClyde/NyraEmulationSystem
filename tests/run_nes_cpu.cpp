@@ -28,7 +28,7 @@
 #include <nes/Disassembly.h>
 #include <core/File.h>
 #include <core/StringUtils.h>
-#include <nes/PPU.h>
+#include <core/OptionsParser.h>
 
 using namespace nyra;
 
@@ -36,56 +36,40 @@ int main(int argc, char** argv)
 {
     try
     {
-        if (argc != 3)
-        {
-            std::cerr << "Usage: <" << argv[0] << "> <NES File><NES Log>\n";
-            return 1;
-        }
+        core::OptionsParser options;
+        options.addOption("-a --start-address", "startAddress",
+                          "Specify the address to start execution at");
+        options.addOption("", "inputPathname",
+                          "Specify the .nes file to run");
+        options.parse(argc, argv);
  
-        const std::string inputPathname = argv[1];
-        const std::string logPathname = argv[2];
-
-        // Read the log file
-        const std::vector<std::string> lines =
-                core::split(core::readFile(logPathname), "\n");
+        const std::string inputPathname =
+                options.get<std::string>("inputPathname");
 
         // Read the cart.
         const nes::Cartridge cart(inputPathname);
 
         // Setup memory
-        nes::MemoryMap memoryMap;
-        nes::RAM ram(0x7F00);
-        nes::RAM zeroPage(0x100);
-        memoryMap.setMemoryBank(0, zeroPage);
-        memoryMap.setMemoryBank(0x0100, ram);
+        nes::MemoryMap memoryMap(true);
         memoryMap.setMemoryBank(0x8000, *(cart.getProgROM()[0]));
         memoryMap.setMemoryBank(0xC000, *(cart.getProgROM()[0]));
 
-        // Setup CPU
-        nes::CPU cpu(memoryMap.readShort(0xFFFC));
+        const uint16_t startingAddress = options.has("startAddress") ?
+                options.get<uint16_t>("startAddress") :
+                memoryMap.readShort(0xFFFD);
 
-        // Setup PPU
-        nes::PPU ppu;
+        // Setup CPU
+        nes::CPU cpu(startingAddress);
 
         // Get dissembly
         nes::Disassembly disassembly;
 
         // Run
-        //for (size_t ii = 0; ii < 10000; ++ii)
         while (true)
         {
-            cpu.tick(ppu.getRegisters(), memoryMap, &disassembly);
+            cpu.tick(memoryMap, &disassembly);
 
-            ppu.tick(cpu.getInfo());
-
-            /*std::stringstream ss;
-            ss << disassembly;
-            if (ss.str() != lines[ii])
-            {
-                std::cout << "\n\n\nERROR: " << ii + 1 << "\n" << ss.str()
-                          << "\n" << lines[ii] << "\n\n\n\n\n";
-                return 0;
-            }*/
+            std::cout << disassembly << "\n";
         }
     }
     catch (core::Exception& ex)

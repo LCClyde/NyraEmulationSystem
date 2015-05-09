@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\tests\run_nes_cpu.cpp">
+    <ClCompile Include="..\..\..\tests\test_emulator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -241,13 +241,12 @@ OpCode::~OpCode()
 void OpCode::operator()(const CPUArgs& args,
                         CPURegisters& registers,
                         CPUInfo& info,
-                        PPURegisters& ppu,
                         MemoryMap& memory)
 {
     // Setup the mode values
     (*mMode)(args, registers, memory, info);
 
-    op(registers, info, ppu, memory);
+    op(registers, info, memory);
     info.programCounter += mLength;
     info.cycles += mTime * 3;
     if (info.cycles >= CYCLES_PER_SCANLINE)

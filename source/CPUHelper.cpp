@@ -58,7 +58,7 @@ CPUInfo::CPUInfo() :
 CPUInfo::CPUInfo(uint16_t programCounter) :
     programCounter(programCounter),
     cycles(0),
-    scanLine(0)
+    scanLine(241)
 {
 }
 }

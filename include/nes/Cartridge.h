@@ -76,10 +76,16 @@ public:
         return mProgROM;
     }
 
+    const ROMBanks& getChrROM() const
+    {
+        return mChrROM;
+    }
+
 private:
     const std::vector<uint8_t> mFile;
     const Header mHeader;
     ROMBanks mProgROM;
+    ROMBanks mChrROM;
 };
 }
 }

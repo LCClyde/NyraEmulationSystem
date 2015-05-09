@@ -30,7 +30,6 @@
 #include <vector>
 #include <nes/CPUHelper.h>
 #include <nes/MemoryMap.h>
-#include <nes/PPUHelpers.h>
 
 namespace nyra
 {
@@ -176,7 +175,6 @@ public:
     void operator()(const CPUArgs& args,
                     CPURegisters& registers,
                     CPUInfo& info,
-                    PPURegisters& ppu,
                     MemoryMap& memory);
 
     /*
@@ -218,7 +216,6 @@ public:
 protected:
     virtual void op(CPURegisters& registers,
                     CPUInfo& info,
-                    PPURegisters& ppu,
                     MemoryMap& memory) = 0;
 
     const std::string mName;

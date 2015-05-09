@@ -11,11 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\tests\run_nes_cpu.cpp" />
+    <ClCompile Include="..\..\..\tests\extract_chr_rom.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{6BDE7BC7-5C03-41A0-9531-AF6C8EE83768}</ProjectGuid>
-    <RootNamespace>TestNESCPU</RootNamespace>
+    <ProjectGuid>{4B6C76AF-5AEB-49AD-A7E8-00241C6FC176}</ProjectGuid>
+    <RootNamespace>TestNESExtractChrRom</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -58,8 +58,8 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\..\libs\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>NyraCore.lib;NyraEmulationSystem.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\..\libs\$(Configuration)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -76,8 +76,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\..\libs\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>NyraCore.lib;NyraEmulationSystem.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\..\libs\$(Configuration)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>

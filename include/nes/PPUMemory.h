@@ -21,12 +21,12 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#ifndef __NYRA_NES_PPU_HELPERS_H__
-#define __NYRA_NES_PPU_HELPERS_H__
+#ifndef __NYRA_NES_PPU_MEMORY_H__
+#define __NYRA_NES_PPU_MEMORY_H__
 
-#include <stdint.h>
-#include <bitset>
+#include <nes/Memory.h>
 #include <nes/Constants.h>
+#include <bitset>
 
 namespace nyra
 {
@@ -43,24 +43,17 @@ enum
     VBLANK
 };
 
-/*
- *  \class - PPURegisters
- *  \brief - Holds the PPU specific register values.
- */
-struct PPURegisters
+class PPUStatus : public Memory
 {
-    /*
-     *  \func - Constructor
-     *  \brief - Sets up a zero'd out registers struct.
-     */
-    PPURegisters();
+public:
+    PPUStatus();
 
-    const size_t statusAddress;
+    virtual uint8_t readByte(size_t address);
 
-    std::bitset<FLAG_SIZE> controller;
-    std::bitset<FLAG_SIZE> mask;
-    std::bitset<FLAG_SIZE> status;
+private:
+    std::bitset<FLAG_SIZE> mRegister;
 };
 }
 }
+
 #endif

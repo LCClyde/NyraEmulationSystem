@@ -21,39 +21,66 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
+#include <iostream>
+#include <core/Exception.h>
 #include <nes/Cartridge.h>
+#include <nes/CPU.h>
+#include <nes/Disassembly.h>
 #include <core/File.h>
+#include <core/StringUtils.h>
+#include <nes/PPU.h>
+#include <graphics/WindowSDL.h>
 
-namespace nyra
+using namespace nyra;
+
+int main(int argc, char** argv)
 {
-namespace nes
-{
-/*****************************************************************************/
-static const size_t PRG_ROM_SIZE = 16384;
-static const size_t CHR_ROM_SIZE = 8192;
-
-/*****************************************************************************/
-Cartridge::Cartridge(const std::string& pathname) :
-    mFile(core::readBinary(pathname)),
-    mHeader(mFile),
-    mProgROM(mHeader.getProgRomSize()),
-    mChrROM(mHeader.getChrRomSize())
-{
-    const uint8_t* ptr = reinterpret_cast<const uint8_t*>(
-            &mFile[0] + mHeader.getHeaderSize());
-
-
-    //! Assign each piece of ROM
-    for (size_t ii = 0; ii < mProgROM.size(); ++ii, ptr += PRG_ROM_SIZE)
+    try
     {
-        mProgROM[ii].reset(new ROM(ptr, PRG_ROM_SIZE, false));
+        if (argc != 2)
+        {
+            std::cerr << "Usage: <" << argv[0] << "> <NES File>\n";
+            return 1;
+        }
+ 
+        const std::string inputPathname = argv[1];
+
+        // Read the cart.
+        const nes::Cartridge cart(inputPathname);
+
+        // Setup memory
+        nes::MemoryMap memoryMap;
+        nes::RAM ram(0x7F00);
+        nes::RAM zeroPage(0x100);
+        memoryMap.setMemoryBank(0, zeroPage);
+        memoryMap.setMemoryBank(0x0100, ram);
+        memoryMap.setMemoryBank(0x8000, *(cart.getProgROM()[0]));
+        memoryMap.setMemoryBank(0xC000, *(cart.getProgROM()[0]));
+
+        // Setup CPU
+        nes::CPU cpu(memoryMap.readShort(0xFFFD));
+
+        // Get dissembly
+        nes::Disassembly disassembly;
+
+        // Run
+        while (true)
+        {
+            cpu.tick(memoryMap, &disassembly);
+
+            std::cout << disassembly << "\n";
+        }
+    }
+    catch (core::Exception& ex)
+    {
+        std::cout << ex.what() << "\n";
+        return 1;
+    }
+    catch (...)
+    {
+        std::cout << "An unknown error occurred\n";
+        return 1;
     }
 
-    //! Assign each picece of CHR ROM
-    for (size_t ii = 0; ii < mChrROM.size(); ++ii, ptr += CHR_ROM_SIZE)
-    {
-        mChrROM[ii].reset(new ROM(ptr, CHR_ROM_SIZE, false));
-    }
-}
-}
+    return 0;
 }

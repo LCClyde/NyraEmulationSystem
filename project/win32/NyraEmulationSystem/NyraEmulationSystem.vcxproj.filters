@@ -42,9 +42,6 @@
     <ClInclude Include="..\..\..\include\nes\PPU.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nes\PPUHelpers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\nes\Constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -52,6 +49,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nes\Mode6502.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nes\PPUMemory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -80,10 +80,10 @@
     <ClCompile Include="..\..\..\source\CPUHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\PPUHelpers.cpp">
+    <ClCompile Include="..\..\..\source\PPU.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\PPU.cpp">
+    <ClCompile Include="..\..\..\source\PPUMemory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

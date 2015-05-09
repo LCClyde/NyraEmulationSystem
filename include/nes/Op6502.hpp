@@ -124,7 +124,6 @@ public:
 private:
     void op(CPURegisters& ,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         throw core::Exception("Attempting to run null op: " + 
@@ -145,7 +144,6 @@ public:
 private:
     void op(CPURegisters& ,
             CPUInfo& info,
-            PPURegisters&,
             MemoryMap& )
     {
         info.programCounter = mMode->getArg();
@@ -166,7 +164,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(mMode->getValue(),
@@ -189,7 +186,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(mMode->getValue(),
@@ -212,17 +208,16 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters& ppu,
             MemoryMap& )
     {
         // Special case for ppu
-        if (mMode->getArg() == ppu.statusAddress)
+        /*if (mMode->getArg() == ppu.statusAddress)
         {
             setRegister(static_cast<uint8_t>(ppu.status.to_ulong()),
                         registers.accumulator,
                         registers.statusRegister);
             return;
-        }
+        }*/
 
         setRegister(mMode->getValue(),
                     registers.accumulator,
@@ -244,7 +239,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& memory)
     {
         const uint8_t value = shiftRight(mMode->getValue(),
@@ -270,7 +264,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(shiftRight(mMode->getValue(),
@@ -295,7 +288,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& memory)
     {
         const uint8_t value = shiftLeft(mMode->getValue(),
@@ -321,7 +313,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(shiftLeft(mMode->getValue(),
@@ -346,7 +337,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& memory)
     {
         const uint8_t value = shiftRight(mMode->getValue(),
@@ -372,7 +362,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(shiftRight(mMode->getValue(),
@@ -397,7 +386,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& memory)
     {
         const uint8_t value = shiftLeft(mMode->getValue(),
@@ -423,7 +411,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(shiftLeft(mMode->getValue(),
@@ -448,7 +435,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& memory)
     {
         memory.writeByte(mMode->getArg(), registers.accumulator);
@@ -469,7 +455,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& memory)
     {
         memory.writeByte(mMode->getArg(), registers.xIndex);
@@ -490,7 +475,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& memory)
     {
         memory.writeByte(mMode->getArg(), registers.yIndex);
@@ -510,7 +494,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& info,
-            PPURegisters&,
             MemoryMap& memory)
     {
         pushStack(((info.programCounter + 2) >> 8) & 0xFF,
@@ -534,7 +517,6 @@ public:
 private:
     void op(CPURegisters& ,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         // NOP
@@ -554,7 +536,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& info,
-            PPURegisters&,
             MemoryMap& memory)
     {
         // TODO: Make sure this is correct. I don't think the
@@ -579,7 +560,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& info,
-            PPURegisters&,
             MemoryMap& memory)
     {
         info.programCounter = popStack(memory, registers.stackPointer) |
@@ -600,7 +580,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(registers.yIndex + 1,
@@ -622,7 +601,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(registers.xIndex + 1,
@@ -645,7 +623,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& memory)
     {
         uint8_t garbage;
@@ -670,7 +647,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& memory)
     {
         uint8_t garbage;
@@ -694,7 +670,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(registers.yIndex - 1,
@@ -716,7 +691,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(registers.xIndex - 1,
@@ -738,7 +712,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(registers.accumulator,
@@ -760,7 +733,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(registers.xIndex,
@@ -782,7 +754,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(registers.accumulator,
@@ -804,7 +775,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(registers.yIndex,
@@ -826,7 +796,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         registers.statusRegister[CARRY] = 1;
@@ -846,7 +815,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         registers.statusRegister[CARRY] = 0;
@@ -866,7 +834,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         registers.statusRegister[OFLOW] = 0;
@@ -886,7 +853,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         registers.statusRegister[INTERRUPT] = 1;
@@ -906,7 +872,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         registers.statusRegister[DECIMAL] = 1;
@@ -926,7 +891,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         registers.statusRegister[DECIMAL] = 0;
@@ -946,7 +910,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(registers.stackPointer,
@@ -968,7 +931,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         registers.stackPointer = registers.xIndex;
@@ -988,7 +950,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& memory)
     {
         setRegister(popStack(memory, registers.stackPointer),
@@ -1010,7 +971,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& memory)
     {
         pushStack(static_cast<uint8_t>(registers.accumulator),
@@ -1031,7 +991,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& memory)
     {
         registers.statusRegister =
@@ -1053,7 +1012,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& memory)
     {
         pushStack(static_cast<uint8_t>(registers.statusRegister.to_ulong()) |
@@ -1080,7 +1038,6 @@ private:
 
     void op(CPURegisters& registers,
             CPUInfo& info,
-            PPURegisters&,
             MemoryMap& )
     {
         if (branchArg(registers.statusRegister))
@@ -1230,7 +1187,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         const size_t param = mMode->getValue();
@@ -1254,7 +1210,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         compare(mMode->getValue(),
@@ -1277,7 +1232,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         compare(mMode->getValue(),
@@ -1300,7 +1254,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         compare(mMode->getValue(),
@@ -1323,7 +1276,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(mMode->getValue() & registers.accumulator,
@@ -1346,7 +1298,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(mMode->getValue() | registers.accumulator,
@@ -1369,7 +1320,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         setRegister(mMode->getValue() ^ registers.accumulator,
@@ -1392,7 +1342,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         add(mMode->getValue(), registers);
@@ -1412,7 +1361,6 @@ public:
 private:
     void op(CPURegisters& registers,
             CPUInfo& ,
-            PPURegisters&,
             MemoryMap& )
     {
         add(~mMode->getValue(), registers);

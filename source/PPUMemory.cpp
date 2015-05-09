@@ -21,19 +21,27 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#include <nes/PPUHelpers.h>
+#include <nes/PPUMemory.h>
+#include <core/Exception.h>
 
 namespace nyra
 {
 namespace nes
 {
 /*****************************************************************************/
-PPURegisters::PPURegisters() :
-    statusAddress(0x2002),
-    controller(0),
-    mask(0),
-    status(0x10)
+PPUStatus::PPUStatus() :
+    Memory(1)
 {
+}
+
+/*****************************************************************************/
+uint8_t PPUStatus::readByte(size_t address)
+{
+    const uint8_t ret = static_cast<uint8_t>(mRegister.to_ulong());
+
+    // Clear the VBLANK flag
+    mRegister[VBLANK] = false;
+    return ret;
 }
 }
 }

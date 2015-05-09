@@ -29,7 +29,6 @@
 #include <nes/CPUHelper.h>
 #include <nes/OpCode.h>
 #include <nes/Disassembly.h>
-#include <nes/PPU.h>
 
 namespace nyra
 {
@@ -59,15 +58,13 @@ public:
      *  \func - tick
      *  \brief - Processes a single opcode.
      *
-     *  \param ppu - The registers that control the PPU.
      *  \param memory - All the available memory as swappable banks.
      *  \param disassembly [OPTIONAL] - Allows you pass in a disassembly
      *         object which can then be used to view information about
      *         the processed opcode.
      *         Remove this to increase performance.
      */
-    void tick(PPURegisters& ppu,
-              MemoryMap& memory,
+    void tick(MemoryMap& memory,
               Disassembly* disassembly = nullptr);
 
     /*

@@ -43,6 +43,62 @@ namespace nes
 class Memory
 {
 public:
+    Memory(size_t size);
+
+    /*
+     *  \func - Destructor
+     *  \brief - Base class destructor
+     */
+    virtual ~Memory();
+
+    /*
+     *  \func - writeByte
+     *  \brief - Writes a single byte into memory at any address.
+     *
+     *  \param address - The address to write to byte at.
+     *  \param value - The 1 byte value to write.
+     *  \throw - If this is called from a ROM object, it will throw.
+     */
+    virtual void writeByte(size_t address,
+                           uint8_t value);
+    
+    /*
+     *  \func - readByte
+     *  \brief - Reads a single byte from the memory structure.
+     *           This cannot be const because some special registers
+     *           modify flags during read.
+     *
+     *  \param address - The address to read from.
+     */
+    virtual uint8_t readByte(size_t address);
+
+    /*
+     *  \func - readShort
+     *  \brief - Reads a single short from the memory structure.
+     *
+     *  \param address - The address to read from.
+     *  TODO: This is setup for a little endian system. We need a big
+     *        endian version as well.
+
+     */
+    virtual uint16_t readShort(size_t address);
+
+    /*
+     *  \func - getSize
+     *  \brief - Returns the size of the memory buffer.
+     */
+    inline size_t getSize() const
+    {
+        return mSize;
+    }
+
+protected:
+    const size_t mSize;
+};
+
+class ROM : public Memory
+{
+public:
     /*
      *  \func - Constructor (buffer)
      *  \brief - Creates a Memory object from an existing buffer. The object
@@ -55,36 +111,25 @@ public:
      *  \param takeOwnership - If this is true the RAM class will handle
      *         freeing this buffer.
      */
-    Memory(const uint8_t* buffer,
-           size_t size,
-           bool takeOwnership = false);
+    ROM(const uint8_t* buffer,
+        size_t size,
+        bool takeOwnership = false);
 
     /*
      *  \func - Destructor
      *  \brief - Base class destructor
      */
-    virtual ~Memory()
-    {
-    }
-
-    /*
-     *  \func - writeByte
-     *  \brief - Writes a single byte into memory at any address.
-     *
-     *  \param address - The address to write to byte at.
-     *  \param value - The 1 byte value to write.
-     *  \throw - If this is called from a ROM object, it will throw.
-     */
-    virtual void writeByte(size_t address,
-                           uint8_t value);
+    virtual ~ROM();
 
     /*
      *  \func - readByte
      *  \brief - Reads a single byte from the memory structure.
+     *           This cannot be const because some special registers
+     *           modify flags during read.
      *
      *  \param address - The address to read from.
      */
-    inline uint8_t readByte(size_t address) const
+    virtual uint8_t readByte(size_t address)
     {
         return mBuffer[address];
     }
@@ -96,32 +141,23 @@ public:
      *  \param address - The address to read from.
      *  TODO: This is setup for a little endian system. We need a big
      *        endian version as well.
+
      */
-    inline uint16_t readShort(size_t address) const
+    virtual uint16_t readShort(size_t address)
     {
         return ((readByte(address + 1) << 8 | readByte(address)));
-    }
-
-    /*
-     *  \func - getSize
-     *  \brief - Returns the size of the memory buffer.
-     */
-    inline size_t getSize() const
-    {
-        return mSize;
     }
 
 protected:
     const std::unique_ptr<const uint8_t[]> mBufferInternal;
     const uint8_t* const mBuffer;
-    const size_t mSize;
 };
 
 /*
  *  \class - RAM
  *  \brief - Exposes 8 bit random access memory.
  */
-class RAM : public Memory
+class RAM : public ROM
 {
 public:
     /*
@@ -167,7 +203,7 @@ public:
      *  \param address - The address to write to byte at.
      *  \param value - The 1 byte value to write.
      */
-    inline void writeByte(size_t address,
+    virtual void writeByte(size_t address,
                           uint8_t value)
     {
         mRAMBuffer[address] = value;
@@ -176,14 +212,6 @@ public:
 private:
     uint8_t* const mRAMBuffer;
 };
-
-/*
- *  \type - ROM
- *  \brief - ROM is the identical to a default Memory object. This is here
- *           (rather than just naming Memory ROM) to avoid confusing
- *           when you polymorph between Memory and RAM.
- */
-typedef Memory ROM;
 }
 }
 #endif

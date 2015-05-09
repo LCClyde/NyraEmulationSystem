@@ -28,6 +28,23 @@ namespace nyra
 namespace nes
 {
 /*****************************************************************************/
+MemoryMap::MemoryMap(bool fillRAM) :
+    mRAM(fillRAM ? new RAM(0x0700) : nullptr),
+    mZeroPage(fillRAM ? new RAM(0x0100) : nullptr)
+{
+    if (fillRAM)
+    {
+        // Mirror the RAM to 0x2000
+        for (size_t ii = 0; ii < 0x2000;
+             ii += (mRAM->getSize() + mZeroPage->getSize()))
+        {
+            setMemoryBank(ii, *mZeroPage);
+            setMemoryBank(ii  + mZeroPage->getSize(), *mRAM);
+        }
+    }
+}
+
+/*****************************************************************************/
 MemoryMap::RamMap::const_iterator MemoryMap::getMemoryBank(
         size_t& address) const
 {

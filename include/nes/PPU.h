@@ -26,6 +26,7 @@
 
 #include <nes/PPUHelpers.h>
 #include <nes/CPUHelper.h>
+#include <nes/Memory.h>
 
 namespace nyra
 {

@@ -23,6 +23,7 @@
  *****************************************************************************/
 #include <nes/Memory.h>
 #include <core/Exception.h>
+#include <core/StringConvert.h>
 
 namespace
 {
@@ -36,7 +37,7 @@ uint8_t* allocationTransitionBuffer(size_t size, const uint8_t* copyFrom)
     }
     else
     {
-        std::fill_n(ret, size, 0xFF);
+        std::fill_n(ret, size, 0x00);
     }
 
     return ret;
@@ -48,25 +49,58 @@ namespace nyra
 namespace nes
 {
 /*****************************************************************************/
-Memory::Memory(const uint8_t* buffer,
-               size_t size,
-               bool takeOwnership) :
-    mBufferInternal(takeOwnership ? buffer : nullptr),
-    mBuffer(buffer),
+Memory::Memory(size_t size) :
     mSize(size)
 {
 }
 
 /*****************************************************************************/
-void Memory::writeByte(size_t , uint8_t )
+Memory::~Memory()
 {
-    throw core::Exception("Cannot write memory to ROM!");
+}
+
+/*****************************************************************************/
+void Memory::writeByte(size_t address,
+                       uint8_t value)
+{
+    throw core::Exception("Cannot write: " +
+            core::toHexString<uint8_t>(value) + " to: " +
+            core::toHexString<size_t>(address));
+}
+
+/*****************************************************************************/
+uint8_t Memory::readByte(size_t address)
+{
+    throw core::Exception("Cannot read byte from: " +
+            core::toHexString<size_t>(address));
+}
+
+/*****************************************************************************/
+uint16_t Memory::readShort(size_t address)
+{
+    throw core::Exception("Cannot read short from: " +
+            core::toHexString<size_t>(address));
+}
+
+/*****************************************************************************/
+ROM::ROM(const uint8_t* buffer,
+         size_t size,
+         bool takeOwnership) :
+    Memory(size),
+    mBufferInternal(takeOwnership ? buffer : nullptr),
+    mBuffer(buffer)
+{
+}
+
+/*****************************************************************************/
+ROM::~ROM()
+{
 }
 
 /*****************************************************************************/
 RAM::RAM(const uint8_t* buffer,
          size_t size) :
-    Memory(allocationTransitionBuffer(size, buffer), size, true),
+    ROM(allocationTransitionBuffer(size, buffer), size, true),
     // This is a legitimate use of const cast because we know we passed in a
     // non const buffer we just created. The Memory makes it const but we still
     // need access to it with the modifiers we passed it in with.
@@ -78,14 +112,15 @@ RAM::RAM(const uint8_t* buffer,
 RAM::RAM(uint8_t* buffer,
          size_t size,
          bool takeOwnership) :
-    Memory(buffer, size, takeOwnership),
+    ROM(buffer, size, takeOwnership),
     mRAMBuffer(buffer)
+
 {
 }
 
 /*****************************************************************************/
 RAM::RAM(size_t size) :
-    Memory(allocationTransitionBuffer(size, nullptr), size, true),
+    ROM(allocationTransitionBuffer(size, nullptr), size, true),
     // This is a legitimate use of const cast because we know we passed in a
     // non const buffer we just created. The Memory makes it const but we still
     // need access to it with the modifiers we passed it in with.

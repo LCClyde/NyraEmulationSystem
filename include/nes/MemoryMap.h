@@ -47,6 +47,8 @@ private:
     typedef std::map<size_t, Memory*> RamMap;
 
 public:
+    MemoryMap(bool fillRAM = false);
+
     /*
      *  \func - setMemoryBank
      *  \brief - Adds a memory bank into the map. It is the user's job to
@@ -124,6 +126,8 @@ private:
     RamMap::const_iterator getMemoryBank(size_t& address) const;
 
     RamMap mMap;
+    std::auto_ptr<RAM> mZeroPage;
+    std::auto_ptr<RAM> mRAM;
 };
 }
 }
