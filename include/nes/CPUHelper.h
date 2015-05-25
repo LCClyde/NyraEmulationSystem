@@ -91,6 +91,7 @@ struct CPUInfo
     uint16_t programCounter;
     uint16_t cycles;
     int16_t scanLine;
+    bool generateNMI;
 };
 
 /*

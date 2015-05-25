@@ -28,6 +28,9 @@ namespace nyra
 namespace nes
 {
 /*****************************************************************************/
+const size_t CPU::INTERRUPT_OPCODE = 0x100;
+
+/*****************************************************************************/
 CPU::CPU(uint16_t startAddress) :
     mInfo(startAddress)
 {
@@ -35,21 +38,42 @@ CPU::CPU(uint16_t startAddress) :
 }
 
 /*****************************************************************************/
-void CPU::tick(MemoryMap& ram,
-               Disassembly* disassembly)
+void CPU::processScanline(MemoryMap& ram,
+                          std::vector<Disassembly>* disassembly)
 {
-    ram.getOpInfo(mInfo.programCounter,
-                  mArgs);
+    // Process one scanline
+    const int16_t scanline = mInfo.scanLine;
 
-    if (disassembly)
+    // Check for interrupts
+    if (mInfo.generateNMI)
     {
-        *disassembly = Disassembly(*mOpCodes[mArgs.opcode],
-                                   mArgs,
-                                   mRegisters,
-                                   mInfo);
+        ram.getOpInfo(0XFFF9, mArgs);
+        (*mOpCodes[INTERRUPT_OPCODE])(mArgs, mRegisters, mInfo, ram);
+        mInfo.generateNMI = false;
     }
 
-    (*mOpCodes[mArgs.opcode])(mArgs, mRegisters, mInfo, ram);
+    while (scanline == mInfo.scanLine)
+    {
+        ram.getOpInfo(mInfo.programCounter,
+                      mArgs);
+
+        if (disassembly)
+        {
+            disassembly->push_back(Disassembly(
+                    *mOpCodes[mArgs.opcode],
+                    mArgs,
+                    mRegisters,
+                    mInfo));
+        }
+
+        (*mOpCodes[mArgs.opcode])(mArgs, mRegisters, mInfo, ram);
+
+        if (disassembly)
+        {
+            Disassembly& dis = disassembly->back();
+            dis.setModeString(dis.getOpCode().getMode().toString());
+        }
+    }
 }
 }
 }

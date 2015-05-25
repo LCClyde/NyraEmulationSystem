@@ -41,7 +41,7 @@ namespace nes
 /*****************************************************************************/
 void allocateOpCodes(OpCodeArray& opCodes)
 {
-    opCodes.resize(256);
+    opCodes.resize(257);
 
     // Fill the known opcodes
     opCodes[0x01].reset(new OpORA<ModeIndirectX>(0x01, 2, 6));
@@ -193,6 +193,7 @@ void allocateOpCodes(OpCodeArray& opCodes)
     opCodes[0xF9].reset(new OpSBC<ModeAbsoluteY<true> >(0xF9, 3, 4));
     opCodes[0xFD].reset(new OpSBC<ModeAbsoluteX<true> >(0xFD, 3, 4));
     opCodes[0xFE].reset(new OpINC<ModeAbsoluteX<false> >(0xFE, 3, 7));
+    opCodes[0x100].reset(new OpJMI());
 
     // Fill all other opcodes with null values
     for (size_t ii = 0; ii < opCodes.size(); ++ii)
@@ -202,18 +203,6 @@ void allocateOpCodes(OpCodeArray& opCodes)
             opCodes[ii].reset(new OpNUL(static_cast<uint8_t>(ii)));
         }
     }
-}
-
-/*****************************************************************************/
-OpCode::Mode::Mode(bool usesArg1, bool usesArg2) :
-    mUsesArg1(usesArg1),
-    mUsesArg2(usesArg2)
-{
-}
-
-/*****************************************************************************/
-OpCode::Mode::~Mode()
-{
 }
 
 /*****************************************************************************/

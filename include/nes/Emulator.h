@@ -21,66 +21,35 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#include <iostream>
-#include <core/Exception.h>
+#ifndef __NYRA_NES_EMULATOR_H__
+#define __NYRA_NES_EMULATOR_H__
+
+#include <string>
+#include <vector>
+#include <nes/MemoryMap.h>
 #include <nes/Cartridge.h>
 #include <nes/CPU.h>
-#include <nes/Disassembly.h>
-#include <core/File.h>
-#include <core/StringUtils.h>
 #include <nes/PPU.h>
-#include <graphics/WindowSDL.h>
+#include <nes/Disassembly.h>
 
-using namespace nyra;
-
-int main(int argc, char** argv)
+namespace nyra
 {
-    try
-    {
-        if (argc != 2)
-        {
-            std::cerr << "Usage: <" << argv[0] << "> <NES File>\n";
-            return 1;
-        }
- 
-        const std::string inputPathname = argv[1];
+namespace nes
+{
+class Emulator
+{
+public:
+    Emulator(const std::string& pathname);
 
-        // Read the cart.
-        const nes::Cartridge cart(inputPathname);
+    void tick(std::vector<Disassembly>* disassembly = nullptr);
 
-        // Setup memory
-        nes::MemoryMap memoryMap;
-        nes::RAM ram(0x7F00);
-        nes::RAM zeroPage(0x100);
-        memoryMap.setMemoryBank(0, zeroPage);
-        memoryMap.setMemoryBank(0x0100, ram);
-        memoryMap.setMemoryBank(0x8000, *(cart.getProgROM()[0]));
-        memoryMap.setMemoryBank(0xC000, *(cart.getProgROM()[0]));
-
-        // Setup CPU
-        nes::CPU cpu(memoryMap.readShort(0xFFFD));
-
-        // Get dissembly
-        nes::Disassembly disassembly;
-
-        // Run
-        while (true)
-        {
-            cpu.tick(memoryMap, &disassembly);
-
-            std::cout << disassembly << "\n";
-        }
-    }
-    catch (core::Exception& ex)
-    {
-        std::cout << ex.what() << "\n";
-        return 1;
-    }
-    catch (...)
-    {
-        std::cout << "An unknown error occurred\n";
-        return 1;
-    }
-
-    return 0;
+private:
+    const Cartridge mCartridge;
+    PPU mPPU;
+    MemoryMap mMemoryMap;
+    CPU mCPU;
+};
 }
+}
+
+#endif

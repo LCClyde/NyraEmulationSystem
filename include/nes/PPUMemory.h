@@ -32,26 +32,90 @@ namespace nyra
 {
 namespace nes
 {
-/*
- *  \enum - Status Flags
- *  \brief - Locations of flags for the PPUSTATUS variable.
- */
-enum
-{
-    SPRITE_OVERFLOW = 5,
-    SPRITE_HIT_0,
-    VBLANK
-};
-
-class PPUStatus : public Memory
+class OamDma : public Memory
 {
 public:
-    PPUStatus();
+    OamDma();
 
-    virtual uint8_t readByte(size_t address);
+    uint8_t readByte(size_t )
+    {
+        return static_cast<uint8_t>(mMemory.to_ulong());
+    }
 
+    virtual void writeByte(size_t ,
+                            uint8_t value)
+    {
+        mMemory = value;
+    }
+
+    std::bitset<FLAG_SIZE>& getRegister()
+    {
+        return mMemory;
+    }
 private:
-    std::bitset<FLAG_SIZE> mRegister;
+    std::bitset<FLAG_SIZE> mMemory;
+};
+
+class PPUMemory : public Memory
+{
+public:
+    enum Register
+    {
+        PPUCTRL = 0,
+        PPUMASK,
+        PPUSTATUS,
+        OAMADDR,
+        OAMDATA,
+        PPUSCROLL,
+        PPUADDR,
+        PPUDATA,
+        MAX_REGISTER,
+        OAMDMA
+    };
+
+    enum
+    {
+        SPRITE_OFLOW = 5,
+        SPIRTE_HIT_0,
+        VBLANK
+    };
+
+    enum
+    {
+        NAMETABLE_ADDRESS_LOW,
+        NAMETABLE_ADDRESS_HIGH,
+        VRAM_INC,
+        SPRITE_PATTERN_TABLE,
+        BACKGROUND_PATTERN_TABLE,
+        SPRITE_SIZE,
+        MASTER_SLAVE,
+        NMI_ENABLED
+    };
+
+    PPUMemory();
+
+    uint8_t readByte(size_t address);
+
+    virtual void writeByte(size_t address,
+                           uint8_t value)
+    {
+        mMemory[address] = value;
+    }
+
+    std::bitset<FLAG_SIZE>& getRegister(Register reg)
+    {
+        return reg != OAMDMA ? mMemory[reg] : mOamDma.getRegister();
+    }
+
+    OamDma& getOamDma()
+    {
+        return mOamDma;
+    }
+
+protected:
+    std::bitset<FLAG_SIZE> mMemory[MAX_REGISTER];
+
+    OamDma mOamDma;
 };
 }
 }

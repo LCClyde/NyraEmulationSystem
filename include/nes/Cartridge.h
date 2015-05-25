@@ -71,14 +71,14 @@ public:
      *  \func - getProgROM
      *  \brief - Returns all known banks of the programming memory.
      */
-    const ROMBanks& getProgROM() const
+    ROM& getProgROM(size_t idx) const
     {
-        return mProgROM;
+        return *mProgROM[idx];
     }
 
-    const ROMBanks& getChrROM() const
+    ROM& getChrROM(size_t idx) const
     {
-        return mChrROM;
+        return *mChrROM[idx];
     }
 
 private:

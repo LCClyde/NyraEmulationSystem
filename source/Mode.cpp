@@ -21,47 +21,24 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#include <nes/PPU.h>
-#include <limits>
-
-namespace
-{
-/*****************************************************************************/
-static const int16_t VBLANK_START = 241;
-static const int16_t VBLANK_END = -1;
-
-
-}
+#include <nes/Mode.h>
 
 namespace nyra
 {
 namespace nes
 {
 /*****************************************************************************/
-PPU::PPU()
+Mode::Mode(bool usesArg1, bool usesArg2) :
+    mUsesArg1(usesArg1),
+    mUsesArg2(usesArg2),
+    mArg(0),
+    mValue(0)
 {
 }
 
 /*****************************************************************************/
-void PPU::processScanline(CPUInfo& info)
+Mode::~Mode()
 {
-    switch (info.scanLine)
-    {
-    case VBLANK_START:
-        // Set the VBLANK flag
-        mRegisters.getRegister(
-                PPUMemory::PPUSTATUS)[PPUMemory::VBLANK] = true;
-
-        // Check for NMI
-        info.generateNMI =mRegisters.getRegister(
-                PPUMemory::PPUCTRL)[PPUMemory::NMI_ENABLED];
-        break;
-    case VBLANK_END:
-        // Set the VBLANK flag
-        mRegisters.getRegister(
-                PPUMemory::PPUSTATUS)[PPUMemory::VBLANK] = false;
-        break;
-    }
 }
 }
 }

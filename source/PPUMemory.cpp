@@ -29,19 +29,32 @@ namespace nyra
 namespace nes
 {
 /*****************************************************************************/
-PPUStatus::PPUStatus() :
+OamDma::OamDma() :
     Memory(1)
 {
 }
 
 /*****************************************************************************/
-uint8_t PPUStatus::readByte(size_t address)
+PPUMemory::PPUMemory() :
+    Memory(8)
 {
-    const uint8_t ret = static_cast<uint8_t>(mRegister.to_ulong());
+}
 
-    // Clear the VBLANK flag
-    mRegister[VBLANK] = false;
-    return ret;
+/*****************************************************************************/
+uint8_t PPUMemory::readByte(size_t address)
+{
+    uint8_t value = static_cast<uint8_t>(mMemory[address].to_ulong());
+    switch (address)
+    {
+    case PPUSTATUS:
+        mMemory[PPUSTATUS][VBLANK] = false;
+        break;
+
+    default:
+        // Do Nothing
+        break;
+    }
+    return value;
 }
 }
 }

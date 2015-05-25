@@ -35,3 +35,5 @@ Release/
 *.vcxproj.user
 *.ilk
 *.pdb
+project/win32/Python/_nes.tlog/unsuccessfulbuild
+*.lastbuildstate

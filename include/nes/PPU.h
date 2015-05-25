@@ -24,9 +24,8 @@
 #ifndef __NYRA_NES_PPU_H__
 #define __NYRA_NES_PPU_H__
 
-#include <nes/PPUHelpers.h>
 #include <nes/CPUHelper.h>
-#include <nes/Memory.h>
+#include <nes/PPUMemory.h>
 
 namespace nyra
 {
@@ -53,20 +52,20 @@ public:
      *  \brief - Updates the PPU to match the CPU timing. ideally I think
      *           we want this to be one scanline.
      */
-    void tick(const CPUInfo& info);
+    void processScanline(CPUInfo& info);
 
-    /*
-     *  \func - getRegisters
-     *  \brief - Returns the current PPU register values.
-     */
-    inline PPURegisters& getRegisters()
+    inline PPUMemory& getRegisers()
+    {
+        return mRegisters;
+    }
+
+    inline const PPUMemory& getRegisters() const
     {
         return mRegisters;
     }
 
 private:
-    PPURegisters mRegisters;
-    int16_t mScanline;
+    PPUMemory mRegisters;
 };
 }
 }

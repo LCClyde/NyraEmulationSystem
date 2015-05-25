@@ -50,7 +50,8 @@ CPURegisters::CPURegisters() :
 CPUInfo::CPUInfo() :
     programCounter(0),
     cycles(0),
-    scanLine(241)
+    scanLine(241),
+    generateNMI(false)
 {
 }
 
@@ -58,7 +59,7 @@ CPUInfo::CPUInfo() :
 CPUInfo::CPUInfo(uint16_t programCounter) :
     programCounter(programCounter),
     cycles(0),
-    scanLine(241)
+    scanLine(0)
 {
 }
 }

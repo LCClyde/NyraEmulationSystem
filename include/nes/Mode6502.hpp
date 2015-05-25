@@ -36,11 +36,11 @@ namespace nyra
 namespace nes
 {
 /*****************************************************************************/
-class ModeAccumulator : public OpCode::Mode
+class ModeAccumulator : public Mode
 {
 public:
     ModeAccumulator() :
-        OpCode::Mode(false, false)
+        Mode(false, false)
     {
     }
 
@@ -61,11 +61,11 @@ public:
 
 /*****************************************************************************/
 template <bool OutputT>
-class ModeAbsolute : public OpCode::Mode
+class ModeAbsolute : public Mode
 {
 public:
     ModeAbsolute() :
-        OpCode::Mode(true, true)
+        Mode(true, true)
     {
     }
 
@@ -87,11 +87,11 @@ public:
 };
 
 /*****************************************************************************/
-class ModeIndirect : public OpCode::Mode
+class ModeIndirect : public Mode
 {
 public:
     ModeIndirect() :
-        OpCode::Mode(true, true),
+        Mode(true, true),
         mOrigArg(0),
         mCorrectArg(0)
     {
@@ -131,11 +131,11 @@ private:
 };
 
 /*****************************************************************************/
-class ModeIndirectX : public OpCode::Mode
+class ModeIndirectX : public Mode
 {
 public:
     ModeIndirectX() :
-        OpCode::Mode(true, false),
+        Mode(true, false),
         mOrigArg(0),
         mModArg(0)
     {
@@ -166,11 +166,11 @@ private:
 };
 
 /*****************************************************************************/
-class ModeZeroPageN : public OpCode::Mode
+class ModeZeroPageN : public Mode
 {
 public:
     ModeZeroPageN(char index) :
-        OpCode::Mode(true, false),
+        Mode(true, false),
         mOrigArg(0),
         mIndex(index)
     {
@@ -239,11 +239,11 @@ private:
 
 /*****************************************************************************/
 template <bool ExtraCycleT>
-class ModeAbsoluteN : public OpCode::Mode
+class ModeAbsoluteN : public Mode
 {
 public:
     ModeAbsoluteN(char index) :
-        OpCode::Mode(true, true),
+        Mode(true, true),
         mOrigArg(0),
         mIndex(index)
     {
@@ -321,11 +321,11 @@ private:
 
 /*****************************************************************************/
 template <bool ExtraCycleT>
-class ModeIndirectY : public OpCode::Mode
+class ModeIndirectY : public Mode
 {
 public:
     ModeIndirectY() :
-        OpCode::Mode(true, false),
+        Mode(true, false),
         mOrigArg(0),
         mModArg(0)
     {
@@ -364,11 +364,11 @@ private:
 };
 
 /*****************************************************************************/
-class ModeRelative : public OpCode::Mode
+class ModeRelative : public Mode
 {
 public:
     ModeRelative() :
-        OpCode::Mode(true, false)
+        Mode(true, false)
     {
     }
 
@@ -389,11 +389,11 @@ public:
 };
 
 /*****************************************************************************/
-class ModeZeroPage : public OpCode::Mode
+class ModeZeroPage : public Mode
 {
 public:
     ModeZeroPage() :
-        OpCode::Mode(true, false)
+        Mode(true, false)
     {
     }
 
@@ -415,11 +415,11 @@ public:
 };
 
 /*****************************************************************************/
-class ModeImmediate : public OpCode::Mode
+class ModeImmediate : public Mode
 {
 public:
     ModeImmediate() :
-        OpCode::Mode(true, false)
+        Mode(true, false)
     {
     }
 
@@ -439,11 +439,11 @@ public:
 };
 
 /*****************************************************************************/
-class ModeImplied : public OpCode::Mode
+class ModeImplied : public Mode
 {
 public:
     ModeImplied() :
-        OpCode::Mode(false, false)
+        Mode(false, false)
     {
     }
 

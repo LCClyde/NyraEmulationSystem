@@ -25,10 +25,9 @@
 #define __NYRA_NES_OP_6502_HPP__
 
 #include <stdint.h>
+#include <stdexcept>
 #include <nes/Mode6502.hpp>
 #include <nes/OpCode.h>
-#include <core/Exception.h>
-#include <core/StringConvert.h>
 #include <nes/Constants.h>
 
 namespace nyra
@@ -117,7 +116,7 @@ class OpNUL : public OpCode
 public:
     OpNUL(uint8_t opCode) :
         OpCode("NUL", "Null Opcode", opCode,
-                          0, 0, new ModeImplied())
+               0, 0, new ModeImplied())
     {
     }
 
@@ -126,8 +125,7 @@ private:
             CPUInfo& ,
             MemoryMap& )
     {
-        throw core::Exception("Attempting to run null op: " + 
-                core::toHexString<uint8_t>(mOpCode));
+        throw std::runtime_error("Attempting to run null op");
     }
 };
 
@@ -157,7 +155,7 @@ class OpLDX : public OpCode
 public:
     OpLDX(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("LDX", "Load X register",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -179,7 +177,7 @@ class OpLDY : public OpCode
 public:
     OpLDY(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("LDY", "Load Y register",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -201,7 +199,7 @@ class OpLDA : public OpCode
 public:
     OpLDA(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("LDA", "Load accumulator",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -232,7 +230,7 @@ class OpLSR : public OpCode
 public:
     OpLSR(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("LSR", "Logical shift right",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -257,7 +255,7 @@ class OpLSR <ModeAccumulator> : public OpCode
 public:
     OpLSR(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("LSR", "Logical shift right",
-                          opcode, length, time, new ModeAccumulator())
+               opcode, length, time, new ModeAccumulator())
     {
     }
 
@@ -281,7 +279,7 @@ class OpASL : public OpCode
 public:
     OpASL(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("ASL", "Arithmetic shift left",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -306,7 +304,7 @@ class OpASL <ModeAccumulator> : public OpCode
 public:
     OpASL(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("ASL", "Arithmetic shift left",
-                          opcode, length, time, new ModeAccumulator())
+               opcode, length, time, new ModeAccumulator())
     {
     }
 
@@ -330,7 +328,7 @@ class OpROR : public OpCode
 public:
     OpROR(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("ROR", "Rotate right",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -355,7 +353,7 @@ class OpROR <ModeAccumulator> : public OpCode
 public:
     OpROR(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("ROR", "Rotate right",
-                          opcode, length, time, new ModeAccumulator())
+               opcode, length, time, new ModeAccumulator())
     {
     }
 
@@ -379,7 +377,7 @@ class OpROL : public OpCode
 public:
     OpROL(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("ROL", "Rotate left",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -404,7 +402,7 @@ class OpROL <ModeAccumulator> : public OpCode
 public:
     OpROL(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("ROL", "Rotate left",
-                          opcode, length, time, new ModeAccumulator())
+               opcode, length, time, new ModeAccumulator())
     {
     }
 
@@ -428,7 +426,7 @@ class OpSTA : public OpCode
 public:
     OpSTA(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("STA", "Store accumulator",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -448,7 +446,7 @@ class OpSTX : public OpCode
 public:
     OpSTX(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("STX", "Store X register",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -468,7 +466,7 @@ class OpSTY : public OpCode
 public:
     OpSTY(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("STY", "Store Y register",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -487,7 +485,34 @@ class OpJSR : public OpCode
 public:
     OpJSR() :
         OpCode("JSR", "Jump to subroutine",
-                          0x20, 0, 6, new ModeAbsolute<false>())
+               0x20, 0, 6, new ModeAbsolute<false>())
+    {
+    }
+
+    virtual ~OpJSR()
+    {
+    }
+
+protected:
+    virtual void op(CPURegisters& registers,
+                    CPUInfo& info,
+                    MemoryMap& memory)
+    {
+        pushStack(((info.programCounter + 2) >> 8) & 0xFF,
+                  memory, registers.stackPointer);
+        pushStack((info.programCounter + 2) & 0xFF,
+                  memory, registers.stackPointer);
+        info.programCounter = mMode->getArg();
+    }
+};
+
+/*****************************************************************************/
+class OpJMI : public OpCode
+{
+public:
+    OpJMI() : 
+        OpCode("JMI", "Jump to interrupt, NYRA created",
+               0x00, 0, 6, new ModeAbsolute<false>())
     {
     }
 
@@ -496,9 +521,11 @@ private:
             CPUInfo& info,
             MemoryMap& memory)
     {
-        pushStack(((info.programCounter + 2) >> 8) & 0xFF,
+        pushStack(((info.programCounter) >> 8) & 0xFF,
                   memory, registers.stackPointer);
-        pushStack((info.programCounter + 2) & 0xFF,
+        pushStack((info.programCounter) & 0xFF,
+                  memory, registers.stackPointer);
+        pushStack(static_cast<uint8_t>(registers.statusRegister.to_ulong()),
                   memory, registers.stackPointer);
         info.programCounter = mMode->getArg();
     }
@@ -510,7 +537,7 @@ class OpNOP : public OpCode
 public:
     OpNOP() :
         OpCode("NOP", "No operation",
-                          0xEA, 1, 2, new ModeImplied())
+               0xEA, 1, 2, new ModeImplied())
     {
     }
 
@@ -529,7 +556,7 @@ class OpRTI : public OpCode
 public:
     OpRTI() :
         OpCode("RTI", "Return from interrupt",
-                          0x40, 0, 6, new ModeImplied())
+               0x40, 0, 6, new ModeImplied())
     {
     }
 
@@ -553,7 +580,7 @@ class OpRTS : public OpCode
 public:
     OpRTS() :
         OpCode("RTS", "Return from subroutine",
-                          0x60, 1, 6, new ModeImplied())
+               0x60, 1, 6, new ModeImplied())
     {
     }
 
@@ -573,7 +600,7 @@ class OpINY : public OpCode
 public:
     OpINY() :
         OpCode("INY", "Increment Y",
-                          0xC8, 1, 2, new ModeImplied())
+               0xC8, 1, 2, new ModeImplied())
     {
     }
 
@@ -594,7 +621,7 @@ class OpINX : public OpCode
 public:
     OpINX() :
         OpCode("INX", "Increment X",
-                          0xC8, 1, 2, new ModeImplied())
+               0xC8, 1, 2, new ModeImplied())
     {
     }
 
@@ -616,7 +643,7 @@ class OpINC : public OpCode
 public:
     OpINC(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("INC", "Increment memory",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -640,7 +667,7 @@ class OpDEC : public OpCode
 public:
     OpDEC(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("DEC", "Decrement memory",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -663,7 +690,7 @@ class OpDEY : public OpCode
 public:
     OpDEY() :
         OpCode("DEY", "Decrement Y",
-                          0x88, 1, 2, new ModeImplied())
+               0x88, 1, 2, new ModeImplied())
     {
     }
 
@@ -684,7 +711,7 @@ class OpDEX : public OpCode
 public:
     OpDEX() :
         OpCode("DEX", "Decrement X",
-                          0xCA, 1, 2, new ModeImplied())
+               0xCA, 1, 2, new ModeImplied())
     {
     }
 
@@ -705,7 +732,7 @@ class OpTAX : public OpCode
 public:
     OpTAX() :
         OpCode("TAX", "Transfer A to X",
-                          0xAA, 1, 2, new ModeImplied())
+               0xAA, 1, 2, new ModeImplied())
     {
     }
 
@@ -726,7 +753,7 @@ class OpTXA : public OpCode
 public:
     OpTXA() :
         OpCode("TXA", "Transfer X to A",
-                          0x8A, 1, 2, new ModeImplied())
+               0x8A, 1, 2, new ModeImplied())
     {
     }
 
@@ -747,7 +774,7 @@ class OpTAY : public OpCode
 public:
     OpTAY() :
         OpCode("TAY", "Transfer A to Y",
-                          0xA8, 1, 2, new ModeImplied())
+               0xA8, 1, 2, new ModeImplied())
     {
     }
 
@@ -768,7 +795,7 @@ class OpTYA : public OpCode
 public:
     OpTYA() :
         OpCode("TYA", "Transfer Y to A",
-                          0x98, 1, 2, new ModeImplied())
+               0x98, 1, 2, new ModeImplied())
     {
     }
 
@@ -789,7 +816,7 @@ class OpSEC : public OpCode
 public:
     OpSEC() :
         OpCode("SEC", "Set carry",
-                          0x38, 1, 2, new ModeImplied())
+               0x38, 1, 2, new ModeImplied())
     {
     }
 
@@ -808,7 +835,7 @@ class OpCLC : public OpCode
 public:
     OpCLC() :
         OpCode("CLC", "Clear carry",
-                          0x18, 1, 2, new ModeImplied())
+               0x18, 1, 2, new ModeImplied())
     {
     }
 
@@ -827,7 +854,7 @@ class OpCLV : public OpCode
 public:
     OpCLV() :
         OpCode("CLV", "Clear overflow",
-                          0xB8, 1, 2, new ModeImplied())
+               0xB8, 1, 2, new ModeImplied())
     {
     }
 
@@ -846,7 +873,7 @@ class OpSEI : public OpCode
 public:
     OpSEI() :
         OpCode("SEI", "Set interrupt",
-                          0x78, 1, 2, new ModeImplied())
+               0x78, 1, 2, new ModeImplied())
     {
     }
 
@@ -865,7 +892,7 @@ class OpSED : public OpCode
 public:
     OpSED() :
         OpCode("SED", "Set decimal",
-                          0xF8, 1, 2, new ModeImplied())
+               0xF8, 1, 2, new ModeImplied())
     {
     }
 
@@ -884,7 +911,7 @@ class OpCLD : public OpCode
 public:
     OpCLD() :
         OpCode("CLD", "Clear decimal",
-                          0xD8, 1, 2, new ModeImplied())
+               0xD8, 1, 2, new ModeImplied())
     {
     }
 
@@ -903,7 +930,7 @@ class OpTSX : public OpCode
 public:
     OpTSX() :
         OpCode("TSX", "Transfer stack ptr to X",
-                          0xBA, 1, 2, new ModeImplied())
+               0xBA, 1, 2, new ModeImplied())
     {
     }
 
@@ -924,7 +951,7 @@ class OpTXS : public OpCode
 public:
     OpTXS() :
         OpCode("TXS", "Transfer X to stack ptr",
-                          0x9A, 1, 2, new ModeImplied())
+               0x9A, 1, 2, new ModeImplied())
     {
     }
 
@@ -943,7 +970,7 @@ class OpPLA : public OpCode
 public:
     OpPLA() :
         OpCode("PLA", "Pull accumulator",
-                          0x68, 1, 4, new ModeImplied())
+               0x68, 1, 4, new ModeImplied())
     {
     }
 
@@ -964,7 +991,7 @@ class OpPHA : public OpCode
 public:
     OpPHA() :
         OpCode("PHA", "Push accumulator",
-                          0x48, 1, 3, new ModeImplied())
+               0x48, 1, 3, new ModeImplied())
     {
     }
 
@@ -984,7 +1011,7 @@ class OpPLP : public OpCode
 public:
     OpPLP() :
         OpCode("PLP", "Pull processor status",
-                          0x28, 1, 4, new ModeImplied())
+               0x28, 1, 4, new ModeImplied())
     {
     }
 
@@ -1005,7 +1032,7 @@ class OpPHP : public OpCode
 public:
     OpPHP() :
         OpCode("PHP", "Push processor status",
-                          0x08, 1, 3, new ModeImplied())
+               0x08, 1, 3, new ModeImplied())
     {
     }
 
@@ -1028,7 +1055,7 @@ public:
              const std::string& extendedName,
              uint8_t opcode) :
         OpCode(name, extendedName, opcode,
-                          0, 2, new ModeRelative())
+               0, 2, new ModeRelative())
     {
     }
 
@@ -1180,7 +1207,7 @@ class OpBIT : public OpCode
 public:
     OpBIT(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("BIT", "Test bits",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -1203,7 +1230,7 @@ class OpCMP : public OpCode
 public:
     OpCMP(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("CMP", "Compare accumulator",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -1225,7 +1252,7 @@ class OpCPY : public OpCode
 public:
     OpCPY(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("CPY", "Compare Y register",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -1247,7 +1274,7 @@ class OpCPX : public OpCode
 public:
     OpCPX(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("CPX", "Compare X register",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -1269,7 +1296,7 @@ class OpAND : public OpCode
 public:
     OpAND(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("AND", "Bitwise AND with accumulator",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -1291,7 +1318,7 @@ class OpORA : public OpCode
 public:
     OpORA(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("ORA", "Bitwise OR with accumulator",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -1313,7 +1340,7 @@ class OpEOR : public OpCode
 public:
     OpEOR(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("EOR", "Bitwise exclusive OR",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -1335,7 +1362,7 @@ class OpADC : public OpCode
 public:
     OpADC(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("ADC", "Add with carry",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 
@@ -1354,7 +1381,7 @@ class OpSBC : public OpCode
 public:
     OpSBC(uint8_t opcode, uint8_t length, uint8_t time) :
         OpCode("SBC", "Subtract with carry",
-                          opcode, length, time, new ModeT())
+               opcode, length, time, new ModeT())
     {
     }
 

@@ -11,21 +11,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\tests\dump_nes_header.cpp" />
+    <ClCompile Include="..\..\..\swig\nes.cxx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\swig\nes.i" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{CB71241F-EEE0-4E77-A231-0D4F205DC23F}</ProjectGuid>
-    <RootNamespace>TestNESHeader</RootNamespace>
+    <ProjectGuid>{7E893288-5B69-4D55-9BB9-1CCFD110FE19}</ProjectGuid>
+    <RootNamespace>Python</RootNamespace>
+    <ProjectName>_nes</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -42,44 +46,68 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)..\..\bin\</OutDir>
-    <IncludePath>$(SolutionDir)..\..\..\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Python27\include;$(SolutionDir)..\..\..\install\include;$(IncludePath)</IncludePath>
+    <TargetExt>.pyd</TargetExt>
+    <OutDir>$(SolutionDir)..\..\libs\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)..\..\bin\</OutDir>
-    <IncludePath>$(SolutionDir)..\..\..\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Python27\include;$(SolutionDir)..\..\..\install\include;$(IncludePath)</IncludePath>
+    <TargetExt>.pyd</TargetExt>
+    <OutDir>$(SolutionDir)..\..\libs\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <DisableSpecificWarnings>4512</DisableSpecificWarnings>
+      <PreprocessorDefinitions>MS_NO_COREDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\..\libs\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>NyraCore.lib;NyraEmulationSystem.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Python27\libs;$(SolutionDir)..\..\..\install\libs\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>NyraEmulationSystem.lib;NyraCore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+      <NoEntryPoint>true</NoEntryPoint>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(SolutionDir)..\..\libs\$(Configuration)\_nes.pyd $(SolutionDir)..\..\..\install\python /D /E /Q /Y
+xcopy $(SolutionDir)..\..\swig\*.py $(SolutionDir)..\..\..\install\python /D /E /Q /Y
+xcopy $(SolutionDir)..\..\python\* $(SolutionDir)..\..\..\install\python /D /E /Q /Y</Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>C:\Users\Clyde\Desktop\swigwin-3.0.5\swig.exe -c++ -python -o C:\workspace\NyraEmulationSystem\swig\nes.cxx -IC:\workspace\NyraEmulationSystem\include C:\workspace\NyraEmulationSystem\swig\nes.i</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <DisableSpecificWarnings>4512</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\..\libs\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>NyraCore.lib;NyraEmulationSystem.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Python27\libs;$(SolutionDir)..\..\..\install\libs\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>NyraEmulationSystem.lib;NyraCore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+      <NoEntryPoint>true</NoEntryPoint>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(SolutionDir)..\..\libs\$(Configuration)\_nes.pyd $(SolutionDir)..\..\..\install\python /D /E /Q /Y
+xcopy $(SolutionDir)..\..\swig\*.py $(SolutionDir)..\..\..\install\python /D /E /Q /Y
+xcopy $(SolutionDir)..\..\python\* $(SolutionDir)..\..\..\install\python /D /E /Q /Y</Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>C:\Users\Clyde\Desktop\swigwin-3.0.5\swig.exe -c++ -python -o C:\workspace\NyraEmulationSystem\swig\nes.cxx -IC:\workspace\NyraEmulationSystem\include C:\workspace\NyraEmulationSystem\swig\nes.i</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -41,13 +41,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)..\..\libs\$(Configuration)\</OutDir>
     <TargetExt>.lib</TargetExt>
-    <IncludePath>$(SolutionDir)..\..\include;$(SolutionDir)..\..\..\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\..\include;$(SolutionDir)..\..\..\install\include;$(IncludePath)</IncludePath>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)..\..\libs\$(Configuration)\</OutDir>
     <TargetExt>.lib</TargetExt>
-    <IncludePath>$(SolutionDir)..\..\include;$(SolutionDir)..\..\..\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\..\include;$(SolutionDir)..\..\..\install\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -63,8 +63,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(SolutionDir)..\..\include\* $(SolutionDir)..\..\..\include /D /E /Q /Y
-xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\libs /D /E /Q /Y</Command>
+      <Command>xcopy $(SolutionDir)..\..\include\* $(SolutionDir)..\..\..\install\include /D /E /Q /Y
+xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\install\libs /D /E /Q /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -85,8 +85,8 @@ xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\libs /D /E /Q /Y</Comman
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(SolutionDir)..\..\include\* $(SolutionDir)..\..\..\include /D /E /Q /Y
-xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\libs /D /E /Q /Y</Command>
+      <Command>xcopy $(SolutionDir)..\..\include\* $(SolutionDir)..\..\..\install\include /D /E /Q /Y
+xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\install\libs /D /E /Q /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -95,9 +95,11 @@ xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\libs /D /E /Q /Y</Comman
     <ClInclude Include="..\..\..\include\nes\CPU.h" />
     <ClInclude Include="..\..\..\include\nes\CPUHelper.h" />
     <ClInclude Include="..\..\..\include\nes\Disassembly.h" />
+    <ClInclude Include="..\..\..\include\nes\Emulator.h" />
     <ClInclude Include="..\..\..\include\nes\Header.h" />
     <ClInclude Include="..\..\..\include\nes\Memory.h" />
     <ClInclude Include="..\..\..\include\nes\MemoryMap.h" />
+    <ClInclude Include="..\..\..\include\nes\Mode.h" />
     <ClInclude Include="..\..\..\include\nes\Mode6502.hpp" />
     <ClInclude Include="..\..\..\include\nes\Op6502.hpp" />
     <ClInclude Include="..\..\..\include\nes\OpCode.h" />
@@ -109,9 +111,11 @@ xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\libs /D /E /Q /Y</Comman
     <ClCompile Include="..\..\..\source\CPU.cpp" />
     <ClCompile Include="..\..\..\source\CPUHelper.cpp" />
     <ClCompile Include="..\..\..\source\Disassembly.cpp" />
+    <ClCompile Include="..\..\..\source\Emulator.cpp" />
     <ClCompile Include="..\..\..\source\Header.cpp" />
     <ClCompile Include="..\..\..\source\Memory.cpp" />
     <ClCompile Include="..\..\..\source\MemoryMap.cpp" />
+    <ClCompile Include="..\..\..\source\Mode.cpp" />
     <ClCompile Include="..\..\..\source\OpCode.cpp" />
     <ClCompile Include="..\..\..\source\PPU.cpp" />
     <ClCompile Include="..\..\..\source\PPUMemory.cpp" />

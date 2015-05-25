@@ -28,9 +28,13 @@ namespace nyra
 namespace nes
 {
 /*****************************************************************************/
-MemoryMap::MemoryMap(bool fillRAM) :
+MemoryMap::MemoryMap(bool fillRAM,
+                     PPUMemory* ppu,
+                     ROM* rom) :
     mRAM(fillRAM ? new RAM(0x0700) : nullptr),
-    mZeroPage(fillRAM ? new RAM(0x0100) : nullptr)
+    mZeroPage(fillRAM ? new RAM(0x0100) : nullptr),
+    mAPUDMC(fillRAM ? new RAM(1) : nullptr),
+    mAPUProgramCounter(fillRAM ? new RAM(1) : nullptr)
 {
     if (fillRAM)
     {
@@ -41,6 +45,30 @@ MemoryMap::MemoryMap(bool fillRAM) :
             setMemoryBank(ii, *mZeroPage);
             setMemoryBank(ii  + mZeroPage->getSize(), *mRAM);
         }
+
+        //! TODO: This is a tempory hack to prevent from
+        //        reading and writing to a NULL register.
+        setMemoryBank(0x4010, *mAPUDMC);
+        mAPUDMC->writeByte(0, 0xFF);
+        setMemoryBank(0x4017, *mAPUProgramCounter);
+        mAPUProgramCounter->writeByte(0, 0xFF);
+    }
+
+    if (ppu)
+    {
+        // PPU Memory
+        for (size_t ii = 0x2000; ii < 0x4000; ii += ppu->getSize())
+        {
+            setMemoryBank(ii, *ppu);
+        }
+
+        setMemoryBank(0x4014, ppu->getOamDma());
+    }
+
+    if (rom)
+    {
+        setMemoryBank(0x8000, *rom);
+        setMemoryBank(0xC000, *rom);
     }
 }
 

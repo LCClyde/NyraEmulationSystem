@@ -21,39 +21,35 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#include <iostream>
-#include <core/Exception.h>
-#include <nes/Cartridge.h>
+#include <nes/Emulator.h>
 
-using namespace nyra;
-
-int main(int argc, char** argv)
+namespace nyra
 {
-    try
+namespace nes
+{
+/*****************************************************************************/
+Emulator::Emulator(const std::string& pathname) :
+    mCartridge(pathname),
+    mMemoryMap(true, &mPPU.getRegisers(), &(mCartridge.getProgROM(0))),
+    mCPU(mMemoryMap.readShort(0xFFFC))
+{
+}
+
+/*****************************************************************************/
+void Emulator::tick(std::vector<Disassembly>* disassembly)
+{
+    if (disassembly)
     {
-        if (argc != 2)
-        {
-            std::cerr << "Usage: <" << argv[0] << "> <NES File>\n";
-            return 1;
-        }
-
-        const std::string inputPathname = argv[1];
-
-
-        const nes::Cartridge cart(inputPathname);
-
-        std::cout << cart.getHeader() << "\n";
-    }
-    catch (core::Exception& ex)
-    {
-        std::cout << ex.what() << "\n";
-        return 1;
-    }
-    catch (...)
-    {
-        std::cout << "An unknown error occurred\n";
-        return 1;
+        disassembly->clear();
     }
 
-    return 0;
+    do
+    {
+        mCPU.processScanline(mMemoryMap,
+                             disassembly);
+        mPPU.processScanline(mCPU.getInfo());
+
+    } while (mCPU.getInfo().scanLine > 0);
+}
+}
 }

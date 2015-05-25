@@ -64,8 +64,8 @@ public:
      *         the processed opcode.
      *         Remove this to increase performance.
      */
-    void tick(MemoryMap& memory,
-              Disassembly* disassembly = nullptr);
+    void processScanline(MemoryMap& memory,
+                         std::vector<Disassembly>* disassembly = nullptr);
 
     /*
      *  \func - getInfo
@@ -76,7 +76,13 @@ public:
         return mInfo;
     }
 
+    inline CPUInfo& getInfo()
+    {
+        return mInfo;
+    }
+
 private:
+    static const size_t INTERRUPT_OPCODE;
     CPURegisters mRegisters;
     CPUInfo mInfo;
     CPUArgs mArgs;

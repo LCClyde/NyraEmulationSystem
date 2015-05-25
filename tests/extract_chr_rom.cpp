@@ -59,7 +59,7 @@ int main(int argc, char** argv)
         std::vector<uint8_t> plane1(8);
         std::vector<uint8_t> plane2(8);
 
-        nes::Memory& chrROM = *(cart.getChrROM()[0]);
+        /*nes::Memory& chrROM = *(cart.getChrROM()[0]);
         for (size_t row = 0; row < 16; ++row)
         {
             for (size_t col = 0; col < 16; ++col)
@@ -84,7 +84,7 @@ int main(int argc, char** argv)
                     }
                 }
             }
-        }
+        }*/
         window.showBuffer(&pixels[0], numPixels * 4);
 
         // Run

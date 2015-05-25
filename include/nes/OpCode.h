@@ -30,6 +30,7 @@
 #include <vector>
 #include <nes/CPUHelper.h>
 #include <nes/MemoryMap.h>
+#include <nes/Mode.h>
 
 namespace nyra
 {
@@ -44,97 +45,6 @@ namespace nes
 class OpCode
 {
 public:
-    /*
-     *  \class - Mode
-     *  \brief - Used to determine how the arguments are used. Like the OpCode
-     *           this is heavily abstracted.
-     */
-    class Mode
-    {
-    public:
-        /*
-         *  \func - Constructor
-         *  \brief - Sets up a Mode object.
-         *
-         *  \param useArg1 - Does this Mode use the first byte argument?
-         *  \param useArg2 - Does this Mode use the second byte argument?
-         *  \NOTE: If the mode uses both arguments as a single 2 byte value,
-         *         pass in true for both parameters.
-         */
-        Mode(bool usesArg1, bool usesArg2);
-
-        /*
-         *  \func - Destructor
-         *  \brief - Used to create reliable inheritance.
-         */
-        virtual ~Mode();
-
-        /*
-         *  \func - toString
-         *  \brief - Outputs the syntax for using this mode.
-         *
-         *  \param args - The args to use when dumping the information.
-         *  \return - The formatted string.
-         */
-        virtual std::string toString() const = 0;
-
-        /*
-         *  \func - useArg1
-         *  \brief - returns true if this mode uses arg1.
-         */
-        virtual bool usesArg1() const
-        {
-            return mUsesArg1;
-        }
-
-        /*
-         *  \func - useArg2
-         *  \brief - returns true if this mode uses arg2.
-         */
-        virtual bool usesArg2() const
-        {
-            return mUsesArg2;
-        }
-
-        /*
-         *  \func - getArg
-         *  \brief - Gets the argument.
-         */
-        inline uint16_t getArg() const
-        {
-            return mArg;
-        }
-
-        /*
-         *  \func - getValue
-         *  \brief - Gets the calculated value. This is mode independent.
-         */
-        inline uint8_t getValue() const
-        {
-            return mValue;
-        }
-
-        /*
-         *  \func - getValue
-         *  \brief - Process all mode information
-         *
-         *  \param args - The input arguments to the mode.
-         *  \param registers - The current CPU registers
-         *  \param memory - The filled out memory banks
-         *  \param info - The current CPU info struct.
-         */
-        virtual void operator()(const CPUArgs& args,
-                                const CPURegisters& registers,
-                                const MemoryMap& memory,
-                                CPUInfo& info) = 0;
-
-    protected:
-        const bool mUsesArg1;
-        const bool mUsesArg2;
-        uint16_t mArg;
-        uint8_t mValue;
-    };
-
     /*
      *  \func - Constructor
      *  \brief - Creates a generalized OpCode

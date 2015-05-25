@@ -51,7 +51,8 @@ Disassembly::Disassembly(const Disassembly& other) :
     mOpCode(other.mOpCode),
     mArgs(other.mArgs),
     mRegisters(other.mRegisters),
-    mInfo(other.mInfo)
+    mInfo(other.mInfo),
+    mModeString(other.mModeString)
 {
 }
 
@@ -69,16 +70,14 @@ void Disassembly::swap(Disassembly& first, Disassembly& second)
     std::swap(first.mArgs, second.mArgs);
     std::swap(first.mRegisters, second.mRegisters);
     std::swap(first.mInfo, second.mInfo);
+    std::swap(first.mModeString, second.mModeString);
 }
 
 /*****************************************************************************/
 std::ostream& operator<<(std::ostream& os,
-                         const Disassembly& data)
+                         const Disassembly& )
 {
-    os << core::toHexString<uint16_t>(data.mInfo.programCounter) << "  "
-       << core::toHexString<uint8_t>(data.mArgs.opcode) << " ";
-
-    std::string params;
+    /*std::string params;
     if (data.mOpCode->getMode().usesArg1())
     {
         params += core::toHexString<uint8_t>(data.mArgs.arg1) + " ";
@@ -88,18 +87,41 @@ std::ostream& operator<<(std::ostream& os,
         params += core::toHexString<uint8_t>(data.mArgs.arg2);
     }
     params = core::pad(params, ' ', 7, true);
-    os << params
-       << core::pad(data.mOpCode->getName() + " " +
+    os << core::toHexString<uint16_t>(data.mInfo.programCounter) << "  "
+        << core::toHexString<uint8_t>(data.mArgs.opcode) << " " << params
+        << core::pad(data.mOpCode->getName() + " " +
                     data.mOpCode->getMode().toString(),
                     ' ', 32, true)
-       << "A:" << core::toHexString<uint8_t>(data.mRegisters.accumulator)
-       << " X:" << core::toHexString<uint8_t>(data.mRegisters.xIndex)
-       << " Y:" << core::toHexString<uint8_t>(data.mRegisters.yIndex)
-       << " P:" << core::toHexString<uint8_t>(static_cast<uint8_t>(
+        << "A:" << core::toHexString<uint8_t>(data.mRegisters.accumulator)
+        << " X:" << core::toHexString<uint8_t>(data.mRegisters.xIndex)
+        << " Y:" << core::toHexString<uint8_t>(data.mRegisters.yIndex)
+        << " P:" << core::toHexString<uint8_t>(static_cast<uint8_t>(
                 data.mRegisters.statusRegister.to_ulong()))
-       << " SP:" << core::toHexString<uint8_t>(data.mRegisters.stackPointer)
-       << " CYC:" << core::pad(core::toString(data.mInfo.cycles), ' ', 3)
-       << " SL:" << core::toString(data.mInfo.scanLine);
+        << " SP:" << core::toHexString<uint8_t>(data.mRegisters.stackPointer)
+        << " CYC:" << core::pad(core::toString(data.mInfo.cycles), ' ', 3)
+        << " SL:" << core::toString(data.mInfo.scanLine);*/
+    /*break;
+
+    case Disassembly::FCEUX:
+        os << "A:" << core::toHexString<uint8_t>(data.mRegisters.accumulator)
+           << " X:" << core::toHexString<uint8_t>(data.mRegisters.xIndex)
+           << " Y:" << core::toHexString<uint8_t>(data.mRegisters.yIndex)
+           << " S:" << core::toHexString<uint8_t>(static_cast<uint8_t>(
+                    data.mRegisters.stackPointer))
+           << " P:" << (data.mRegisters.statusRegister[SIGN] ? 'N' : 'n')
+           << (data.mRegisters.statusRegister[OFLOW] ? 'V' : 'v')
+           << (data.mRegisters.statusRegister[IGNORE] ? 'U' : 'u')
+           << (data.mRegisters.statusRegister[STACK] ? 'B' : 'b')
+           << (data.mRegisters.statusRegister[DECIMAL] ? 'D' : 'd')
+           << (data.mRegisters.statusRegister[INTERRUPT] ? 'I' : 'i')
+           << (data.mRegisters.statusRegister[ZERO] ? 'Z' : 'z')
+           << (data.mRegisters.statusRegister[CARRY] ? 'C' : 'c') << " $"
+           << core::toHexString<uint16_t>(data.mInfo.programCounter) << ":"
+           << core::toHexString<uint8_t>(data.mArgs.opcode) << " " << params
+           << data.mOpCode->getName() << " " 
+           << data.mOpCode->getMode().toString();
+        break;
+    }*/
     return os;
 }
 }

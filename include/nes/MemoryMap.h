@@ -28,6 +28,7 @@
 #include <map>
 #include <nes/Memory.h>
 #include <nes/CPUHelper.h>
+#include <nes/PPUMemory.h>
 
 namespace nyra
 {
@@ -47,7 +48,9 @@ private:
     typedef std::map<size_t, Memory*> RamMap;
 
 public:
-    MemoryMap(bool fillRAM = false);
+    MemoryMap(bool fillRAM = false,
+              PPUMemory* ppu = nullptr,
+              ROM* rom = nullptr);
 
     /*
      *  \func - setMemoryBank
@@ -126,8 +129,14 @@ private:
     RamMap::const_iterator getMemoryBank(size_t& address) const;
 
     RamMap mMap;
+
+    // Standard RAM
     std::auto_ptr<RAM> mZeroPage;
     std::auto_ptr<RAM> mRAM;
+
+    // APU Memory
+    std::auto_ptr<RAM> mAPUDMC;
+    std::auto_ptr<RAM> mAPUProgramCounter;
 };
 }
 }

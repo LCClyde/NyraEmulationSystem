@@ -27,7 +27,6 @@
 #include <stdint.h>
 #include <nes/OpCode.h>
 #include <nes/CPUHelper.h>
-#include <ostream>
 
 namespace nyra
 {
@@ -85,26 +84,48 @@ public:
      */
     Disassembly& operator=(Disassembly other);
 
-    /*
-     *  \func operator (ostream)
-     *  \brief - Outputs details about a Disassembly.
-     *
-     *  \param os - The output stream.
-     *  \param data - The Disassembly to stream
-     *  \return - The ouptput stream.
-     */
-    friend std::ostream& operator<<(std::ostream& os,
-                                    const Disassembly& data);
+    const OpCode& getOpCode() const
+    {
+        return *mOpCode;
+    }
+
+    const CPUArgs& getArgs() const
+    {
+        return mArgs;
+    }
+
+    const CPURegisters& getRegisters() const
+    {
+        return mRegisters;
+    }
+
+    const CPUInfo& getInfo() const
+    {
+        return mInfo;
+    }
+
+    void setModeString(const std::string& mode)
+    {
+        mModeString = mode;
+    }
+
+    std::string getModeString() const
+    {
+        return mModeString;
+    }
 
 private:
     void swap(Disassembly& first, Disassembly& second);
 
     //! TODO: Can we get rid of this pointer and find a way to copy construct
     //        an OpCode? Then this can live independent of the CPU.
+    //! TODO: This needs a lot of work. The OpCode mode should not control the
+    //        string output. This should be contolled in python.
     const OpCode* mOpCode;
     CPUArgs mArgs;
     CPURegisters mRegisters;
     CPUInfo mInfo;
+    std::string mModeString;
 };
 }
 }
