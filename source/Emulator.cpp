@@ -22,6 +22,9 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 #include <nes/Emulator.h>
+#include <nes/MemoryFactory.h>
+#include <nes/Constants.h>
+#include <Windows.h>
 
 namespace nyra
 {
@@ -30,26 +33,37 @@ namespace nes
 /*****************************************************************************/
 Emulator::Emulator(const std::string& pathname) :
     mCartridge(pathname),
-    mMemoryMap(true, &mPPU.getRegisers(), &(mCartridge.getProgROM(0))),
-    mCPU(mMemoryMap.readShort(0xFFFC))
+    mPPU(mCartridge.getChrROM()),
+    mMemoryMap(createMemoryMap(mCartridge, mPPU)),
+    mCPU(mMemoryMap->readShort(0xFFFC))
 {
 }
 
 /*****************************************************************************/
-void Emulator::tick(std::vector<Disassembly>* disassembly)
+void Emulator::tick(uint32_t* buffer,
+                    std::vector<Disassembly>* disassembly)
 {
+    Sleep(15);
     if (disassembly)
     {
         disassembly->clear();
     }
 
+    // Clear buffer
+    if (buffer)
+    {
+        std::fill_n(buffer, NUM_PIXELS, 0);
+    }
+
     do
     {
-        mCPU.processScanline(mMemoryMap,
+        mCPU.processScanline(*mMemoryMap,
                              disassembly);
-        mPPU.processScanline(mCPU.getInfo());
+        mPPU.processScanline(mCPU.getInfo(),
+                             *mMemoryMap,
+                             buffer);
 
-    } while (mCPU.getInfo().scanLine > 0);
+    } while (mCPU.getInfo().scanLine >= 0);
 }
 }
 }

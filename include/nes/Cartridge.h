@@ -29,6 +29,7 @@
 #include <memory>
 #include <nes/Header.h>
 #include <nes/Memory.h>
+#include <nes/Constants.h>
 
 namespace nyra
 {
@@ -42,14 +43,6 @@ namespace nes
 class Cartridge
 {
 public:
-    /*
-     *  \type - ROMBanks
-     *  \brief - A vector of ROM objects. This is used to be able to
-     *           easily pass around several ROM objects in a form that is
-     *           usable in the emulator.
-     */
-    typedef std::vector<std::unique_ptr<ROM> > ROMBanks;
-
     /*
      *  \func - Constructor (pathname)
      *  \brief - Creates a cartridge object from a file pathname.
@@ -71,14 +64,14 @@ public:
      *  \func - getProgROM
      *  \brief - Returns all known banks of the programming memory.
      */
-    ROM& getProgROM(size_t idx) const
+    const ROMBanks& getProgROM() const
     {
-        return *mProgROM[idx];
+        return mProgROM;
     }
 
-    ROM& getChrROM(size_t idx) const
+    const ROMBanks& getChrROM() const
     {
-        return *mChrROM[idx];
+        return mChrROM;
     }
 
 private:

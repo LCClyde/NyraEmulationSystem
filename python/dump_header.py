@@ -9,4 +9,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     cart = Cartridge(args.pathname)
-    print cart.get_header()
+    print cart.header

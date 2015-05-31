@@ -41,12 +41,23 @@ class Emulator
 public:
     Emulator(const std::string& pathname);
 
-    void tick(std::vector<Disassembly>* disassembly = nullptr);
+    void tick(uint32_t* buffer = nullptr,
+              std::vector<Disassembly>* disassembly = nullptr);
+
+    PPU& getPPU()
+    {
+        return mPPU;
+    }
+
+    const PPU& getPPU() const
+    {
+        return mPPU;
+    }
 
 private:
     const Cartridge mCartridge;
     PPU mPPU;
-    MemoryMap mMemoryMap;
+    std::shared_ptr<MemoryMap> mMemoryMap;
     CPU mCPU;
 };
 }

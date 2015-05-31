@@ -9,7 +9,8 @@
     #include "nes/OpCode.h"
     #include "nes/CPUHelper.h"
     #include "nes/MemoryMap.h"
-    #include "nes/PPUMemory.h"
+    #include "nes/MemoryFactory.h"
+    #include "nes/PPURegisters.h"
     #include "nes/Emulator.h"
     #include "nes/PPU.h"
     #include "nes/Mode.h"
@@ -31,20 +32,35 @@
   }
 }
 
-%rename("%(undercase)s", %$isfunction) "";
-%rename("%(undercase)s", %$isvariable) "";
-
+%include "attribute.i"
 %include "stdint.i"
 %include "std_string.i"
 %include "std_vector.i"
+
+%attribute2(nyra::nes::Cartridge, nyra::nes::Header, header, getHeader)
+%attribute2(nyra::nes::Disassembly, nyra::nes::OpCode, opcode, getOpCode)
+%attribute2(nyra::nes::Disassembly, nyra::nes::CPUInfo, info, getInfo)
+%attribute2(nyra::nes::Disassembly, nyra::nes::CPURegisters, registers, getRegisters)
+%attribute2(nyra::nes::Disassembly, nyra::nes::CPUArgs, args, getArgs)
+%attribute2(nyra::nes::OpCode, nyra::nes::Mode, mode, getMode)
+%attribute(nyra::nes::Mode, bool, uses_arg1, usesArg1)
+%attribute(nyra::nes::Mode, bool, uses_arg2, usesArg2)
+%attributestring(nyra::nes::OpCode, std::string, name, getName)
+%attributestring(nyra::nes::Disassembly, std::string, mode_string, getModeString)
+
+%rename("%(undercase)s", %$isfunction) "";
+%rename("%(undercase)s", %$isvariable) "";
+
+%include "nes/Constants.h"
 %include "nes/Memory.h"
 %include "nes/Header.h"
 %include "nes/Cartridge.h"
 %include "nes/CPUHelper.h"
-%include "nes/Constants.h"
-%include "nes/PPUMemory.h"
-%include "nes/PPU.h"
+%include "nes/HiLowLatch.h"
 %include "nes/MemoryMap.h"
+%include "nes/PPURegisters.h"
+%include "nes/PPU.h"
+%include "nes/MemoryFactory.h"
 %include "nes/Mode.h"
 %include "nes/OpCode.h"
 %include "nes/Disassembly.h"
@@ -52,6 +68,7 @@
 %include "nes/Emulator.h"
 
 %template(DisassemblyVector) std::vector<nyra::nes::Disassembly>;
+%template(PixelVector) std::vector<uint32_t>;
 
 %extend nyra::nes::Header
 {
@@ -70,6 +87,14 @@
         return static_cast<uint8_t>(self->statusRegister.to_ulong());
     }
 };
+
+%extend nyra::nes::Emulator
+{
+    void tick(size_t buffer)
+    {
+        self->tick(reinterpret_cast<uint32_t*>(buffer));
+    }
+}
 
 
 

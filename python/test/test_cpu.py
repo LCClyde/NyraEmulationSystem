@@ -1,7 +1,7 @@
 
 import unittest
 import os
-from nes import CPU, Cartridge, MemoryMap, DisassemblyVector
+from nes import CPU, Cartridge, create_memory_map, DisassemblyVector, PPU
 from print_disassembly import print_nintendulator
 
 class TestCPU(unittest.TestCase):
@@ -11,9 +11,9 @@ class TestCPU(unittest.TestCase):
         log_pathname = os.path.join(
                 os.path.dirname(os.path.realpath(__file__)), 'nestest.log')
         cart = Cartridge(cart_pathname)
-        memory = MemoryMap(True)
-        memory.set_memory_bank(0x8000, cart.get_prog_rom(0))
-        memory.set_memory_bank(0xC000, cart.get_prog_rom(0))
+        
+        ppu = PPU(cart.get_chr_rom())
+        memory = create_memory_map(cart, ppu)
 
         lines = open(log_pathname).readlines()
 

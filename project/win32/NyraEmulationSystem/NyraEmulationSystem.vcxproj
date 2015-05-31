@@ -76,7 +76,7 @@ xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\install\libs /D /E /Q /Y
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4512</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4512;4127</DisableSpecificWarnings>
       <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -97,28 +97,38 @@ xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\install\libs /D /E /Q /Y
     <ClInclude Include="..\..\..\include\nes\Disassembly.h" />
     <ClInclude Include="..\..\..\include\nes\Emulator.h" />
     <ClInclude Include="..\..\..\include\nes\Header.h" />
+    <ClInclude Include="..\..\..\include\nes\HiLowLatch.h" />
     <ClInclude Include="..\..\..\include\nes\Memory.h" />
+    <ClInclude Include="..\..\..\include\nes\MemoryFactory.h" />
+    <ClInclude Include="..\..\..\include\nes\MemoryNROM.h" />
+    <ClInclude Include="..\..\..\include\nes\MemorySystem.h" />
     <ClInclude Include="..\..\..\include\nes\MemoryMap.h" />
     <ClInclude Include="..\..\..\include\nes\Mode.h" />
     <ClInclude Include="..\..\..\include\nes\Mode6502.hpp" />
     <ClInclude Include="..\..\..\include\nes\Op6502.hpp" />
     <ClInclude Include="..\..\..\include\nes\OpCode.h" />
     <ClInclude Include="..\..\..\include\nes\PPU.h" />
-    <ClInclude Include="..\..\..\include\nes\PPUMemory.h" />
+    <ClInclude Include="..\..\..\include\nes\PPURegisters.h" />
+    <ClInclude Include="..\..\..\include\nes\VRAM.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\include\nes\MemoryFactory.cpp" />
     <ClCompile Include="..\..\..\source\Cartridge.cpp" />
     <ClCompile Include="..\..\..\source\CPU.cpp" />
     <ClCompile Include="..\..\..\source\CPUHelper.cpp" />
     <ClCompile Include="..\..\..\source\Disassembly.cpp" />
     <ClCompile Include="..\..\..\source\Emulator.cpp" />
     <ClCompile Include="..\..\..\source\Header.cpp" />
+    <ClCompile Include="..\..\..\source\HiLowLatch.cpp" />
     <ClCompile Include="..\..\..\source\Memory.cpp" />
+    <ClCompile Include="..\..\..\source\MemoryNROM.cpp" />
+    <ClCompile Include="..\..\..\source\MemorySystem.cpp" />
     <ClCompile Include="..\..\..\source\MemoryMap.cpp" />
     <ClCompile Include="..\..\..\source\Mode.cpp" />
     <ClCompile Include="..\..\..\source\OpCode.cpp" />
     <ClCompile Include="..\..\..\source\PPU.cpp" />
-    <ClCompile Include="..\..\..\source\PPUMemory.cpp" />
+    <ClCompile Include="..\..\..\source\PPURegisters.cpp" />
+    <ClCompile Include="..\..\..\source\VRAM.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,38 +21,46 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#ifndef __NYRA_NES_CONSTANTS_H__
-#define __NYRA_NES_CONSTANTS_H__
-
-#include <vector>
-#include <memory>
+#include <nes/MemorySystem.h>
 
 namespace nyra
 {
 namespace nes
 {
-class ROM;
+/*****************************************************************************/
+MemorySystem::MemorySystem(PPURegisters& ppu) :
+    mRAM(0x0700),
+    mZeroPage(0x0100),
+    mFill1(0x14),
+    mFill2(0x3FEC)
+{
+    // Mirror the RAM to 0x2000
+    for (size_t ii = 0; ii < 0x2000;
+            ii += (mRAM.getSize() + mZeroPage.getSize()))
+    {
+        setMemoryBank(ii, mZeroPage);
+        setMemoryBank(ii  + mZeroPage.getSize(), mRAM);
+    }
 
-/*
- *  \Constant - FLAG_SIZE
- *  \brief - The number of flags in a register. For the 6502 these are
- *            8 bit values.
- */
-static const size_t FLAG_SIZE = 8;
+    // PPU Memory
+    for (size_t ii = 0x2000; ii < 0x4000; ii += ppu.getSize())
+    {
+        setMemoryBank(ii, ppu);
+    }
 
-static const size_t SCREEN_WIDTH = 256;
-static const size_t SCREEN_HEIGHT = 240;
-static const size_t NUM_PIXELS = SCREEN_WIDTH * SCREEN_HEIGHT;
+    //! TODO: This is a tempory hack to prevent from
+    //        reading and writing to a NULL register.
+    setMemoryBank(0x4000, mFill1);
 
-/*
- *  \type - ROMBanks
- *  \brief - A vector of ROM objects. This is used to be able to
- *           easily pass around several ROM objects in a form that is
- *           usable in the emulator.
- */
-typedef std::vector<std::unique_ptr<ROM> > ROMBanks;
-typedef std::vector<std::unique_ptr<RAM> > RAMBanks;
+    setMemoryBank(0x4014, ppu.getOamDma());
+
+    setMemoryBank(0x4015, mFill2);
+
+}
+
+/*****************************************************************************/
+MemorySystem::~MemorySystem()
+{
 }
 }
-
-#endif
+}

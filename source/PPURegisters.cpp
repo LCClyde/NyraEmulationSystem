@@ -21,49 +21,66 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#include <nes/MemoryMap.h>
+#include <nes/PPURegisters.h>
+#include <core/Exception.h>
 
 namespace nyra
 {
 namespace nes
 {
 /*****************************************************************************/
-MemoryMap::~MemoryMap()
+OamDma::OamDma(HiLowLatch& spriteRamAddress) :
+    Memory(1),
+    mSpriteRamAddress(spriteRamAddress)
 {
 }
 
 /*****************************************************************************/
-MemoryMap::RamMap::const_iterator MemoryMap::getMemoryBank(
-        size_t& address) const
+PPURegisters::PPURegisters(MemoryMap& vram) :
+    Memory(8),
+    mOamDma(mSpriteRamAddress),
+    mVRAM(vram)
 {
-    RamMap::const_iterator iter = mMap.upper_bound(address);
-    --iter;
-    address -= iter->first;
-    return iter;
 }
 
 /*****************************************************************************/
-uint16_t MemoryMap::readShort(size_t address) const
+uint8_t PPURegisters::readByte(size_t address)
 {
-    size_t modAddress = address;
-    RamMap::const_iterator iter = getMemoryBank(modAddress);
-    uint16_t ret = iter->second->readByte(modAddress);
+    uint8_t value = static_cast<uint8_t>(mMemory[address].to_ulong());
+    switch (address)
+    {
+    case PPUSTATUS:
+        mMemory[PPUSTATUS][VBLANK] = false;
+        mPPUAddress.reset();
+        break;
 
-    // Check if we are at the end of the bank
-    if (iter->first + iter->second->getSize() <= address + 1)
-    {
-        modAddress = 0;
-        // Check if this is zero page
-        if (address >= 0x0100)
-        {
-            ++iter;
-        }
+    default:
+        // Do Nothing
+        break;
     }
-    else
+    return value;
+}
+
+
+/*****************************************************************************/
+void PPURegisters::writeByte(size_t address, uint8_t value)
+{
+    switch (address)
     {
-        ++modAddress;
+    case OAMADDR:
+        mSpriteRamAddress.setLow(value);
+        break;
+    case PPUADDR:
+        mPPUAddress.set(value);
+        break;
+    case PPUDATA:
+        mVRAM.writeByte(mPPUAddress.get(), value);
+        mPPUAddress.inc(mMemory[PPUCTRL][VRAM_INC ] ? 32 : 1);
+        break;
+    default:
+        mMemory[address] = value;
+        break;
     }
-    return (iter->second->readByte(modAddress) << 8) | ret;
 }
 }
 }

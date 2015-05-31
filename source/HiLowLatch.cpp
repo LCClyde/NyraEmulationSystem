@@ -21,40 +21,17 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#include <nes/PPUMemory.h>
-#include <core/Exception.h>
+#include <nes/HiLowLatch.h>
 
 namespace nyra
 {
 namespace nes
 {
 /*****************************************************************************/
-OamDma::OamDma() :
-    Memory(1)
+HiLowLatch::HiLowLatch() :
+    mHighSet(false),
+    mValue(0)
 {
-}
-
-/*****************************************************************************/
-PPUMemory::PPUMemory() :
-    Memory(8)
-{
-}
-
-/*****************************************************************************/
-uint8_t PPUMemory::readByte(size_t address)
-{
-    uint8_t value = static_cast<uint8_t>(mMemory[address].to_ulong());
-    switch (address)
-    {
-    case PPUSTATUS:
-        mMemory[PPUSTATUS][VBLANK] = false;
-        break;
-
-    default:
-        // Do Nothing
-        break;
-    }
-    return value;
 }
 }
 }

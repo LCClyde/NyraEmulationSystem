@@ -28,7 +28,6 @@
 #include <map>
 #include <nes/Memory.h>
 #include <nes/CPUHelper.h>
-#include <nes/PPUMemory.h>
 
 namespace nyra
 {
@@ -38,6 +37,9 @@ namespace nes
  *  \class - MemoryMap
  *  \brief - Holds banks of memory which can then be read as it it was one
  *           contiguous buffer.
+ *  TODO: Reimplement this using a look up table. A map should be assigned to
+ *        and then locked. Once locked it creates the look up table of values.
+ *        this removes the lower bound logic and allows direct memory access.
  */
 class MemoryMap
 {
@@ -48,9 +50,7 @@ private:
     typedef std::map<size_t, Memory*> RamMap;
 
 public:
-    MemoryMap(bool fillRAM = false,
-              PPUMemory* ppu = nullptr,
-              ROM* rom = nullptr);
+    virtual ~MemoryMap();
 
     /*
      *  \func - setMemoryBank
@@ -129,14 +129,6 @@ private:
     RamMap::const_iterator getMemoryBank(size_t& address) const;
 
     RamMap mMap;
-
-    // Standard RAM
-    std::auto_ptr<RAM> mZeroPage;
-    std::auto_ptr<RAM> mRAM;
-
-    // APU Memory
-    std::auto_ptr<RAM> mAPUDMC;
-    std::auto_ptr<RAM> mAPUProgramCounter;
 };
 }
 }

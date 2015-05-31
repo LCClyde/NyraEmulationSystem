@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\swig\nes.i" />
+    <None Include="..\..\..\swig\unique_ptr.i" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7E893288-5B69-4D55-9BB9-1CCFD110FE19}</ProjectGuid>
@@ -60,8 +61,6 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>MS_NO_COREDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

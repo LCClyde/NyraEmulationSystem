@@ -21,66 +21,23 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#ifndef __NYRA_NES_PPU_H__
-#define __NYRA_NES_PPU_H__
+#ifndef __NYRA_NES_MEMORY_NROM_H__
+#define __NYRA_NES_MEMORY_NROM_H__
 
-#include <vector>
+#include <nes/MemorySystem.h>
 #include <nes/Memory.h>
-#include <nes/CPUHelper.h>
 #include <nes/PPURegisters.h>
-#include <nes/VRAM.h>
 #include <nes/Constants.h>
 
 namespace nyra
 {
 namespace nes
 {
-/*
- *  \class - PPU
- *  \brief - The picture processing unit handles rendering the image to the
- *           screen. In the actual NES this runs in parallel with the CPU.
- *           This implemention instead will run sequentially until it catches
- *           up to the CPU.
- */
-class PPU
+class MemoryNROM : public MemorySystem
 {
 public:
-    /*
-     *  \func - Constructor
-     *  \brief - Sets a default internal structure for the PPU.
-     */
-    PPU(const ROMBanks& chrROM);
-
-    /*
-     *  \func - tick
-     *  \brief - Updates the PPU to match the CPU timing. ideally I think
-     *           we want this to be one scanline.
-     */
-    void processScanline(CPUInfo& info,
-                         const MemoryMap& memory,
-                         uint32_t* buffer = nullptr);
-
-    void renderScanline(int16_t scanLine,
-                        const MemoryMap& memory,
-                        uint32_t* buffer = nullptr);
-
-    uint32_t extractPixel(uint32_t address,
-                          size_t bitPosition,
-                          size_t palette);
-
-    inline PPURegisters& getRegisers()
-    {
-        return mRegisters;
-    }
-
-    inline const PPURegisters& getRegisters() const
-    {
-        return mRegisters;
-    }
-
-private:
-    VRAM mVRAM;
-    PPURegisters mRegisters;
+    MemoryNROM(const ROMBanks& prgROM,
+               PPURegisters& ppu);
 };
 }
 }

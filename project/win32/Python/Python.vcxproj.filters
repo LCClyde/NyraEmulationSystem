@@ -18,6 +18,9 @@
     <None Include="..\..\..\swig\nes.i">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="..\..\..\swig\unique_ptr.i">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\swig\nes.cxx">

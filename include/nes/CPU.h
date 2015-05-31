@@ -67,6 +67,12 @@ public:
     void processScanline(MemoryMap& memory,
                          std::vector<Disassembly>* disassembly = nullptr);
 
+    void processScanline(const std::unique_ptr<MemoryMap>& memory,
+                         std::vector<Disassembly>* disassembly = nullptr)
+    {
+        processScanline(*memory, disassembly);
+    }
+
     /*
      *  \func - getInfo
      *  \brief - Returns the CPU implementation info.

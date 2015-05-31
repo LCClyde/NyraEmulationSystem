@@ -21,38 +21,19 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#ifndef __NYRA_NES_CONSTANTS_H__
-#define __NYRA_NES_CONSTANTS_H__
-
-#include <vector>
-#include <memory>
+#include <nes/MemoryNROM.h>
 
 namespace nyra
 {
 namespace nes
 {
-class ROM;
-
-/*
- *  \Constant - FLAG_SIZE
- *  \brief - The number of flags in a register. For the 6502 these are
- *            8 bit values.
- */
-static const size_t FLAG_SIZE = 8;
-
-static const size_t SCREEN_WIDTH = 256;
-static const size_t SCREEN_HEIGHT = 240;
-static const size_t NUM_PIXELS = SCREEN_WIDTH * SCREEN_HEIGHT;
-
-/*
- *  \type - ROMBanks
- *  \brief - A vector of ROM objects. This is used to be able to
- *           easily pass around several ROM objects in a form that is
- *           usable in the emulator.
- */
-typedef std::vector<std::unique_ptr<ROM> > ROMBanks;
-typedef std::vector<std::unique_ptr<RAM> > RAMBanks;
+/*****************************************************************************/
+MemoryNROM::MemoryNROM(const ROMBanks& rom,
+                       PPURegisters& ppu) :
+    MemorySystem(ppu)
+{
+    setMemoryBank(0x8000, *rom[0]);
+    setMemoryBank(0xC000, *rom[(rom.size() == 2) ? 1 : 0]);
 }
 }
-
-#endif
+}

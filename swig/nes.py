@@ -183,6 +183,11 @@ class Memory(_object):
         return _nes.Memory_get_size(self)
 Memory_swigregister = _nes.Memory_swigregister
 Memory_swigregister(Memory)
+cvar = _nes.cvar
+flag_size = cvar.flag_size
+screen_width = cvar.screen_width
+screen_height = cvar.screen_height
+num_pixels = cvar.num_pixels
 
 class ROM(Memory):
     __swig_setmethods__ = {}
@@ -314,14 +319,14 @@ class Cartridge(_object):
         except:
             self.this = this
 
-    def get_header(self):
-        return _nes.Cartridge_get_header(self)
+    def get_prog_rom(self):
+        return _nes.Cartridge_get_prog_rom(self)
 
-    def get_prog_rom(self, idx):
-        return _nes.Cartridge_get_prog_rom(self, idx)
-
-    def get_chr_rom(self, idx):
-        return _nes.Cartridge_get_chr_rom(self, idx)
+    def get_chr_rom(self):
+        return _nes.Cartridge_get_chr_rom(self)
+    __swig_getmethods__["header"] = _nes.Cartridge_header_get
+    if _newclass:
+        header = _swig_property(_nes.Cartridge_header_get)
     __swig_destroy__ = _nes.delete_Cartridge
     __del__ = lambda self: None
 Cartridge_swigregister = _nes.Cartridge_swigregister
@@ -460,6 +465,75 @@ class CPUArgs(_object):
 CPUArgs_swigregister = _nes.CPUArgs_swigregister
 CPUArgs_swigregister(CPUArgs)
 
+class HiLowLatch(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, HiLowLatch, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, HiLowLatch, name)
+    __repr__ = _swig_repr
+
+    def __init__(self):
+        this = _nes.new_HiLowLatch()
+        try:
+            self.this.append(this)
+        except:
+            self.this = this
+
+    def set(self, value):
+        return _nes.HiLowLatch_set(self, value)
+
+    def set_low(self, value):
+        return _nes.HiLowLatch_set_low(self, value)
+
+    def set_high(self, value):
+        return _nes.HiLowLatch_set_high(self, value)
+
+    def reset(self):
+        return _nes.HiLowLatch_reset(self)
+
+    def get(self):
+        return _nes.HiLowLatch_get(self)
+
+    def inc(self, amount):
+        return _nes.HiLowLatch_inc(self, amount)
+    __swig_destroy__ = _nes.delete_HiLowLatch
+    __del__ = lambda self: None
+HiLowLatch_swigregister = _nes.HiLowLatch_swigregister
+HiLowLatch_swigregister(HiLowLatch)
+
+class MemoryMap(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, MemoryMap, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, MemoryMap, name)
+    __repr__ = _swig_repr
+    __swig_destroy__ = _nes.delete_MemoryMap
+    __del__ = lambda self: None
+
+    def set_memory_bank(self, memoryOffset, memory):
+        return _nes.MemoryMap_set_memory_bank(self, memoryOffset, memory)
+
+    def write_byte(self, address, value):
+        return _nes.MemoryMap_write_byte(self, address, value)
+
+    def get_op_info(self, address, args):
+        return _nes.MemoryMap_get_op_info(self, address, args)
+
+    def read_byte(self, address):
+        return _nes.MemoryMap_read_byte(self, address)
+
+    def read_short(self, address):
+        return _nes.MemoryMap_read_short(self, address)
+
+    def __init__(self):
+        this = _nes.new_MemoryMap()
+        try:
+            self.this.append(this)
+        except:
+            self.this = this
+MemoryMap_swigregister = _nes.MemoryMap_swigregister
+MemoryMap_swigregister(MemoryMap)
+
 class OamDma(Memory):
     __swig_setmethods__ = {}
     for _s in [Memory]:
@@ -471,8 +545,8 @@ class OamDma(Memory):
     __getattr__ = lambda self, name: _swig_getattr(self, OamDma, name)
     __repr__ = _swig_repr
 
-    def __init__(self):
-        this = _nes.new_OamDma()
+    def __init__(self, spriteRamAddress):
+        this = _nes.new_OamDma(spriteRamAddress)
         try:
             self.this.append(this)
         except:
@@ -490,63 +564,72 @@ class OamDma(Memory):
     __del__ = lambda self: None
 OamDma_swigregister = _nes.OamDma_swigregister
 OamDma_swigregister(OamDma)
-cvar = _nes.cvar
-flag_size = cvar.flag_size
 
-class PPUMemory(Memory):
+class PPURegisters(Memory):
     __swig_setmethods__ = {}
     for _s in [Memory]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
-    __setattr__ = lambda self, name, value: _swig_setattr(self, PPUMemory, name, value)
+    __setattr__ = lambda self, name, value: _swig_setattr(self, PPURegisters, name, value)
     __swig_getmethods__ = {}
     for _s in [Memory]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
-    __getattr__ = lambda self, name: _swig_getattr(self, PPUMemory, name)
+    __getattr__ = lambda self, name: _swig_getattr(self, PPURegisters, name)
     __repr__ = _swig_repr
-    PPUCTRL = _nes.PPUMemory_PPUCTRL
-    PPUMASK = _nes.PPUMemory_PPUMASK
-    PPUSTATUS = _nes.PPUMemory_PPUSTATUS
-    OAMADDR = _nes.PPUMemory_OAMADDR
-    OAMDATA = _nes.PPUMemory_OAMDATA
-    PPUSCROLL = _nes.PPUMemory_PPUSCROLL
-    PPUADDR = _nes.PPUMemory_PPUADDR
-    PPUDATA = _nes.PPUMemory_PPUDATA
-    MAX_REGISTER = _nes.PPUMemory_MAX_REGISTER
-    OAMDMA = _nes.PPUMemory_OAMDMA
-    SPRITE_OFLOW = _nes.PPUMemory_SPRITE_OFLOW
-    SPIRTE_HIT_0 = _nes.PPUMemory_SPIRTE_HIT_0
-    VBLANK = _nes.PPUMemory_VBLANK
-    NAMETABLE_ADDRESS_LOW = _nes.PPUMemory_NAMETABLE_ADDRESS_LOW
-    NAMETABLE_ADDRESS_HIGH = _nes.PPUMemory_NAMETABLE_ADDRESS_HIGH
-    VRAM_INC = _nes.PPUMemory_VRAM_INC
-    SPRITE_PATTERN_TABLE = _nes.PPUMemory_SPRITE_PATTERN_TABLE
-    BACKGROUND_PATTERN_TABLE = _nes.PPUMemory_BACKGROUND_PATTERN_TABLE
-    SPRITE_SIZE = _nes.PPUMemory_SPRITE_SIZE
-    MASTER_SLAVE = _nes.PPUMemory_MASTER_SLAVE
-    NMI_ENABLED = _nes.PPUMemory_NMI_ENABLED
+    PPUCTRL = _nes.PPURegisters_PPUCTRL
+    PPUMASK = _nes.PPURegisters_PPUMASK
+    PPUSTATUS = _nes.PPURegisters_PPUSTATUS
+    OAMADDR = _nes.PPURegisters_OAMADDR
+    OAMDATA = _nes.PPURegisters_OAMDATA
+    PPUSCROLL = _nes.PPURegisters_PPUSCROLL
+    PPUADDR = _nes.PPURegisters_PPUADDR
+    PPUDATA = _nes.PPURegisters_PPUDATA
+    MAX_REGISTER = _nes.PPURegisters_MAX_REGISTER
+    OAMDMA = _nes.PPURegisters_OAMDMA
+    SPRITE_OFLOW = _nes.PPURegisters_SPRITE_OFLOW
+    SPIRTE_HIT_0 = _nes.PPURegisters_SPIRTE_HIT_0
+    VBLANK = _nes.PPURegisters_VBLANK
+    NAMETABLE_ADDRESS_LOW = _nes.PPURegisters_NAMETABLE_ADDRESS_LOW
+    NAMETABLE_ADDRESS_HIGH = _nes.PPURegisters_NAMETABLE_ADDRESS_HIGH
+    VRAM_INC = _nes.PPURegisters_VRAM_INC
+    SPRITE_PATTERN_TABLE = _nes.PPURegisters_SPRITE_PATTERN_TABLE
+    BACKGROUND_PATTERN_TABLE = _nes.PPURegisters_BACKGROUND_PATTERN_TABLE
+    SPRITE_SIZE = _nes.PPURegisters_SPRITE_SIZE
+    MASTER_SLAVE = _nes.PPURegisters_MASTER_SLAVE
+    NMI_ENABLED = _nes.PPURegisters_NMI_ENABLED
+    GRAYSCALE = _nes.PPURegisters_GRAYSCALE
+    BACKGROUND_LEFTMOST = _nes.PPURegisters_BACKGROUND_LEFTMOST
+    SPRITES_LEFTMOST = _nes.PPURegisters_SPRITES_LEFTMOST
+    SHOW_BACKGROUND = _nes.PPURegisters_SHOW_BACKGROUND
+    SHOW_SPRITES = _nes.PPURegisters_SHOW_SPRITES
+    EMPHASIZE_REF = _nes.PPURegisters_EMPHASIZE_REF
+    EMPHASIZE_GREEN = _nes.PPURegisters_EMPHASIZE_GREEN
+    EMPHASIZE_BLUE = _nes.PPURegisters_EMPHASIZE_BLUE
 
-    def __init__(self):
-        this = _nes.new_PPUMemory()
+    def __init__(self, vram):
+        this = _nes.new_PPURegisters(vram)
         try:
             self.this.append(this)
         except:
             self.this = this
 
     def read_byte(self, address):
-        return _nes.PPUMemory_read_byte(self, address)
+        return _nes.PPURegisters_read_byte(self, address)
 
     def write_byte(self, address, value):
-        return _nes.PPUMemory_write_byte(self, address, value)
+        return _nes.PPURegisters_write_byte(self, address, value)
 
     def get_register(self, reg):
-        return _nes.PPUMemory_get_register(self, reg)
+        return _nes.PPURegisters_get_register(self, reg)
 
     def get_oam_dma(self):
-        return _nes.PPUMemory_get_oam_dma(self)
-    __swig_destroy__ = _nes.delete_PPUMemory
+        return _nes.PPURegisters_get_oam_dma(self)
+
+    def get_sprite_ram_address(self):
+        return _nes.PPURegisters_get_sprite_ram_address(self)
+    __swig_destroy__ = _nes.delete_PPURegisters
     __del__ = lambda self: None
-PPUMemory_swigregister = _nes.PPUMemory_swigregister
-PPUMemory_swigregister(PPUMemory)
+PPURegisters_swigregister = _nes.PPURegisters_swigregister
+PPURegisters_swigregister(PPURegisters)
 
 class PPU(_object):
     __swig_setmethods__ = {}
@@ -555,15 +638,21 @@ class PPU(_object):
     __getattr__ = lambda self, name: _swig_getattr(self, PPU, name)
     __repr__ = _swig_repr
 
-    def __init__(self):
-        this = _nes.new_PPU()
+    def __init__(self, chrROM):
+        this = _nes.new_PPU(chrROM)
         try:
             self.this.append(this)
         except:
             self.this = this
 
-    def process_scanline(self, info):
-        return _nes.PPU_process_scanline(self, info)
+    def process_scanline(self, info, memory, buffer=None):
+        return _nes.PPU_process_scanline(self, info, memory, buffer)
+
+    def render_scanline(self, scanLine, memory, buffer=None):
+        return _nes.PPU_render_scanline(self, scanLine, memory, buffer)
+
+    def extract_pixel(self, address, bitPosition, palette):
+        return _nes.PPU_extract_pixel(self, address, bitPosition, palette)
 
     def get_regisers(self):
         return _nes.PPU_get_regisers(self)
@@ -575,39 +664,10 @@ class PPU(_object):
 PPU_swigregister = _nes.PPU_swigregister
 PPU_swigregister(PPU)
 
-class MemoryMap(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, MemoryMap, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, MemoryMap, name)
-    __repr__ = _swig_repr
 
-    def __init__(self, fillRAM=False, ppu=None, rom=None):
-        this = _nes.new_MemoryMap(fillRAM, ppu, rom)
-        try:
-            self.this.append(this)
-        except:
-            self.this = this
-
-    def set_memory_bank(self, memoryOffset, memory):
-        return _nes.MemoryMap_set_memory_bank(self, memoryOffset, memory)
-
-    def write_byte(self, address, value):
-        return _nes.MemoryMap_write_byte(self, address, value)
-
-    def get_op_info(self, address, args):
-        return _nes.MemoryMap_get_op_info(self, address, args)
-
-    def read_byte(self, address):
-        return _nes.MemoryMap_read_byte(self, address)
-
-    def read_short(self, address):
-        return _nes.MemoryMap_read_short(self, address)
-    __swig_destroy__ = _nes.delete_MemoryMap
-    __del__ = lambda self: None
-MemoryMap_swigregister = _nes.MemoryMap_swigregister
-MemoryMap_swigregister(MemoryMap)
-
+def create_memory_map(cart, ppu):
+    return _nes.create_memory_map(cart, ppu)
+create_memory_map = _nes.create_memory_map
 class Mode(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, Mode, name, value)
@@ -623,12 +683,6 @@ class Mode(_object):
     def to_string(self):
         return _nes.Mode_to_string(self)
 
-    def uses_arg1(self):
-        return _nes.Mode_uses_arg1(self)
-
-    def uses_arg2(self):
-        return _nes.Mode_uses_arg2(self)
-
     def get_arg(self):
         return _nes.Mode_get_arg(self)
 
@@ -637,6 +691,12 @@ class Mode(_object):
 
     def __call__(self, args, registers, memory, info):
         return _nes.Mode___call__(self, args, registers, memory, info)
+    __swig_getmethods__["uses_arg1"] = _nes.Mode_uses_arg1_get
+    if _newclass:
+        uses_arg1 = _swig_property(_nes.Mode_uses_arg1_get)
+    __swig_getmethods__["uses_arg2"] = _nes.Mode_uses_arg2_get
+    if _newclass:
+        uses_arg2 = _swig_property(_nes.Mode_uses_arg2_get)
 Mode_swigregister = _nes.Mode_swigregister
 Mode_swigregister(Mode)
 
@@ -655,17 +715,17 @@ class OpCode(_object):
     def __call__(self, args, registers, info, memory):
         return _nes.OpCode___call__(self, args, registers, info, memory)
 
-    def get_name(self):
-        return _nes.OpCode_get_name(self)
-
     def get_extended_name(self):
         return _nes.OpCode_get_extended_name(self)
 
-    def get_mode(self):
-        return _nes.OpCode_get_mode(self)
-
     def get_op_code(self):
         return _nes.OpCode_get_op_code(self)
+    __swig_getmethods__["mode"] = _nes.OpCode_mode_get
+    if _newclass:
+        mode = _swig_property(_nes.OpCode_mode_get)
+    __swig_getmethods__["name"] = _nes.OpCode_name_get
+    if _newclass:
+        name = _swig_property(_nes.OpCode_name_get)
 OpCode_swigregister = _nes.OpCode_swigregister
 OpCode_swigregister(OpCode)
 
@@ -687,23 +747,23 @@ class Disassembly(_object):
         except:
             self.this = this
 
-    def get_op_code(self):
-        return _nes.Disassembly_get_op_code(self)
-
-    def get_args(self):
-        return _nes.Disassembly_get_args(self)
-
-    def get_registers(self):
-        return _nes.Disassembly_get_registers(self)
-
-    def get_info(self):
-        return _nes.Disassembly_get_info(self)
-
     def set_mode_string(self, mode):
         return _nes.Disassembly_set_mode_string(self, mode)
-
-    def get_mode_string(self):
-        return _nes.Disassembly_get_mode_string(self)
+    __swig_getmethods__["opcode"] = _nes.Disassembly_opcode_get
+    if _newclass:
+        opcode = _swig_property(_nes.Disassembly_opcode_get)
+    __swig_getmethods__["info"] = _nes.Disassembly_info_get
+    if _newclass:
+        info = _swig_property(_nes.Disassembly_info_get)
+    __swig_getmethods__["registers"] = _nes.Disassembly_registers_get
+    if _newclass:
+        registers = _swig_property(_nes.Disassembly_registers_get)
+    __swig_getmethods__["args"] = _nes.Disassembly_args_get
+    if _newclass:
+        args = _swig_property(_nes.Disassembly_args_get)
+    __swig_getmethods__["mode_string"] = _nes.Disassembly_mode_string_get
+    if _newclass:
+        mode_string = _swig_property(_nes.Disassembly_mode_string_get)
     __swig_destroy__ = _nes.delete_Disassembly
     __del__ = lambda self: None
 Disassembly_swigregister = _nes.Disassembly_swigregister
@@ -723,8 +783,8 @@ class CPU(_object):
         except:
             self.this = this
 
-    def process_scanline(self, memory, disassembly=None):
-        return _nes.CPU_process_scanline(self, memory, disassembly)
+    def process_scanline(self, *args):
+        return _nes.CPU_process_scanline(self, *args)
 
     def get_info(self, *args):
         return _nes.CPU_get_info(self, *args)
@@ -747,8 +807,11 @@ class Emulator(_object):
         except:
             self.this = this
 
-    def tick(self, disassembly=None):
-        return _nes.Emulator_tick(self, disassembly)
+    def get_ppu(self, *args):
+        return _nes.Emulator_get_ppu(self, *args)
+
+    def tick(self, *args):
+        return _nes.Emulator_tick(self, *args)
     __swig_destroy__ = _nes.delete_Emulator
     __del__ = lambda self: None
 Emulator_swigregister = _nes.Emulator_swigregister
@@ -866,6 +929,119 @@ class DisassemblyVector(_object):
     __del__ = lambda self: None
 DisassemblyVector_swigregister = _nes.DisassemblyVector_swigregister
 DisassemblyVector_swigregister(DisassemblyVector)
+
+class PixelVector(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, PixelVector, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, PixelVector, name)
+    __repr__ = _swig_repr
+
+    def iterator(self):
+        return _nes.PixelVector_iterator(self)
+    def __iter__(self):
+        return self.iterator()
+
+    def __nonzero__(self):
+        return _nes.PixelVector___nonzero__(self)
+
+    def __bool__(self):
+        return _nes.PixelVector___bool__(self)
+
+    def __len__(self):
+        return _nes.PixelVector___len__(self)
+
+    def pop(self):
+        return _nes.PixelVector_pop(self)
+
+    def __getslice__(self, i, j):
+        return _nes.PixelVector___getslice__(self, i, j)
+
+    def __setslice__(self, *args):
+        return _nes.PixelVector___setslice__(self, *args)
+
+    def __delslice__(self, i, j):
+        return _nes.PixelVector___delslice__(self, i, j)
+
+    def __delitem__(self, *args):
+        return _nes.PixelVector___delitem__(self, *args)
+
+    def __getitem__(self, *args):
+        return _nes.PixelVector___getitem__(self, *args)
+
+    def __setitem__(self, *args):
+        return _nes.PixelVector___setitem__(self, *args)
+
+    def append(self, x):
+        return _nes.PixelVector_append(self, x)
+
+    def empty(self):
+        return _nes.PixelVector_empty(self)
+
+    def size(self):
+        return _nes.PixelVector_size(self)
+
+    def clear(self):
+        return _nes.PixelVector_clear(self)
+
+    def swap(self, v):
+        return _nes.PixelVector_swap(self, v)
+
+    def get_allocator(self):
+        return _nes.PixelVector_get_allocator(self)
+
+    def begin(self):
+        return _nes.PixelVector_begin(self)
+
+    def end(self):
+        return _nes.PixelVector_end(self)
+
+    def rbegin(self):
+        return _nes.PixelVector_rbegin(self)
+
+    def rend(self):
+        return _nes.PixelVector_rend(self)
+
+    def pop_back(self):
+        return _nes.PixelVector_pop_back(self)
+
+    def erase(self, *args):
+        return _nes.PixelVector_erase(self, *args)
+
+    def __init__(self, *args):
+        this = _nes.new_PixelVector(*args)
+        try:
+            self.this.append(this)
+        except:
+            self.this = this
+
+    def push_back(self, x):
+        return _nes.PixelVector_push_back(self, x)
+
+    def front(self):
+        return _nes.PixelVector_front(self)
+
+    def back(self):
+        return _nes.PixelVector_back(self)
+
+    def assign(self, n, x):
+        return _nes.PixelVector_assign(self, n, x)
+
+    def resize(self, *args):
+        return _nes.PixelVector_resize(self, *args)
+
+    def insert(self, *args):
+        return _nes.PixelVector_insert(self, *args)
+
+    def reserve(self, n):
+        return _nes.PixelVector_reserve(self, n)
+
+    def capacity(self):
+        return _nes.PixelVector_capacity(self)
+    __swig_destroy__ = _nes.delete_PixelVector
+    __del__ = lambda self: None
+PixelVector_swigregister = _nes.PixelVector_swigregister
+PixelVector_swigregister(PixelVector)
 
 # This file is compatible with both classic and new-style classes.
 

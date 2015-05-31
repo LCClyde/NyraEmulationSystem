@@ -22,6 +22,7 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 #include <nes/CPU.h>
+#include <iostream>
 
 namespace nyra
 {
@@ -43,6 +44,12 @@ void CPU::processScanline(MemoryMap& ram,
 {
     // Process one scanline
     const int16_t scanline = mInfo.scanLine;
+    if (scanline == -1)
+        printf("");
+    if (mInfo.programCounter == 0xFAC4 || mInfo.programCounter == 0xFE09)
+    {
+        printf("");
+    }
 
     // Check for interrupts
     if (mInfo.generateNMI)
@@ -56,6 +63,11 @@ void CPU::processScanline(MemoryMap& ram,
     {
         ram.getOpInfo(mInfo.programCounter,
                       mArgs);
+
+        if (mArgs.darg == 0xFAC4)
+        {
+            printf("");
+        }
 
         if (disassembly)
         {

@@ -21,37 +21,64 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#ifndef __NYRA_NES_CONSTANTS_H__
-#define __NYRA_NES_CONSTANTS_H__
+#ifndef __NYRA_NES_HI_LOW_LATCH_H__
+#define __NYRA_NES_HI_LOW_LATCH_H__
 
-#include <vector>
-#include <memory>
+#include <stdint.h>
+#include <iostream>
 
 namespace nyra
 {
 namespace nes
 {
-class ROM;
+class HiLowLatch
+{
+public:
+    HiLowLatch();
 
-/*
- *  \Constant - FLAG_SIZE
- *  \brief - The number of flags in a register. For the 6502 these are
- *            8 bit values.
- */
-static const size_t FLAG_SIZE = 8;
+    inline void set(uint8_t value)
+    {
+        if (!mHighSet)
+        {
+            setHigh(value);
+        }
+        else
+        {
+            setLow(value);
+        }
+    }
 
-static const size_t SCREEN_WIDTH = 256;
-static const size_t SCREEN_HEIGHT = 240;
-static const size_t NUM_PIXELS = SCREEN_WIDTH * SCREEN_HEIGHT;
+    inline void setLow(uint8_t value)
+    {
+        mValue = (mValue & 0xFF00) | value;
+    }
 
-/*
- *  \type - ROMBanks
- *  \brief - A vector of ROM objects. This is used to be able to
- *           easily pass around several ROM objects in a form that is
- *           usable in the emulator.
- */
-typedef std::vector<std::unique_ptr<ROM> > ROMBanks;
-typedef std::vector<std::unique_ptr<RAM> > RAMBanks;
+    inline void setHigh(uint8_t value)
+    {
+        mValue = (mValue & 0x00FF) | (value << 8);
+        mHighSet = true;
+    }
+
+    inline void reset()
+    {
+        mHighSet = false;
+        mValue = 0;
+    }
+
+    inline uint16_t get() const
+    {
+        return mValue;
+    }
+
+    inline void inc(uint8_t amount)
+    {
+        mValue += amount;
+    }
+
+private:
+    bool mHighSet;
+    uint16_t mValue;
+};
 }
 }
 

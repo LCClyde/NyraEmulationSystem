@@ -21,12 +21,15 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#ifndef __NYRA_NES_PPU_MEMORY_H__
-#define __NYRA_NES_PPU_MEMORY_H__
+#ifndef __NYRA_NES_PPU_REGISTERS_H__
+#define __NYRA_NES_PPU_REGISTERS_H__
 
 #include <nes/Memory.h>
+#include <nes/MemoryMap.h>
 #include <nes/Constants.h>
+#include <nes/HiLowLatch.h>
 #include <bitset>
+#include <vector>
 
 namespace nyra
 {
@@ -35,7 +38,7 @@ namespace nes
 class OamDma : public Memory
 {
 public:
-    OamDma();
+    OamDma(HiLowLatch& spriteRamAddress);
 
     uint8_t readByte(size_t )
     {
@@ -43,9 +46,9 @@ public:
     }
 
     virtual void writeByte(size_t ,
-                            uint8_t value)
+                           uint8_t value)
     {
-        mMemory = value;
+        mSpriteRamAddress.setHigh(value);
     }
 
     std::bitset<FLAG_SIZE>& getRegister()
@@ -54,9 +57,10 @@ public:
     }
 private:
     std::bitset<FLAG_SIZE> mMemory;
+    HiLowLatch& mSpriteRamAddress;
 };
 
-class PPUMemory : public Memory
+class PPURegisters : public Memory
 {
 public:
     enum Register
@@ -82,7 +86,7 @@ public:
 
     enum
     {
-        NAMETABLE_ADDRESS_LOW,
+        NAMETABLE_ADDRESS_LOW = 0,
         NAMETABLE_ADDRESS_HIGH,
         VRAM_INC,
         SPRITE_PATTERN_TABLE,
@@ -92,15 +96,24 @@ public:
         NMI_ENABLED
     };
 
-    PPUMemory();
+    enum
+    {
+        GRAYSCALE = 0,
+        BACKGROUND_LEFTMOST,
+        SPRITES_LEFTMOST,
+        SHOW_BACKGROUND,
+        SHOW_SPRITES,
+        EMPHASIZE_REF,
+        EMPHASIZE_GREEN,
+        EMPHASIZE_BLUE
+    };
+
+    PPURegisters(MemoryMap& vram);
 
     uint8_t readByte(size_t address);
 
     virtual void writeByte(size_t address,
-                           uint8_t value)
-    {
-        mMemory[address] = value;
-    }
+                           uint8_t value);
 
     std::bitset<FLAG_SIZE>& getRegister(Register reg)
     {
@@ -112,10 +125,18 @@ public:
         return mOamDma;
     }
 
+    uint16_t getSpriteRamAddress() const
+    {
+        return mSpriteRamAddress.get();
+    }
+
 protected:
     std::bitset<FLAG_SIZE> mMemory[MAX_REGISTER];
 
+    HiLowLatch mSpriteRamAddress;
+    HiLowLatch mPPUAddress;
     OamDma mOamDma;
+    MemoryMap& mVRAM;
 };
 }
 }

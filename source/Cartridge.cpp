@@ -30,14 +30,14 @@ namespace nes
 {
 /*****************************************************************************/
 static const size_t PRG_ROM_SIZE = 16384;
-static const size_t CHR_ROM_SIZE = 8192;
+static const size_t CHR_ROM_SIZE = 4096;
 
 /*****************************************************************************/
 Cartridge::Cartridge(const std::string& pathname) :
     mFile(core::readBinary(pathname)),
     mHeader(mFile),
     mProgROM(mHeader.getProgRomSize()),
-    mChrROM(mHeader.getChrRomSize())
+    mChrROM(mHeader.getChrRomSize() * 2)
 {
     const uint8_t* ptr = reinterpret_cast<const uint8_t*>(
             &mFile[0] + mHeader.getHeaderSize());
