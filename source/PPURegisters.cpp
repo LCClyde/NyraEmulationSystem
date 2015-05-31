@@ -53,6 +53,9 @@ uint8_t PPURegisters::readByte(size_t address)
         mMemory[PPUSTATUS][VBLANK] = false;
         mPPUAddress.reset();
         break;
+    case PPUDATA:
+        //mPPUAddress.inc(mMemory[PPUCTRL][VRAM_INC ] ? 32 : 1);
+        break;
 
     default:
         // Do Nothing

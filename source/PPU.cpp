@@ -23,6 +23,8 @@
  *****************************************************************************/
 #include <nes/PPU.h>
 #include <nes/Constants.h>
+#include <iostream>
+#include <core/StringConvert.h>
 
 namespace
 {
@@ -36,6 +38,7 @@ uint32_t rgb(uint8_t r, uint8_t g, uint8_t b)
 static const int16_t VBLANK_START = 241;
 static const int16_t VBLANK_END = -1;
 static const size_t SPRITE_PALETTE_ADDRESS = 0x3F10;
+static const size_t BACKGROUND_PALETTE_ADDRESS = 0x3F00;
 static const uint32_t RGB_PALLETE[64] =
 {
 rgb( 84,  84,  84), rgb(  0,  30, 116), rgb(  8,  16, 144), rgb( 48,   0, 136),
@@ -55,7 +58,6 @@ rgb(236, 174, 236), rgb(236, 174, 212), rgb(236, 180, 176), rgb(228, 196, 144),
 rgb(204, 210, 120), rgb(180, 222, 120), rgb(168, 226, 144), rgb(152, 226, 180),
 rgb(160, 214, 228), rgb(160, 162, 160), rgb(  0,   0,   0), rgb(  0,   0,   0)
 };
-static const uint32_t NULL_PIXEL = 0xFFFFFFFF;
 }
 
 namespace nyra
@@ -110,6 +112,43 @@ void PPU::renderScanline(int16_t scanLine,
     }
 
     uint32_t* const ptr = buffer + (scanLine * SCREEN_WIDTH);
+    const uint32_t backgroundColor =
+            RGB_PALLETE[mVRAM.getBackgroundColor()];
+
+    //! Render background
+    const size_t backgroundY = scanLine / 8;
+    const size_t backgroundAddress = 0x2000 + (backgroundY * 32);
+    for (size_t ii = 0; ii < 32; ++ii)
+    {
+        const size_t backgroundIndex =
+                mVRAM.readByte(backgroundAddress + ii);
+        const size_t pixelPosition = ii * 8;
+        const size_t address = 0x1000 + (backgroundIndex * 16);
+
+        // Get palette number
+        const size_t attributeRow = backgroundY / 4;
+        const size_t attributeCol = ii / 4;
+        const uint8_t attributeIndex =
+                mVRAM.readByte(0x23C0 + (attributeRow * 8) + attributeCol);
+
+        // The palette that is returned is for four tiles.
+        // value = (topleft << 0) |
+        //         (topright << 2) |
+        //         (bottomleft << 4) |
+        //         (bottomright << 6)
+        const uint8_t paletteIndex =
+                (((ii / 2) % 2) + (((backgroundY / 2) %  2) * 2)) * 2;
+        const uint8_t paletteNumber = (attributeIndex >> paletteIndex) & 0x03;
+
+        // Render this background
+        for (size_t jj = 0; jj < 8; ++jj)
+        {
+            ptr[pixelPosition + jj] = extractPixel(
+                    address + (scanLine % 8),
+                    7 - jj,
+                    BACKGROUND_PALETTE_ADDRESS + (paletteNumber * 4));
+        }
+    }
 
     const uint16_t spriteAddress = mRegisters.getSpriteRamAddress();
 
@@ -118,7 +157,7 @@ void PPU::renderScanline(int16_t scanLine,
     {
         // Get the y position
         const int16_t renderLine =
-                memory.readByte(spriteAddress + ii) - scanLine;
+                memory.readByte(spriteAddress + ii) - scanLine + 8;
         if (renderLine < 8 && renderLine >= 0)
         {
             // Get the sprite number
@@ -132,10 +171,10 @@ void PPU::renderScanline(int16_t scanLine,
             const size_t xPosition = memory.readByte(spriteAddress + ii + 3);
 
             // Render this sprite into this line
-            for (size_t ii = 0; ii < 8; ++ii)
+            for (size_t jj = 0; jj < 8; ++jj)
             {
                 const size_t pixelPosition = xPosition +
-                        (flipHorizontally ? (7 - ii) : ii);
+                        (flipHorizontally ? (7 - jj) : jj);
 
                 // Note that pixelPosition is unsigned. If it goes negative,
                 // it because max unsigned int.
@@ -144,10 +183,11 @@ void PPU::renderScanline(int16_t scanLine,
                     continue;
                 }
 
-                const uint32_t pixel = extractPixel(address + (7 - renderLine),
-                                                    7 - ii,
-                                                    paletteNumber);
-                if (pixel != NULL_PIXEL)
+                const uint32_t pixel = extractPixel(
+                        address + (7 - renderLine),
+                        7 - jj,
+                        SPRITE_PALETTE_ADDRESS + (paletteNumber * 4));
+                if (pixel != backgroundColor)
                 {
                     ptr[pixelPosition] = pixel;
                 }
@@ -173,12 +213,9 @@ uint32_t PPU::extractPixel(uint32_t address,
             ((mVRAM.readByte(address + 8) >>
                     (bitPosition) & 0x01)) << 1;
     const uint8_t addressOffset = (val1 | val2);
-    if (addressOffset != 0)
-    {
-        const size_t paletteAddress = SPRITE_PALETTE_ADDRESS + (palette * 4) + addressOffset;
-        return RGB_PALLETE[mVRAM.readByte(paletteAddress)];
-    }
-    return NULL_PIXEL;
+
+    const size_t paletteAddress = palette + addressOffset;
+    return RGB_PALLETE[mVRAM.readByte(paletteAddress)];
 }
 }
 }

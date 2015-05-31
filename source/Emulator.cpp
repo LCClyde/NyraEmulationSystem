@@ -47,12 +47,6 @@ void Emulator::tick(uint32_t* buffer,
         disassembly->clear();
     }
 
-    // Clear buffer
-    if (buffer)
-    {
-        std::fill_n(buffer, NUM_PIXELS, 0);
-    }
-
     do
     {
         mCPU.processScanline(*mMemoryMap,

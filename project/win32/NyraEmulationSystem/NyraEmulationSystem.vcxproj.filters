@@ -129,7 +129,7 @@
       <Filter>Memory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\HiLowLatch.cpp">
-      <Filter>Machine</Filter>
+      <Filter>Memory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

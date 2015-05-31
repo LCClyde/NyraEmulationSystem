@@ -46,6 +46,7 @@ public:
         {
             setLow(value);
         }
+        mHighSet = !mHighSet;
     }
 
     inline void setLow(uint8_t value)
@@ -56,7 +57,6 @@ public:
     inline void setHigh(uint8_t value)
     {
         mValue = (mValue & 0x00FF) | (value << 8);
-        mHighSet = true;
     }
 
     inline void reset()
@@ -73,6 +73,7 @@ public:
     inline void inc(uint8_t amount)
     {
         mValue += amount;
+        mValue &= 0x7FFF;
     }
 
 private:

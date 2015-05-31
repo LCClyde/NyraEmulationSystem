@@ -30,14 +30,30 @@ namespace nes
 /*****************************************************************************/
 VRAM::VRAM(const ROMBanks& chrROM) :
     MemoryMap(),
-    mNametables(0x1000),
+    //mNametables(2),
+    mNametable(0x1000),
     mUniversalBackgroundColor(4),
-    mPalettes(8)
+    mPalettes(8),
+    mFill(0x0F00)
 {
     setMemoryBank(0x0000, *chrROM[0]);
     setMemoryBank(0x1000, *chrROM[1]);
-    setMemoryBank(0x2000, mNametables);
-    setMemoryBank(0x3000, mNametables);
+
+    setMemoryBank(0x2000, mNametable);
+    /*mNametables[0].reset(new RAM(0x400));
+    mNametables[1].reset(new RAM(0x400));
+    setMemoryBank(0x2000, *mNametables[0]);
+    setMemoryBank(0x2400, *mNametables[0]);
+    setMemoryBank(0x2800, *mNametables[1]);
+    setMemoryBank(0x2C00, *mNametables[1]);*/
+
+    // TODO: This should actually be a mirror of $2000 - $2EFF
+    setMemoryBank(0x3000, mFill);
+    /*setMemoryBank(0x3000, *mNametables[0]);
+    setMemoryBank(0x3400, *mNametables[0]);
+    setMemoryBank(0x3800, *mNametables[1]);
+    setMemoryBank(0x3C00, *mNametables[1]);*/
+
     for (size_t ii = 0; ii < 4; ++ii)
     {
         mUniversalBackgroundColor[ii].reset(new RAM(1));
@@ -45,8 +61,11 @@ VRAM::VRAM(const ROMBanks& chrROM) :
         mPalettes[ii + 4].reset(new RAM(3));
 
         const size_t address = ii * 4;
-        setMemoryBank(0x3F00 + address, *mUniversalBackgroundColor[ii]);
-        setMemoryBank(0x3F10 + address, *mUniversalBackgroundColor[ii]);
+        // TODO: This should actually be mUniversalBackgroundColor[ii].
+        //       But that makes things more difficult and has no functional
+        //       purpose other than being techinically correct.
+        setMemoryBank(0x3F00 + address, *mUniversalBackgroundColor[0]);
+        setMemoryBank(0x3F10 + address, *mUniversalBackgroundColor[0]);
         setMemoryBank(0x3F01 + address, *mPalettes[ii]);
         setMemoryBank(0x3F11 + address, *mPalettes[ii + 4]);
     }

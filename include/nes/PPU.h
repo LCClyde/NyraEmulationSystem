@@ -78,6 +78,11 @@ public:
         return mRegisters;
     }
 
+    void vblank()
+    {
+        mVRAM.vblank();
+    }
+
 private:
     VRAM mVRAM;
     PPURegisters mRegisters;

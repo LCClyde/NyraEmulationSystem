@@ -10313,6 +10313,36 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_PPU_vblank(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  nyra::nes::PPU *arg1 = (nyra::nes::PPU *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:PPU_vblank",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_nyra__nes__PPU, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PPU_vblank" "', argument " "1"" of type '" "nyra::nes::PPU *""'"); 
+  }
+  arg1 = reinterpret_cast< nyra::nes::PPU * >(argp1);
+  {
+    try
+    {
+      (arg1)->vblank();
+    }
+    catch (const std::exception& e)
+    {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_delete_PPU(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   nyra::nes::PPU *arg1 = (nyra::nes::PPU *) 0 ;
@@ -16939,6 +16969,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"PPU_extract_pixel", _wrap_PPU_extract_pixel, METH_VARARGS, NULL},
 	 { (char *)"PPU_get_regisers", _wrap_PPU_get_regisers, METH_VARARGS, NULL},
 	 { (char *)"PPU_get_registers", _wrap_PPU_get_registers, METH_VARARGS, NULL},
+	 { (char *)"PPU_vblank", _wrap_PPU_vblank, METH_VARARGS, NULL},
 	 { (char *)"delete_PPU", _wrap_delete_PPU, METH_VARARGS, NULL},
 	 { (char *)"PPU_swigregister", PPU_swigregister, METH_VARARGS, NULL},
 	 { (char *)"create_memory_map", _wrap_create_memory_map, METH_VARARGS, NULL},

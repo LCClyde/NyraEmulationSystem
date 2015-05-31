@@ -38,10 +38,25 @@ class VRAM : public MemoryMap
 public:
     VRAM(const ROMBanks& chrROM);
 
+    inline uint8_t getBackgroundColor()
+    {
+        return mUniversalBackgroundColor[0]->readByte(0);
+    }
+
+    void vblank()
+    {
+        for (size_t ii = 0; ii < mNametable.getSize(); ++ii)
+        {
+            mNametable.writeByte(ii, 0);
+        }
+    }
+
 private:
-    RAM mNametables;
+    RAM mNametable;
+    //RAMBanks mNametables;
     RAMBanks mUniversalBackgroundColor;
     RAMBanks mPalettes;
+    RAM mFill;
 };
 }
 }

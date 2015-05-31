@@ -659,6 +659,9 @@ class PPU(_object):
 
     def get_registers(self):
         return _nes.PPU_get_registers(self)
+
+    def vblank(self):
+        return _nes.PPU_vblank(self)
     __swig_destroy__ = _nes.delete_PPU
     __del__ = lambda self: None
 PPU_swigregister = _nes.PPU_swigregister
