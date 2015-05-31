@@ -24,7 +24,6 @@
 #include <nes/Emulator.h>
 #include <nes/MemoryFactory.h>
 #include <nes/Constants.h>
-#include <Windows.h>
 
 namespace nyra
 {
@@ -43,7 +42,6 @@ Emulator::Emulator(const std::string& pathname) :
 void Emulator::tick(uint32_t* buffer,
                     std::vector<Disassembly>* disassembly)
 {
-    Sleep(15);
     if (disassembly)
     {
         disassembly->clear();
