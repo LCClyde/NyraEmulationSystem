@@ -76,6 +76,8 @@ VRAM::VRAM(const ROMBanks& chrROM,
         setMemoryBank(0x3F01 + address, *mPalettes[ii]);
         setMemoryBank(0x3F11 + address, *mPalettes[ii + 4]);
     }
+
+    lockLookUpTable();
 }
 }
 }

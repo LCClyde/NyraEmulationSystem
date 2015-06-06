@@ -535,6 +535,9 @@ class MemoryMap(_object):
     def read_short(self, address):
         return _nes.MemoryMap_read_short(self, address)
 
+    def lock_look_up_table(self):
+        return _nes.MemoryMap_lock_look_up_table(self)
+
     def __init__(self):
         this = _nes.new_MemoryMap()
         try:

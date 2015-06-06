@@ -31,7 +31,8 @@ class Screen:
         # Update fps
         self.fps += 1
         time = timeit.default_timer()
-        if time - self.prev_time >= 1.0:
+        self.current_time = time - self.prev_time
+        if self.current_time >= 1.0:
             pygame.display.set_caption('FPS: ' + str(self.fps))
             self.fps = 0
             self.prev_time = time

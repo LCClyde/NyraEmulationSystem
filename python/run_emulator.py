@@ -19,7 +19,6 @@ if __name__ == "__main__":
     keep_going = True
     while keep_going:
         try:
-            time.sleep(0.01)
             pressed = pygame.key.get_pressed()
             if pressed[pygame.K_RETURN]:
                 emulator.controller_1.set_key(Controller.BUTTON_START)

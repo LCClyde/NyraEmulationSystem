@@ -45,6 +45,7 @@ public:
 private:
     RAM mZeroPage;
     RAM mRAM;
+    RAM mFill0;
     RAM mFill1;
     RAM mFill2;
 };

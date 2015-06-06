@@ -33,8 +33,9 @@ MemorySystem::MemorySystem(PPURegisters& ppu,
                            Controller& controller2) :
     mRAM(0x0700),
     mZeroPage(0x0100),
+    mFill0(1),
     mFill1(0x14),
-    mFill2(0x3FEC)
+    mFill2(0x3FE8)
 {
     // Mirror the RAM to 0x2000
     for (size_t ii = 0; ii < 0x2000;
@@ -55,12 +56,12 @@ MemorySystem::MemorySystem(PPURegisters& ppu,
     setMemoryBank(0x4000, mFill1);
 
     setMemoryBank(0x4014, ppu.getOamDma());
-
-    setMemoryBank(0x4015, mFill2);
+    setMemoryBank(0x4015, mFill0);
 
     // Controller memory
     setMemoryBank(0x4016, controller1);
     setMemoryBank(0x4017, controller2);
+    setMemoryBank(0x4018, mFill2);
 
 }
 

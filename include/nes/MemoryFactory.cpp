@@ -35,11 +35,13 @@ std::shared_ptr<MemoryMap> createMemoryMap(
         Controller& controller1,
         Controller& controller2)
 {
-    return std::shared_ptr<MemoryMap>(new MemoryNROM(
-            cart.getProgROM(),
-            ppu.getRegisers(),
-            controller1,
-            controller2));
+    std::shared_ptr<MemoryMap> ret(
+            new MemoryNROM(cart.getProgROM(),
+                           ppu.getRegisers(),
+                           controller1,
+                           controller2));
+    ret->lockLookUpTable();
+    return ret;
 }
 }
 }

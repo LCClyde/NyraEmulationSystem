@@ -9420,6 +9420,36 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_MemoryMap_lock_look_up_table(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  nyra::nes::MemoryMap *arg1 = (nyra::nes::MemoryMap *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:MemoryMap_lock_look_up_table",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_nyra__nes__MemoryMap, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MemoryMap_lock_look_up_table" "', argument " "1"" of type '" "nyra::nes::MemoryMap *""'"); 
+  }
+  arg1 = reinterpret_cast< nyra::nes::MemoryMap * >(argp1);
+  {
+    try
+    {
+      (arg1)->lockLookUpTable();
+    }
+    catch (const std::exception& e)
+    {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_new_MemoryMap(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   nyra::nes::MemoryMap *result = 0 ;
@@ -17482,6 +17512,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"MemoryMap_get_op_info", _wrap_MemoryMap_get_op_info, METH_VARARGS, NULL},
 	 { (char *)"MemoryMap_read_byte", _wrap_MemoryMap_read_byte, METH_VARARGS, NULL},
 	 { (char *)"MemoryMap_read_short", _wrap_MemoryMap_read_short, METH_VARARGS, NULL},
+	 { (char *)"MemoryMap_lock_look_up_table", _wrap_MemoryMap_lock_look_up_table, METH_VARARGS, NULL},
 	 { (char *)"new_MemoryMap", _wrap_new_MemoryMap, METH_VARARGS, NULL},
 	 { (char *)"MemoryMap_swigregister", MemoryMap_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_OamDma", _wrap_new_OamDma, METH_VARARGS, NULL},

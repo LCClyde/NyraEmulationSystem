@@ -1,7 +1,7 @@
 
 import unittest
 import os
-from nes import CPU, Cartridge, create_memory_map, DisassemblyVector, PPU
+from nes import CPU, Cartridge, create_memory_map, DisassemblyVector, PPU, Controller
 from print_disassembly import print_nintendulator
 
 class TestCPU(unittest.TestCase):
@@ -12,8 +12,10 @@ class TestCPU(unittest.TestCase):
                 os.path.dirname(os.path.realpath(__file__)), 'nestest.log')
         cart = Cartridge(cart_pathname)
         
-        ppu = PPU(cart.get_chr_rom())
-        memory = create_memory_map(cart, ppu)
+        ppu = PPU(cart.get_chr_rom(), 0)
+        controller1 = Controller()
+        controller2 = Controller()
+        memory = create_memory_map(cart, ppu, controller1, controller2)
 
         lines = open(log_pathname).readlines()
 
@@ -29,7 +31,8 @@ class TestCPU(unittest.TestCase):
                 cpu.process_scanline(memory, disassembly)
             except:
                 keep_going = False
-                disassembly.pop()
+                if not disassembly.empty():
+                    disassembly.pop()
 
             for data in disassembly:
                 self.assertEqual(print_nintendulator(data),
