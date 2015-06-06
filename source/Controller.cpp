@@ -21,52 +21,51 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#include <nes/MemorySystem.h>
+#include <nes/Controller.h>
+#include <iostream>
 
 namespace nyra
 {
 namespace nes
 {
 /*****************************************************************************/
-MemorySystem::MemorySystem(PPURegisters& ppu,
-                           Controller& controller1,
-                           Controller& controller2) :
-    mRAM(0x0700),
-    mZeroPage(0x0100),
-    mFill1(0x14),
-    mFill2(0x3FEC)
+Controller::Controller() :
+    Memory(1),
+    mStrobe(false),
+    mIndex(BUTTON_A)
 {
-    // Mirror the RAM to 0x2000
-    for (size_t ii = 0; ii < 0x2000;
-            ii += (mRAM.getSize() + mZeroPage.getSize()))
-    {
-        setMemoryBank(ii, mZeroPage);
-        setMemoryBank(ii  + mZeroPage.getSize(), mRAM);
-    }
-
-    // PPU Memory
-    for (size_t ii = 0x2000; ii < 0x4000; ii += ppu.getSize())
-    {
-        setMemoryBank(ii, ppu);
-    }
-
-    //! TODO: This is a tempory hack to prevent from
-    //        reading and writing to a NULL register.
-    setMemoryBank(0x4000, mFill1);
-
-    setMemoryBank(0x4014, ppu.getOamDma());
-
-    setMemoryBank(0x4015, mFill2);
-
-    // Controller memory
-    setMemoryBank(0x4016, controller1);
-    setMemoryBank(0x4017, controller2);
-
+    std::fill_n(mButtons, static_cast<size_t>(BUTTON_MAX), false);
+    std::fill_n(mButtonsQueued, static_cast<size_t>(BUTTON_MAX), false);
 }
 
 /*****************************************************************************/
-MemorySystem::~MemorySystem()
+void Controller::writeByte(size_t ,
+                           uint8_t value)
 {
+    mStrobe = ((value & 0x01) == 0x01);
+    mIndex = BUTTON_A;
+    if (mStrobe)
+    {
+        std::copy(mButtonsQueued, mButtonsQueued + BUTTON_MAX, mButtons);
+        std::fill_n(mButtonsQueued, static_cast<size_t>(BUTTON_MAX), false);
+    }
+}
+
+/*****************************************************************************/
+uint8_t Controller::readByte(size_t )
+{
+    // TODO: This will probably never be used?
+    //       It is currently unexpectly entered because of the way the memory
+    //       is handled. This should be reworked so it never enters here as a
+    //       side effect.
+    if (mStrobe)
+    {
+        // This should actually strobe the controller?
+        return mButtons[BUTTON_A] ? 0x01 : 0x00;
+    }
+    const uint8_t ret = mButtons[mIndex] ? 0x01 : 0x00;
+    mIndex = static_cast<ControllerBit>((mIndex + 1) % BUTTON_MAX);
+    return ret;
 }
 }
 }

@@ -31,7 +31,6 @@ namespace nyra
 {
 namespace nes
 {
-class ROM;
 
 /*
  *  \Constant - FLAG_SIZE
@@ -50,8 +49,21 @@ static const size_t NUM_PIXELS = SCREEN_WIDTH * SCREEN_HEIGHT;
  *           easily pass around several ROM objects in a form that is
  *           usable in the emulator.
  */
+class ROM;
+class RAM;
 typedef std::vector<std::unique_ptr<ROM> > ROMBanks;
 typedef std::vector<std::unique_ptr<RAM> > RAMBanks;
+
+/*
+ *  \enum - Mirroring
+ *  \brief - Describes how the nametables should be presented to
+ *           the player.
+ */
+enum Mirroring
+{
+    HORIZONTAL,
+    VERTICAL
+};
 }
 }
 

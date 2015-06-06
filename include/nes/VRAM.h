@@ -36,24 +36,17 @@ namespace nes
 class VRAM : public MemoryMap
 {
 public:
-    VRAM(const ROMBanks& chrROM);
+    VRAM(const ROMBanks& chrROM,
+         Mirroring mirroring);
 
     inline uint8_t getBackgroundColor()
     {
         return mUniversalBackgroundColor[0]->readByte(0);
     }
 
-    void vblank()
-    {
-        for (size_t ii = 0; ii < mNametable.getSize(); ++ii)
-        {
-            mNametable.writeByte(ii, 0);
-        }
-    }
-
 private:
-    RAM mNametable;
-    //RAMBanks mNametables;
+    //RAM mNametable;
+    RAMBanks mNametables;
     RAMBanks mUniversalBackgroundColor;
     RAMBanks mPalettes;
     RAM mFill;

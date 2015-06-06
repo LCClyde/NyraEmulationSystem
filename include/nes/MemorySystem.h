@@ -26,6 +26,7 @@
 
 #include <nes/MemoryMap.h>
 #include <nes/PPURegisters.h>
+#include <nes/Controller.h>
 
 namespace nyra
 {
@@ -35,7 +36,9 @@ namespace nes
 class MemorySystem : public MemoryMap
 {
 public:
-    MemorySystem(PPURegisters& ppu);
+    MemorySystem(PPURegisters& ppu,
+                 Controller& controller1,
+                 Controller& controller2);
 
     virtual ~MemorySystem();
 

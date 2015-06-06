@@ -37,7 +37,9 @@ class MemoryNROM : public MemorySystem
 {
 public:
     MemoryNROM(const ROMBanks& prgROM,
-               PPURegisters& ppu);
+               PPURegisters& ppu,
+               Controller& controller1,
+               Controller& controller2);
 };
 }
 }

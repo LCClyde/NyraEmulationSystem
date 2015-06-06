@@ -65,8 +65,9 @@ namespace nyra
 namespace nes
 {
 /*****************************************************************************/
-PPU::PPU(const ROMBanks& chrROM) :
-    mVRAM(chrROM),
+PPU::PPU(const ROMBanks& chrROM,
+         Mirroring mirroring) :
+    mVRAM(chrROM, mirroring),
     mRegisters(mVRAM)
 {
 }
@@ -91,6 +92,8 @@ void PPU::processScanline(CPUInfo& info,
         // Set the VBLANK flag
         mRegisters.getRegister(
                 PPURegisters::PPUSTATUS)[PPURegisters::VBLANK] = false;
+        mRegisters.getRegister(
+                PPURegisters::PPUSTATUS)[PPURegisters::SPRITE_HIT_0] = false;
         break;
     }
 
@@ -114,22 +117,53 @@ void PPU::renderScanline(int16_t scanLine,
     uint32_t* const ptr = buffer + (scanLine * SCREEN_WIDTH);
     const uint32_t backgroundColor =
             RGB_PALLETE[mVRAM.getBackgroundColor()];
+    size_t paletteAddress;
+    const uint8_t scrollX = mRegisters.getScrollX();
+    const size_t backgroundPatternTable =
+            mRegisters.getRegister(PPURegisters::PPUCTRL)
+            [PPURegisters::BACKGROUND_PATTERN_TABLE] ? 0x1000 : 0x0000;
 
+    //! TODO: This should be & 0x03 and take the y nametable into
+    //        consideration
+    const uint8_t nametableBaseAddress = mRegisters.getRegister(
+            PPURegisters::PPUCTRL).to_ulong() & 0x01;
+
+    //! TODO: Scroll in the y direction
     //! Render background
     const size_t backgroundY = scanLine / 8;
-    const size_t backgroundAddress = 0x2000 + (backgroundY * 32);
-    for (size_t ii = 0; ii < 32; ++ii)
+
+    //! TODO: This needs a lot of clean up.
+    for (int32_t ii = 0; ii < 33; ++ii)
     {
-        const size_t backgroundIndex =
-                mVRAM.readByte(backgroundAddress + ii);
-        const size_t pixelPosition = ii * 8;
-        const size_t address = 0x1000 + (backgroundIndex * 16);
+        // Get the background X position
+        int32_t backgroundX = ii + (scrollX / 8);
+        size_t baseNametableAddress;
+
+        // If the background X is greater than 32, we need to go to the next
+        // nametable
+        if (backgroundX >= 32)
+        {
+            backgroundX -= 32;
+            baseNametableAddress = nametableBaseAddress ? 0x2000 : 0x2400;
+        }
+        else
+        {
+            baseNametableAddress = nametableBaseAddress ? 0x2400 : 0x2000;
+        }
+
+        // Get the background tile index
+        const size_t backgroundIndex = mVRAM.readByte(
+                baseNametableAddress + (backgroundY * 32) + backgroundX);
+
+        const size_t pixelPosition = (ii * 8) - (scrollX % 8);
+        const size_t address = backgroundPatternTable + (backgroundIndex * 16);
 
         // Get palette number
         const size_t attributeRow = backgroundY / 4;
-        const size_t attributeCol = ii / 4;
+        const size_t attributeCol = backgroundX / 4;
         const uint8_t attributeIndex =
-                mVRAM.readByte(0x23C0 + (attributeRow * 8) + attributeCol);
+                mVRAM.readByte(baseNametableAddress + 0x03C0 +
+                        (attributeRow * 8) + attributeCol);
 
         // The palette that is returned is for four tiles.
         // value = (topleft << 0) |
@@ -137,16 +171,22 @@ void PPU::renderScanline(int16_t scanLine,
         //         (bottomleft << 4) |
         //         (bottomright << 6)
         const uint8_t paletteIndex =
-                (((ii / 2) % 2) + (((backgroundY / 2) %  2) * 2)) * 2;
+                (((backgroundX / 2) % 2) + (((backgroundY / 2) %  2) * 2)) * 2;
         const uint8_t paletteNumber = (attributeIndex >> paletteIndex) & 0x03;
 
         // Render this background
         for (size_t jj = 0; jj < 8; ++jj)
         {
-            ptr[pixelPosition + jj] = extractPixel(
-                    address + (scanLine % 8),
-                    7 - jj,
-                    BACKGROUND_PALETTE_ADDRESS + (paletteNumber * 4));
+            // Make sure the pixel is in a valid range
+            if (pixelPosition + jj >= 0 && pixelPosition + jj < 256)
+            {
+                ptr[pixelPosition + jj] = extractPixel(
+                        address + (scanLine % 8),
+                        7 - jj,
+                        BACKGROUND_PALETTE_ADDRESS + (paletteNumber * 4),
+                        backgroundColor,
+                        paletteAddress);
+            }
         }
     }
 
@@ -167,6 +207,7 @@ void PPU::renderScanline(int16_t scanLine,
             const size_t attributes = memory.readByte(spriteAddress + ii + 2);
             const size_t paletteNumber = attributes & 0x03;
             const bool flipHorizontally = (attributes & 0x40) > 0;
+            const bool flipVertically = (attributes & 0x80) > 0;
 
             const size_t xPosition = memory.readByte(spriteAddress + ii + 3);
 
@@ -184,12 +225,26 @@ void PPU::renderScanline(int16_t scanLine,
                 }
 
                 const uint32_t pixel = extractPixel(
-                        address + (7 - renderLine),
+                        address + (flipVertically ? renderLine : (7 - renderLine)),
                         7 - jj,
-                        SPRITE_PALETTE_ADDRESS + (paletteNumber * 4));
-                if (pixel != backgroundColor)
+                        SPRITE_PALETTE_ADDRESS + (paletteNumber * 4),
+                        backgroundColor,
+                        paletteAddress);
+
+                if (paletteAddress != 0)
                 {
+                    //! TODO: This actually needs to check if the pixel has
+                    //        a palette of 0. There is the posibility that
+                    //        a palette reuses the background color.
+                    // Check for sprite hit 0
+                    if (ii == 0 && ptr[pixelPosition] != backgroundColor)
+                    {
+                        mRegisters.getRegister(PPURegisters::PPUSTATUS)
+                                [PPURegisters::SPRITE_HIT_0] = true;
+                    }
+
                     ptr[pixelPosition] = pixel;
+
                 }
             }
         }
@@ -199,7 +254,9 @@ void PPU::renderScanline(int16_t scanLine,
 /*****************************************************************************/
 uint32_t PPU::extractPixel(uint32_t address,
                            size_t bitPosition,
-                           size_t palette)
+                           size_t palette,
+                           uint32_t backgroundColor,
+                           size_t& paletteAddress)
 {
     //! TODO: Is there a reliable way to preprocess this
     //        information? I need more information about CHR ROM
@@ -212,10 +269,14 @@ uint32_t PPU::extractPixel(uint32_t address,
     const uint8_t val2 =
             ((mVRAM.readByte(address + 8) >>
                     (bitPosition) & 0x01)) << 1;
-    const uint8_t addressOffset = (val1 | val2);
+    paletteAddress = (val1 | val2);
 
-    const size_t paletteAddress = palette + addressOffset;
-    return RGB_PALLETE[mVRAM.readByte(paletteAddress)];
+    if (paletteAddress == 0)
+    {
+        return backgroundColor;
+    }
+
+    return RGB_PALLETE[mVRAM.readByte(palette + paletteAddress)];
 }
 }
 }

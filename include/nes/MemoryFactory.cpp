@@ -31,10 +31,15 @@ namespace nes
 /*****************************************************************************/
 std::shared_ptr<MemoryMap> createMemoryMap(
         const Cartridge& cart,
-        PPU& ppu)
+        PPU& ppu,
+        Controller& controller1,
+        Controller& controller2)
 {
-    return std::shared_ptr<MemoryMap>(
-        new MemoryNROM(cart.getProgROM(), ppu.getRegisers()));
+    return std::shared_ptr<MemoryMap>(new MemoryNROM(
+            cart.getProgROM(),
+            ppu.getRegisers(),
+            controller1,
+            controller2));
 }
 }
 }

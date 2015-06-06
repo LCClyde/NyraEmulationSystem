@@ -28,6 +28,7 @@
 #include <nes/MemoryMap.h>
 #include <nes/Cartridge.h>
 #include <nes/PPU.h>
+#include <nes/Controller.h>
 
 namespace nyra
 {
@@ -35,7 +36,9 @@ namespace nes
 {
 std::shared_ptr<MemoryMap> createMemoryMap(
         const Cartridge& cart,
-        PPU& ppu);
+        PPU& ppu,
+        Controller& controller1,
+        Controller& controller2);
 }
 }
 

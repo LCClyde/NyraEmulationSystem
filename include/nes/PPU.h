@@ -49,7 +49,8 @@ public:
      *  \func - Constructor
      *  \brief - Sets a default internal structure for the PPU.
      */
-    PPU(const ROMBanks& chrROM);
+    PPU(const ROMBanks& chrROM,
+        Mirroring mirroring);
 
     /*
      *  \func - tick
@@ -66,7 +67,9 @@ public:
 
     uint32_t extractPixel(uint32_t address,
                           size_t bitPosition,
-                          size_t palette);
+                          size_t palette,
+                          uint32_t backgroundColor,
+                          size_t& paletteAddress);
 
     inline PPURegisters& getRegisers()
     {
@@ -76,11 +79,6 @@ public:
     inline const PPURegisters& getRegisters() const
     {
         return mRegisters;
-    }
-
-    void vblank()
-    {
-        mVRAM.vblank();
     }
 
 private:

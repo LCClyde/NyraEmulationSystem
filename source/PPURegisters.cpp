@@ -23,6 +23,7 @@
  *****************************************************************************/
 #include <nes/PPURegisters.h>
 #include <core/Exception.h>
+#include <core/StringConvert.h>
 
 namespace nyra
 {
@@ -39,7 +40,8 @@ OamDma::OamDma(HiLowLatch& spriteRamAddress) :
 PPURegisters::PPURegisters(MemoryMap& vram) :
     Memory(8),
     mOamDma(mSpriteRamAddress),
-    mVRAM(vram)
+    mVRAM(vram),
+    mByteBuffer(0)
 {
 }
 
@@ -52,10 +54,26 @@ uint8_t PPURegisters::readByte(size_t address)
     case PPUSTATUS:
         mMemory[PPUSTATUS][VBLANK] = false;
         mPPUAddress.reset();
+        mScrollPosition.reset();
         break;
     case PPUDATA:
-        //mPPUAddress.inc(mMemory[PPUCTRL][VRAM_INC ] ? 32 : 1);
+    {
+        const size_t ppuAddress = mPPUAddress.get();
+        mPPUAddress.inc(mMemory[PPUCTRL][VRAM_INC ] ? 32 : 1);
+
+        // 1 byte delay
+        const uint8_t ret = mByteBuffer;
+        mByteBuffer = mVRAM.readByte(ppuAddress);
+        if (ppuAddress <= 0x3EFF)
+        {
+            return ret;
+        }
+        else
+        {
+            return mVRAM.readByte(ppuAddress);
+        }
         break;
+    }
 
     default:
         // Do Nothing
@@ -74,11 +92,19 @@ void PPURegisters::writeByte(size_t address, uint8_t value)
         mSpriteRamAddress.setLow(value);
         break;
     case PPUADDR:
+        //! HACK: Reset the base nametable address
+        //        We need to implement full scrolling to get around this.
+        mMemory[PPUCTRL][NAMETABLE_ADDRESS_LOW] = false;
+        mMemory[PPUCTRL][NAMETABLE_ADDRESS_HIGH] = false;
         mPPUAddress.set(value);
         break;
     case PPUDATA:
         mVRAM.writeByte(mPPUAddress.get(), value);
         mPPUAddress.inc(mMemory[PPUCTRL][VRAM_INC ] ? 32 : 1);
+        break;
+    case PPUSCROLL:
+        mScrollPosition.set(value);
+        mMemory[address] = value;
         break;
     default:
         mMemory[address] = value;

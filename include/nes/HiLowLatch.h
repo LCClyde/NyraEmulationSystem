@@ -62,7 +62,7 @@ public:
     inline void reset()
     {
         mHighSet = false;
-        mValue = 0;
+        //mValue = 0;
     }
 
     inline uint16_t get() const
@@ -74,6 +74,16 @@ public:
     {
         mValue += amount;
         mValue &= 0x7FFF;
+    }
+
+    inline uint8_t getHigh() const
+    {
+        return static_cast<uint8_t>(mValue >> 8);
+    }
+
+    inline uint8_t getLow() const
+    {
+        return static_cast<uint8_t>(mValue & 0xFF);
     }
 
 private:

@@ -154,6 +154,12 @@ class SwigPyIterator(_object):
 SwigPyIterator_swigregister = _nes.SwigPyIterator_swigregister
 SwigPyIterator_swigregister(SwigPyIterator)
 
+
+_nes.HORIZONTAL_swigconstant(_nes)
+HORIZONTAL = _nes.HORIZONTAL
+
+_nes.VERTICAL_swigconstant(_nes)
+VERTICAL = _nes.VERTICAL
 class Memory(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, Memory, name, value)
@@ -248,8 +254,6 @@ class Header(_object):
     __swig_getmethods__ = {}
     __getattr__ = lambda self, name: _swig_getattr(self, Header, name)
     __repr__ = _swig_repr
-    HORIZONTAL = _nes.Header_HORIZONTAL
-    VERTICAL = _nes.Header_VERTICAL
 
     def __init__(self, binary):
         this = _nes.new_Header(binary)
@@ -496,6 +500,12 @@ class HiLowLatch(_object):
 
     def inc(self, amount):
         return _nes.HiLowLatch_inc(self, amount)
+
+    def get_high(self):
+        return _nes.HiLowLatch_get_high(self)
+
+    def get_low(self):
+        return _nes.HiLowLatch_get_low(self)
     __swig_destroy__ = _nes.delete_HiLowLatch
     __del__ = lambda self: None
 HiLowLatch_swigregister = _nes.HiLowLatch_swigregister
@@ -586,7 +596,7 @@ class PPURegisters(Memory):
     MAX_REGISTER = _nes.PPURegisters_MAX_REGISTER
     OAMDMA = _nes.PPURegisters_OAMDMA
     SPRITE_OFLOW = _nes.PPURegisters_SPRITE_OFLOW
-    SPIRTE_HIT_0 = _nes.PPURegisters_SPIRTE_HIT_0
+    SPRITE_HIT_0 = _nes.PPURegisters_SPRITE_HIT_0
     VBLANK = _nes.PPURegisters_VBLANK
     NAMETABLE_ADDRESS_LOW = _nes.PPURegisters_NAMETABLE_ADDRESS_LOW
     NAMETABLE_ADDRESS_HIGH = _nes.PPURegisters_NAMETABLE_ADDRESS_HIGH
@@ -626,6 +636,12 @@ class PPURegisters(Memory):
 
     def get_sprite_ram_address(self):
         return _nes.PPURegisters_get_sprite_ram_address(self)
+
+    def get_scroll_x(self):
+        return _nes.PPURegisters_get_scroll_x(self)
+
+    def get_scroll_y(self):
+        return _nes.PPURegisters_get_scroll_y(self)
     __swig_destroy__ = _nes.delete_PPURegisters
     __del__ = lambda self: None
 PPURegisters_swigregister = _nes.PPURegisters_swigregister
@@ -638,8 +654,8 @@ class PPU(_object):
     __getattr__ = lambda self, name: _swig_getattr(self, PPU, name)
     __repr__ = _swig_repr
 
-    def __init__(self, chrROM):
-        this = _nes.new_PPU(chrROM)
+    def __init__(self, chrROM, mirroring):
+        this = _nes.new_PPU(chrROM, mirroring)
         try:
             self.this.append(this)
         except:
@@ -651,25 +667,62 @@ class PPU(_object):
     def render_scanline(self, scanLine, memory, buffer=None):
         return _nes.PPU_render_scanline(self, scanLine, memory, buffer)
 
-    def extract_pixel(self, address, bitPosition, palette):
-        return _nes.PPU_extract_pixel(self, address, bitPosition, palette)
+    def extract_pixel(self, address, bitPosition, palette, backgroundColor, paletteAddress):
+        return _nes.PPU_extract_pixel(self, address, bitPosition, palette, backgroundColor, paletteAddress)
 
     def get_regisers(self):
         return _nes.PPU_get_regisers(self)
 
     def get_registers(self):
         return _nes.PPU_get_registers(self)
-
-    def vblank(self):
-        return _nes.PPU_vblank(self)
     __swig_destroy__ = _nes.delete_PPU
     __del__ = lambda self: None
 PPU_swigregister = _nes.PPU_swigregister
 PPU_swigregister(PPU)
 
+class Controller(Memory):
+    __swig_setmethods__ = {}
+    for _s in [Memory]:
+        __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, Controller, name, value)
+    __swig_getmethods__ = {}
+    for _s in [Memory]:
+        __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
+    __getattr__ = lambda self, name: _swig_getattr(self, Controller, name)
+    __repr__ = _swig_repr
+    BUTTON_A = _nes.Controller_BUTTON_A
+    BUTTON_B = _nes.Controller_BUTTON_B
+    BUTTON_SELECT = _nes.Controller_BUTTON_SELECT
+    BUTTON_START = _nes.Controller_BUTTON_START
+    BUTTON_UP = _nes.Controller_BUTTON_UP
+    BUTTON_DOWN = _nes.Controller_BUTTON_DOWN
+    BUTTON_LEFT = _nes.Controller_BUTTON_LEFT
+    BUTTON_RIGHT = _nes.Controller_BUTTON_RIGHT
+    BUTTON_MAX = _nes.Controller_BUTTON_MAX
 
-def create_memory_map(cart, ppu):
-    return _nes.create_memory_map(cart, ppu)
+    def __init__(self):
+        this = _nes.new_Controller()
+        try:
+            self.this.append(this)
+        except:
+            self.this = this
+
+    def write_byte(self, address, value):
+        return _nes.Controller_write_byte(self, address, value)
+
+    def read_byte(self, address):
+        return _nes.Controller_read_byte(self, address)
+
+    def set_key(self, index, value=True):
+        return _nes.Controller_set_key(self, index, value)
+    __swig_destroy__ = _nes.delete_Controller
+    __del__ = lambda self: None
+Controller_swigregister = _nes.Controller_swigregister
+Controller_swigregister(Controller)
+
+
+def create_memory_map(cart, ppu, controller1, controller2):
+    return _nes.create_memory_map(cart, ppu, controller1, controller2)
 create_memory_map = _nes.create_memory_map
 class Mode(_object):
     __swig_setmethods__ = {}
@@ -812,6 +865,12 @@ class Emulator(_object):
 
     def get_ppu(self, *args):
         return _nes.Emulator_get_ppu(self, *args)
+    __swig_getmethods__["controller_1"] = _nes.Emulator_controller_1_get
+    if _newclass:
+        controller_1 = _swig_property(_nes.Emulator_controller_1_get)
+    __swig_getmethods__["controller_2"] = _nes.Emulator_controller_2_get
+    if _newclass:
+        controller_2 = _swig_property(_nes.Emulator_controller_2_get)
 
     def tick(self, *args):
         return _nes.Emulator_tick(self, *args)

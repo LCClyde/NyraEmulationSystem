@@ -14,6 +14,7 @@
     #include "nes/Emulator.h"
     #include "nes/PPU.h"
     #include "nes/Mode.h"
+    #include "nes/Controller.h"
 
     #include <sstream>
 %}
@@ -47,6 +48,8 @@
 %attribute(nyra::nes::Mode, bool, uses_arg2, usesArg2)
 %attributestring(nyra::nes::OpCode, std::string, name, getName)
 %attributestring(nyra::nes::Disassembly, std::string, mode_string, getModeString)
+%attribute2(nyra::nes::Emulator, nyra::nes::Controller, controller_1, getController1)
+%attribute2(nyra::nes::Emulator, nyra::nes::Controller, controller_2, getController2)
 
 %rename("%(undercase)s", %$isfunction) "";
 %rename("%(undercase)s", %$isvariable) "";
@@ -60,6 +63,7 @@
 %include "nes/MemoryMap.h"
 %include "nes/PPURegisters.h"
 %include "nes/PPU.h"
+%include "nes/Controller.h"
 %include "nes/MemoryFactory.h"
 %include "nes/Mode.h"
 %include "nes/OpCode.h"

@@ -92,6 +92,7 @@ xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\install\libs /D /E /Q /Y
   <ItemGroup>
     <ClInclude Include="..\..\..\include\nes\Cartridge.h" />
     <ClInclude Include="..\..\..\include\nes\Constants.h" />
+    <ClInclude Include="..\..\..\include\nes\Controller.h" />
     <ClInclude Include="..\..\..\include\nes\CPU.h" />
     <ClInclude Include="..\..\..\include\nes\CPUHelper.h" />
     <ClInclude Include="..\..\..\include\nes\Disassembly.h" />
@@ -114,6 +115,7 @@ xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\install\libs /D /E /Q /Y
   <ItemGroup>
     <ClCompile Include="..\..\..\include\nes\MemoryFactory.cpp" />
     <ClCompile Include="..\..\..\source\Cartridge.cpp" />
+    <ClCompile Include="..\..\..\source\Controller.cpp" />
     <ClCompile Include="..\..\..\source\CPU.cpp" />
     <ClCompile Include="..\..\..\source\CPUHelper.cpp" />
     <ClCompile Include="..\..\..\source\Disassembly.cpp" />

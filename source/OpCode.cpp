@@ -121,7 +121,7 @@ void allocateOpCodes(OpCodeArray& opCodes)
     opCodes[0x88].reset(new OpDEY());
     opCodes[0x8A].reset(new OpTXA());
     opCodes[0x8C].reset(new OpSTY<ModeAbsolute<true> >(0x8C, 3, 4));
-    opCodes[0x8D].reset(new OpSTA<ModeAbsolute<true> >(0x8D, 3, 4));
+    opCodes[0x8D].reset(new OpSTA<ModeAbsolute<false> >(0x8D, 3, 4));
     opCodes[0x8E].reset(new OpSTX<ModeAbsolute<true> >(0x8E, 3, 4));
     opCodes[0x90].reset(new OpBCC());
     opCodes[0x91].reset(new OpSTA<ModeIndirectY<false> >(0x91, 2, 6));

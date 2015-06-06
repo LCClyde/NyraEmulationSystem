@@ -21,52 +21,53 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#include <nes/MemorySystem.h>
+#ifndef __NYRA_NES_CONTROLLER_H__
+#define __NYRA_NES_CONTROLLER_H__
+
+#include <nes/Memory.h>
 
 namespace nyra
 {
 namespace nes
 {
-/*****************************************************************************/
-MemorySystem::MemorySystem(PPURegisters& ppu,
-                           Controller& controller1,
-                           Controller& controller2) :
-    mRAM(0x0700),
-    mZeroPage(0x0100),
-    mFill1(0x14),
-    mFill2(0x3FEC)
+class Controller : public Memory
 {
-    // Mirror the RAM to 0x2000
-    for (size_t ii = 0; ii < 0x2000;
-            ii += (mRAM.getSize() + mZeroPage.getSize()))
+public:
+    enum ControllerBit
     {
-        setMemoryBank(ii, mZeroPage);
-        setMemoryBank(ii  + mZeroPage.getSize(), mRAM);
+        BUTTON_A,
+        BUTTON_B,
+        BUTTON_SELECT,
+        BUTTON_START,
+        BUTTON_UP,
+        BUTTON_DOWN,
+        BUTTON_LEFT,
+        BUTTON_RIGHT,
+        BUTTON_MAX
+    };
+
+    Controller();
+
+    void writeByte(size_t address,
+                   uint8_t value);
+
+    uint8_t readByte(size_t address);
+
+    inline void setKey(ControllerBit index, bool value = true)
+    {
+        if (value)
+        {
+            mButtonsQueued[index] = value;
+        }
     }
 
-    // PPU Memory
-    for (size_t ii = 0x2000; ii < 0x4000; ii += ppu.getSize())
-    {
-        setMemoryBank(ii, ppu);
-    }
-
-    //! TODO: This is a tempory hack to prevent from
-    //        reading and writing to a NULL register.
-    setMemoryBank(0x4000, mFill1);
-
-    setMemoryBank(0x4014, ppu.getOamDma());
-
-    setMemoryBank(0x4015, mFill2);
-
-    // Controller memory
-    setMemoryBank(0x4016, controller1);
-    setMemoryBank(0x4017, controller2);
-
-}
-
-/*****************************************************************************/
-MemorySystem::~MemorySystem()
-{
+private:
+    bool mStrobe;
+    ControllerBit mIndex;
+    bool mButtons[BUTTON_MAX];
+    bool mButtonsQueued[BUTTON_MAX];
+};
 }
 }
-}
+
+#endif

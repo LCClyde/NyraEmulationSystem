@@ -80,7 +80,7 @@ public:
     enum
     {
         SPRITE_OFLOW = 5,
-        SPIRTE_HIT_0,
+        SPRITE_HIT_0,
         VBLANK
     };
 
@@ -130,13 +130,27 @@ public:
         return mSpriteRamAddress.get();
     }
 
+    uint8_t getScrollX() const
+    {
+        return mScrollPosition.getHigh();
+    }
+
+    uint8_t getScrollY() const
+    {
+        return mScrollPosition.getLow();
+    }
+
 protected:
     std::bitset<FLAG_SIZE> mMemory[MAX_REGISTER];
 
     HiLowLatch mSpriteRamAddress;
     HiLowLatch mPPUAddress;
+
+    // High is x, low is y
+    HiLowLatch mScrollPosition;
     OamDma mOamDma;
     MemoryMap& mVRAM;
+    uint8_t mByteBuffer;
 };
 }
 }

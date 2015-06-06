@@ -27,6 +27,7 @@
 #include <ostream>
 #include <vector>
 #include <stdint.h>
+#include <nes/Constants.h>
 
 namespace nyra
 {
@@ -39,17 +40,6 @@ namespace nes
 class Header
 {
 public:
-    /*
-     *  \enum - Mirroring
-     *  \brief - Describes how the nametables should be presented to
-     *           the player.
-     */
-    enum Mirroring
-    {
-        HORIZONTAL,
-        VERTICAL
-    };
-
     /*
      *  \func - Constructor (string)
      *  \brief - Creates a Header from a string.

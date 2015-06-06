@@ -54,6 +54,7 @@ uint16_t MemoryMap::readShort(size_t address) const
     {
         modAddress = 0;
         // Check if this is zero page
+        // TODO: Is this logic correct for VRAM as well?
         if (address >= 0x0100)
         {
             ++iter;

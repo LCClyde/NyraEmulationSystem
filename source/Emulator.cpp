@@ -32,8 +32,8 @@ namespace nes
 /*****************************************************************************/
 Emulator::Emulator(const std::string& pathname) :
     mCartridge(pathname),
-    mPPU(mCartridge.getChrROM()),
-    mMemoryMap(createMemoryMap(mCartridge, mPPU)),
+    mPPU(mCartridge.getChrROM(), mCartridge.getHeader().getMirroring()),
+    mMemoryMap(createMemoryMap(mCartridge, mPPU, mController1, mController2)),
     mCPU(mMemoryMap->readShort(0xFFFC))
 {
 }

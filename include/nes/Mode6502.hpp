@@ -82,7 +82,7 @@ public:
                     CPUInfo& )
     {
         mArg = args.darg;
-        mValue = memory.readByte(mArg);
+        mValue = OutputT ? memory.readByte(mArg) : 0;
     }
 };
 

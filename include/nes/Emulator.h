@@ -31,6 +31,7 @@
 #include <nes/CPU.h>
 #include <nes/PPU.h>
 #include <nes/Disassembly.h>
+#include <nes/Controller.h>
 
 namespace nyra
 {
@@ -54,9 +55,21 @@ public:
         return mPPU;
     }
 
+    Controller& getController1()
+    {
+        return mController1;
+    }
+
+    Controller& getController2()
+    {
+        return mController2;
+    }
+
 private:
     const Cartridge mCartridge;
     PPU mPPU;
+    Controller mController1;
+    Controller mController2;
     std::shared_ptr<MemoryMap> mMemoryMap;
     CPU mCPU;
 };

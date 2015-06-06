@@ -78,6 +78,9 @@
     <ClInclude Include="..\..\..\include\nes\MemoryFactory.h">
       <Filter>Memory</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nes\Controller.h">
+      <Filter>Machine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Cartridge.cpp">
@@ -130,6 +133,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\HiLowLatch.cpp">
       <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Controller.cpp">
+      <Filter>Machine</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
