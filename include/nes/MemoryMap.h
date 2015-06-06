@@ -26,6 +26,7 @@
 
 #include <stdint.h>
 #include <map>
+#include <vector>
 #include <nes/Memory.h>
 #include <nes/CPUHelper.h>
 
@@ -37,17 +38,26 @@ namespace nes
  *  \class - MemoryMap
  *  \brief - Holds banks of memory which can then be read as it it was one
  *           contiguous buffer.
- *  TODO: Reimplement this using a look up table. A map should be assigned to
- *        and then locked. Once locked it creates the look up table of values.
- *        this removes the lower bound logic and allows direct memory access.
  */
 class MemoryMap
 {
 private:
-    // TODO: Ideally this should hold a reference to a Memory, not a pointer.
-    //       A first quick pass at this seemed to show this was not possible.
-    //       This needs to be investigated further.
-    typedef std::map<size_t, Memory*> RamMap;
+    struct MemoryHandle
+    {
+        MemoryHandle(size_t offset, Memory& memory);
+
+        inline bool operator<(const MemoryHandle& other) const
+        {
+            return offset < other.offset;
+        }
+
+        // Non const to implement default constructors.
+        // The higher level value will be const so this is okay.
+        // TODO: Make these const and manually implement, move, copy,
+        //       and assignment.
+        Memory* memory;
+        size_t offset;
+    };
 
 public:
     virtual ~MemoryMap();
@@ -63,7 +73,7 @@ public:
      */
     inline void setMemoryBank(size_t memoryOffset, Memory& memory)
     {
-        mMap[memoryOffset] = &memory;
+        mMemory.push_back(MemoryHandle(memoryOffset, memory));
     }
 
     /*
@@ -75,8 +85,7 @@ public:
      */
     inline void writeByte(size_t address, uint8_t value)
     {
-        RamMap::const_iterator iter = getMemoryBank(address);
-        iter->second->writeByte(address, value);
+        getMemoryBank(address).memory->writeByte(address, value);
     }
 
     /*
@@ -90,15 +99,15 @@ public:
     inline void getOpInfo(size_t address,
                           CPUArgs& args)
     {
-        RamMap::const_iterator iter = getMemoryBank(address);
-        args.opcode = iter->second->readByte(address);
-        args.arg1 = iter->second->readByte(address + 1);
-        args.arg2 = iter->second->readByte(address + 2);
+        const MemoryHandle& handle = getMemoryBank(address);
+        args.opcode = handle.memory->readByte(address);
+        args.arg1 = handle.memory->readByte(address + 1);
+        args.arg2 = handle.memory->readByte(address + 2);
 
         // TODO: Is it safe to get the dword in this way? Should we instead
         //       call MemoryMap::readShort as this has extra statements to
         //       protect against going out of bounds in a memory bank.
-        args.darg = iter->second->readShort(address + 1);
+        args.darg = handle.memory->readShort(address + 1);
     }
 
     /*
@@ -110,8 +119,7 @@ public:
      */
     inline uint8_t readByte(size_t address) const
     {
-        RamMap::const_iterator iter = getMemoryBank(address);
-        return iter->second->readByte(address);
+        return getMemoryBank(address).memory->readByte(address);
     }
 
     /*
@@ -125,10 +133,13 @@ public:
      */
     uint16_t readShort(size_t address) const;
 
-private:
-    RamMap::const_iterator getMemoryBank(size_t& address) const;
+    void lockLookUpTable();
 
-    RamMap mMap;
+private:
+    const MemoryHandle& getMemoryBank(size_t& address) const;
+
+    std::vector<const MemoryHandle> mMemory;
+    std::vector<size_t> mLookUpTable;
 };
 }
 }

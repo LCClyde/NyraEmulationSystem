@@ -22,49 +22,67 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 #include <nes/MemoryMap.h>
+#include <iostream>
+#include <algorithm>
 
 namespace nyra
 {
 namespace nes
 {
 /*****************************************************************************/
+MemoryMap::MemoryHandle::MemoryHandle(size_t offset, Memory& memory) :
+    memory(&memory),
+    offset(offset)
+{
+}
+
+/*****************************************************************************/
 MemoryMap::~MemoryMap()
 {
 }
 
 /*****************************************************************************/
-MemoryMap::RamMap::const_iterator MemoryMap::getMemoryBank(
-        size_t& address) const
+const MemoryMap::MemoryHandle& MemoryMap::getMemoryBank(size_t& address) const
 {
-    RamMap::const_iterator iter = mMap.upper_bound(address);
-    --iter;
-    address -= iter->first;
-    return iter;
+    const MemoryHandle& handle = mMemory[mLookUpTable[address]];
+    address -= handle.offset;
+    return handle;
 }
 
 /*****************************************************************************/
 uint16_t MemoryMap::readShort(size_t address) const
 {
     size_t modAddress = address;
-    RamMap::const_iterator iter = getMemoryBank(modAddress);
-    uint16_t ret = iter->second->readByte(modAddress);
+    const MemoryHandle* handle = &getMemoryBank(modAddress);
+    const uint16_t ret = handle->memory->readByte(modAddress);
 
-    // Check if we are at the end of the bank
-    if (iter->first + iter->second->getSize() <= address + 1)
+    // Check if this is zero page
+    // TODO: Is this logic correct for VRAM as well?
+    if (address >= 0x0100)
     {
-        modAddress = 0;
-        // Check if this is zero page
-        // TODO: Is this logic correct for VRAM as well?
-        if (address >= 0x0100)
-        {
-            ++iter;
-        }
+        modAddress = address + 1;
+        handle = &getMemoryBank(modAddress);
     }
     else
     {
-        ++modAddress;
+        modAddress = (modAddress + 1) & 0xFF;
     }
-    return (iter->second->readByte(modAddress) << 8) | ret;
+    return (handle->memory->readByte(modAddress) << 8) | ret;
+}
+
+/*****************************************************************************/
+void MemoryMap::lockLookUpTable()
+{
+    mLookUpTable.clear();
+    std::sort(mMemory.begin(), mMemory.end());
+
+    for (size_t ii = 0; ii < mMemory.size(); ++ii)
+    {
+        for (size_t jj = 0; jj < mMemory[ii].memory->getSize(); ++jj)
+        {
+            mLookUpTable.push_back(ii);
+        }
+    }
 }
 }
 }
