@@ -62,7 +62,6 @@ public:
                          uint32_t* buffer = nullptr);
 
     void renderScanline(int16_t scanLine,
-                        const MemoryMap& memory,
                         uint32_t* buffer = nullptr);
 
     uint32_t extractPixel(uint32_t address,
@@ -84,6 +83,7 @@ public:
 private:
     VRAM mVRAM;
     PPURegisters mRegisters;
+    RAM mOAM;
 };
 }
 }

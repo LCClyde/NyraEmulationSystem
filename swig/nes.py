@@ -573,6 +573,9 @@ class OamDma(Memory):
 
     def get_register(self):
         return _nes.OamDma_get_register(self)
+
+    def needs_copy(self):
+        return _nes.OamDma_needs_copy(self)
     __swig_destroy__ = _nes.delete_OamDma
     __del__ = lambda self: None
 OamDma_swigregister = _nes.OamDma_swigregister
@@ -667,8 +670,8 @@ class PPU(_object):
     def process_scanline(self, info, memory, buffer=None):
         return _nes.PPU_process_scanline(self, info, memory, buffer)
 
-    def render_scanline(self, scanLine, memory, buffer=None):
-        return _nes.PPU_render_scanline(self, scanLine, memory, buffer)
+    def render_scanline(self, scanLine, buffer=None):
+        return _nes.PPU_render_scanline(self, scanLine, buffer)
 
     def extract_pixel(self, address, bitPosition, palette, backgroundColor, paletteAddress):
         return _nes.PPU_extract_pixel(self, address, bitPosition, palette, backgroundColor, paletteAddress)

@@ -16,6 +16,9 @@
     <Filter Include="Tools">
       <UniqueIdentifier>{8f66725f-01ed-4148-84c1-8f3d84d572ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="APU">
+      <UniqueIdentifier>{014a8b67-4d7a-487b-8674-1732f344f092}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\nes\PPU.h">

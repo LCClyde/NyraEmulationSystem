@@ -2,10 +2,10 @@
 import argparse
 import pygame
 import sys
-import time
 from nes import Emulator, DisassemblyVector, Controller
 from print_disassembly import print_nintendulator
 from screen import Screen
+from fps import FPS
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -15,10 +15,12 @@ if __name__ == "__main__":
 
     emulator = Emulator(args.pathname)
     screen = Screen()
+    fps = FPS()
     
     keep_going = True
     while keep_going:
         try:
+            # Get button presses
             pressed = pygame.key.get_pressed()
             if pressed[pygame.K_RETURN]:
                 emulator.controller_1.set_key(Controller.BUTTON_START)
@@ -39,6 +41,9 @@ if __name__ == "__main__":
 
             emulator.tick(screen.buffer)
             keep_going = screen.render()
+            
+            fps.update(60)
+            
         except Exception, e:
             print 'Exception occurred: ' + str(e)
             keep_going = False

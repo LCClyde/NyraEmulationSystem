@@ -49,15 +49,25 @@ public:
                            uint8_t value)
     {
         mSpriteRamAddress.setHigh(value);
+        mNeedsCopy = true;
     }
 
     std::bitset<FLAG_SIZE>& getRegister()
     {
         return mMemory;
     }
+
+    inline bool needsCopy()
+    {
+        const bool temp = mNeedsCopy;
+        mNeedsCopy = false;
+        return temp;
+    }
+
 private:
     std::bitset<FLAG_SIZE> mMemory;
     HiLowLatch& mSpriteRamAddress;
+    bool mNeedsCopy;
 };
 
 class PPURegisters : public Memory

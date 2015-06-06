@@ -32,7 +32,8 @@ namespace nes
 /*****************************************************************************/
 OamDma::OamDma(HiLowLatch& spriteRamAddress) :
     Memory(1),
-    mSpriteRamAddress(spriteRamAddress)
+    mSpriteRamAddress(spriteRamAddress),
+    mNeedsCopy(false)
 {
 }
 
@@ -106,6 +107,8 @@ void PPURegisters::writeByte(size_t address, uint8_t value)
         mScrollPosition.set(value);
         mMemory[address] = value;
         break;
+    case OAMDATA:
+        // Fall through
     default:
         mMemory[address] = value;
         break;

@@ -68,7 +68,8 @@ namespace nes
 PPU::PPU(const ROMBanks& chrROM,
          Mirroring mirroring) :
     mVRAM(chrROM, mirroring),
-    mRegisters(mVRAM)
+    mRegisters(mVRAM),
+    mOAM(256)
 {
 }
 
@@ -77,6 +78,16 @@ void PPU::processScanline(CPUInfo& info,
                           const MemoryMap& memory,
                           uint32_t* buffer)
 {
+    // Check for OAM copy
+    if (mRegisters.getOamDma().needsCopy())
+    {
+        const uint16_t address = mRegisters.getSpriteRamAddress();
+        for (size_t ii = 0; ii < mOAM.getSize(); ++ii)
+        {
+            mOAM.writeByte(ii, memory.readByte(address + ii));
+        }
+    }
+
     switch (info.scanLine)
     {
     case VBLANK_START:
@@ -99,13 +110,12 @@ void PPU::processScanline(CPUInfo& info,
 
     if (buffer && mRegisters.getRegister(PPURegisters::PPUMASK)[PPURegisters::SHOW_SPRITES])
     {
-        renderScanline(info.scanLine, memory, buffer);
+        renderScanline(info.scanLine, buffer);
     }
 }
 
 /*****************************************************************************/
 void PPU::renderScanline(int16_t scanLine,
-                         const MemoryMap& memory,
                          uint32_t* buffer)
 {
     //! Make sure this is renderable scanline
@@ -190,26 +200,26 @@ void PPU::renderScanline(int16_t scanLine,
         }
     }
 
-    const uint16_t spriteAddress = mRegisters.getSpriteRamAddress();
+    const uint16_t spriteAddress = 0;
 
     //! Get the values
     for (size_t ii = 0; ii < 64 * 4; ii += 4)
     {
         // Get the y position
-        const int16_t renderLine =
-                memory.readByte(spriteAddress + ii) - scanLine + 8;
+        const int16_t renderLine = static_cast<int16_t>(
+                mOAM.readByte(spriteAddress + ii)) - scanLine + 8;
         if (renderLine < 8 && renderLine >= 0)
         {
             // Get the sprite number
             const size_t address =
-                    memory.readByte(spriteAddress + ii + 1) * 16;
+                    mOAM.readByte(spriteAddress + ii + 1) * 16;
 
-            const size_t attributes = memory.readByte(spriteAddress + ii + 2);
+            const size_t attributes = mOAM.readByte(spriteAddress + ii + 2);
             const size_t paletteNumber = attributes & 0x03;
             const bool flipHorizontally = (attributes & 0x40) > 0;
             const bool flipVertically = (attributes & 0x80) > 0;
 
-            const size_t xPosition = memory.readByte(spriteAddress + ii + 3);
+            const size_t xPosition = mOAM.readByte(spriteAddress + ii + 3);
 
             // Render this sprite into this line
             for (size_t jj = 0; jj < 8; ++jj)
