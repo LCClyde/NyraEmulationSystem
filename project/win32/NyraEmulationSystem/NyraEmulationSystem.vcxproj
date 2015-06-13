@@ -90,6 +90,8 @@ xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\install\libs /D /E /Q /Y
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\include\nes\APU.h" />
+    <ClInclude Include="..\..\..\include\nes\APURegisters.h" />
     <ClInclude Include="..\..\..\include\nes\Cartridge.h" />
     <ClInclude Include="..\..\..\include\nes\Constants.h" />
     <ClInclude Include="..\..\..\include\nes\Controller.h" />
@@ -114,6 +116,7 @@ xcopy $(SolutionDir)..\..\libs\* $(SolutionDir)..\..\..\install\libs /D /E /Q /Y
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\include\nes\MemoryFactory.cpp" />
+    <ClCompile Include="..\..\..\source\APU.cpp" />
     <ClCompile Include="..\..\..\source\Cartridge.cpp" />
     <ClCompile Include="..\..\..\source\Controller.cpp" />
     <ClCompile Include="..\..\..\source\CPU.cpp" />

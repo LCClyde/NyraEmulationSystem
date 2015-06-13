@@ -61,9 +61,6 @@ public:
                          const MemoryMap& memory,
                          uint32_t* buffer = nullptr);
 
-    void renderScanline(int16_t scanLine,
-                        uint32_t* buffer = nullptr);
-
     uint32_t extractPixel(uint32_t address,
                           size_t bitPosition,
                           size_t palette,
@@ -81,6 +78,15 @@ public:
     }
 
 private:
+    void renderScanline(int16_t scanLine,
+                        uint32_t* buffer = nullptr);
+
+    void renderSprites(int16_t scanLine,
+                       uint32_t* buffer);
+
+    void renderBackground(int16_t scanLine,
+                          uint32_t* buffer);
+
     VRAM mVRAM;
     PPURegisters mRegisters;
     RAM mOAM;

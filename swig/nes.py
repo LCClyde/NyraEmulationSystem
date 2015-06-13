@@ -155,6 +155,9 @@ SwigPyIterator_swigregister = _nes.SwigPyIterator_swigregister
 SwigPyIterator_swigregister(SwigPyIterator)
 
 
+_nes.SHARED_PTR_DISOWN_swigconstant(_nes)
+SHARED_PTR_DISOWN = _nes.SHARED_PTR_DISOWN
+
 _nes.HORIZONTAL_swigconstant(_nes)
 HORIZONTAL = _nes.HORIZONTAL
 
@@ -280,9 +283,6 @@ class Header(_object):
     def get_has_battery_back(self):
         return _nes.Header_get_has_battery_back(self)
 
-    def get_mirroring(self):
-        return _nes.Header_get_mirroring(self)
-
     def get_is_play_choice_10(self):
         return _nes.Header_get_is_play_choice_10(self)
 
@@ -297,6 +297,9 @@ class Header(_object):
 
     def get_nesidentifier(self):
         return _nes.Header_get_nesidentifier(self)
+    __swig_getmethods__["mirroring"] = _nes.Header_mirroring_get
+    if _newclass:
+        mirroring = _swig_property(_nes.Header_mirroring_get)
 
     def __str__(self):
         return _nes.Header___str__(self)
@@ -325,12 +328,12 @@ class Cartridge(_object):
 
     def get_prog_rom(self):
         return _nes.Cartridge_get_prog_rom(self)
-
-    def get_chr_rom(self):
-        return _nes.Cartridge_get_chr_rom(self)
     __swig_getmethods__["header"] = _nes.Cartridge_header_get
     if _newclass:
         header = _swig_property(_nes.Cartridge_header_get)
+    __swig_getmethods__["chr_rom"] = _nes.Cartridge_chr_rom_get
+    if _newclass:
+        chr_rom = _swig_property(_nes.Cartridge_chr_rom_get)
     __swig_destroy__ = _nes.delete_Cartridge
     __del__ = lambda self: None
 Cartridge_swigregister = _nes.Cartridge_swigregister
@@ -667,12 +670,6 @@ class PPU(_object):
         except:
             self.this = this
 
-    def process_scanline(self, info, memory, buffer=None):
-        return _nes.PPU_process_scanline(self, info, memory, buffer)
-
-    def render_scanline(self, scanLine, buffer=None):
-        return _nes.PPU_render_scanline(self, scanLine, buffer)
-
     def extract_pixel(self, address, bitPosition, palette, backgroundColor, paletteAddress):
         return _nes.PPU_extract_pixel(self, address, bitPosition, palette, backgroundColor, paletteAddress)
 
@@ -681,6 +678,9 @@ class PPU(_object):
 
     def get_registers(self):
         return _nes.PPU_get_registers(self)
+
+    def process_scanline(self, *args):
+        return _nes.PPU_process_scanline(self, *args)
     __swig_destroy__ = _nes.delete_PPU
     __del__ = lambda self: None
 PPU_swigregister = _nes.PPU_swigregister
@@ -726,9 +726,36 @@ class Controller(Memory):
 Controller_swigregister = _nes.Controller_swigregister
 Controller_swigregister(Controller)
 
+class APU(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, APU, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, APU, name)
+    __repr__ = _swig_repr
 
-def create_memory_map(cart, ppu, controller1, controller2):
-    return _nes.create_memory_map(cart, ppu, controller1, controller2)
+    def __init__(self):
+        this = _nes.new_APU()
+        try:
+            self.this.append(this)
+        except:
+            self.this = this
+
+    def get_registers(self):
+        return _nes.APU_get_registers(self)
+
+    def get_channel_info(self):
+        return _nes.APU_get_channel_info(self)
+
+    def get_frame_counter(self):
+        return _nes.APU_get_frame_counter(self)
+    __swig_destroy__ = _nes.delete_APU
+    __del__ = lambda self: None
+APU_swigregister = _nes.APU_swigregister
+APU_swigregister(APU)
+
+
+def create_memory_map(cart, ppu, apu, controller1, controller2):
+    return _nes.create_memory_map(cart, ppu, apu, controller1, controller2)
 create_memory_map = _nes.create_memory_map
 class Mode(_object):
     __swig_setmethods__ = {}
@@ -847,9 +874,9 @@ class CPU(_object):
 
     def process_scanline(self, *args):
         return _nes.CPU_process_scanline(self, *args)
-
-    def get_info(self, *args):
-        return _nes.CPU_get_info(self, *args)
+    __swig_getmethods__["info"] = _nes.CPU_info_get
+    if _newclass:
+        info = _swig_property(_nes.CPU_info_get)
     __swig_destroy__ = _nes.delete_CPU
     __del__ = lambda self: None
 CPU_swigregister = _nes.CPU_swigregister
@@ -869,6 +896,9 @@ class Emulator(_object):
         except:
             self.this = this
 
+    def tick(self, buffer=None, disassembly=None):
+        return _nes.Emulator_tick(self, buffer, disassembly)
+
     def get_ppu(self, *args):
         return _nes.Emulator_get_ppu(self, *args)
     __swig_getmethods__["controller_1"] = _nes.Emulator_controller_1_get
@@ -877,9 +907,6 @@ class Emulator(_object):
     __swig_getmethods__["controller_2"] = _nes.Emulator_controller_2_get
     if _newclass:
         controller_2 = _swig_property(_nes.Emulator_controller_2_get)
-
-    def tick(self, *args):
-        return _nes.Emulator_tick(self, *args)
     __swig_destroy__ = _nes.delete_Emulator
     __del__ = lambda self: None
 Emulator_swigregister = _nes.Emulator_swigregister

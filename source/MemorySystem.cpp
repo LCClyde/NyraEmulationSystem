@@ -29,13 +29,12 @@ namespace nes
 {
 /*****************************************************************************/
 MemorySystem::MemorySystem(PPURegisters& ppu,
+                           APU& apu,
                            Controller& controller1,
                            Controller& controller2) :
     mRAM(0x0700),
     mZeroPage(0x0100),
-    mFill0(1),
-    mFill1(0x14),
-    mFill2(0x3FE8)
+    mFill(0x3FE8)
 {
     // Mirror the RAM to 0x2000
     for (size_t ii = 0; ii < 0x2000;
@@ -53,15 +52,20 @@ MemorySystem::MemorySystem(PPURegisters& ppu,
 
     //! TODO: This is a tempory hack to prevent from
     //        reading and writing to a NULL register.
-    setMemoryBank(0x4000, mFill1);
+    setMemoryBank(0x4000, apu.getRegisters());
 
     setMemoryBank(0x4014, ppu.getOamDma());
-    setMemoryBank(0x4015, mFill0);
+    setMemoryBank(0x4015, apu.getChannelInfo());
 
     // Controller memory
     setMemoryBank(0x4016, controller1);
-    setMemoryBank(0x4017, controller2);
-    setMemoryBank(0x4018, mFill2);
+
+    // TODO: 4007 controls both controller2 and the apu frame counter
+    //       we need a way to handle this.
+    //setMemoryBank(0x4017, controller2);
+    setMemoryBank(0x4017, apu.getFrameCounter());
+
+    setMemoryBank(0x4018, mFill);
 
 }
 

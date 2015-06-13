@@ -27,6 +27,8 @@ class FPS:
 
         # TODO: This is not high enough precision.
         #       for now it is close enough.
+        #       Trying to use pygame.time.Clock.tick results in the
+        #       same lack of precision.
         if throttle != None:
             sleep_time = (1.0 / throttle) - self.delta_time
             if sleep_time > 0.0:

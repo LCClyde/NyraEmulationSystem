@@ -21,27 +21,41 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *****************************************************************************/
-#ifndef __NYRA_NES_MEMORY_NROM_H__
-#define __NYRA_NES_MEMORY_NROM_H__
+#ifndef __NYRA_NES_APU_H__
+#define __NYRA_NES_APU_H__
 
-#include <nes/MemorySystem.h>
 #include <nes/Memory.h>
-#include <nes/PPURegisters.h>
-#include <nes/Constants.h>
 
 namespace nyra
 {
 namespace nes
 {
-class MemoryNROM : public MemorySystem
+class APU
 {
 public:
-    MemoryNROM(const ROMBanks& prgROM,
-               PPURegisters& ppu,
-               APU& apu,
-               Controller& controller1,
-               Controller& controller2);
+    APU();
+
+    RAM& getRegisters()
+    {
+        return mRegisters;
+    }
+
+    RAM& getChannelInfo()
+    {
+        return mChannelInfo;
+    }
+
+    RAM& getFrameCounter()
+    {
+        return mFrameCounter;
+    }
+
+private:
+    RAM mRegisters;
+    RAM mChannelInfo;
+    RAM mFrameCounter;
 };
 }
 }
+
 #endif

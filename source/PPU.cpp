@@ -78,6 +78,8 @@ void PPU::processScanline(CPUInfo& info,
                           const MemoryMap& memory,
                           uint32_t* buffer)
 {
+    //! TODO: There is something wrong with this. In Mario, on the lives screen
+    //        The player will sometimes disappear before starting.
     // Check for OAM copy
     if (mRegisters.getOamDma().needsCopy())
     {
@@ -108,23 +110,16 @@ void PPU::processScanline(CPUInfo& info,
         break;
     }
 
-    if (buffer && mRegisters.getRegister(PPURegisters::PPUMASK)[PPURegisters::SHOW_SPRITES])
+    if (buffer)
     {
         renderScanline(info.scanLine, buffer);
     }
 }
 
 /*****************************************************************************/
-void PPU::renderScanline(int16_t scanLine,
-                         uint32_t* buffer)
+void PPU::renderBackground(int16_t scanLine,
+                           uint32_t* buffer)
 {
-    //! Make sure this is renderable scanline
-    if (scanLine <= VBLANK_END || scanLine >= VBLANK_START - 1)
-    {
-        return;
-    }
-
-    uint32_t* const ptr = buffer + (scanLine * SCREEN_WIDTH);
     const uint32_t backgroundColor =
             RGB_PALLETE[mVRAM.getBackgroundColor()];
     size_t paletteAddress;
@@ -166,7 +161,8 @@ void PPU::renderScanline(int16_t scanLine,
                 baseNametableAddress + (backgroundY * 32) + backgroundX);
 
         const size_t pixelPosition = (ii * 8) - (scrollX % 8);
-        const size_t address = backgroundPatternTable + (backgroundIndex * 16);
+        const size_t address = backgroundPatternTable +
+                (backgroundIndex * 16);
 
         // Get palette number
         const size_t attributeRow = backgroundY / 4;
@@ -190,7 +186,7 @@ void PPU::renderScanline(int16_t scanLine,
             // Make sure the pixel is in a valid range
             if (pixelPosition + jj >= 0 && pixelPosition + jj < 256)
             {
-                ptr[pixelPosition + jj] = extractPixel(
+                buffer[pixelPosition + jj] = extractPixel(
                         address + (scanLine % 8),
                         7 - jj,
                         BACKGROUND_PALETTE_ADDRESS + (paletteNumber * 4),
@@ -199,7 +195,15 @@ void PPU::renderScanline(int16_t scanLine,
             }
         }
     }
+}
 
+/*****************************************************************************/
+void PPU::renderSprites(int16_t scanLine,
+                        uint32_t* buffer)
+{
+    const uint32_t backgroundColor =
+            RGB_PALLETE[mVRAM.getBackgroundColor()];
+    size_t paletteAddress;
     const uint16_t spriteAddress = 0;
 
     //! Get the values
@@ -218,6 +222,7 @@ void PPU::renderScanline(int16_t scanLine,
             const size_t paletteNumber = attributes & 0x03;
             const bool flipHorizontally = (attributes & 0x40) > 0;
             const bool flipVertically = (attributes & 0x80) > 0;
+            const bool frontOfBackground = (attributes & 0x20) == 0;
 
             const size_t xPosition = mOAM.readByte(spriteAddress + ii + 3);
 
@@ -235,7 +240,8 @@ void PPU::renderScanline(int16_t scanLine,
                 }
 
                 const uint32_t pixel = extractPixel(
-                        address + (flipVertically ? renderLine : (7 - renderLine)),
+                        address + (flipVertically ? renderLine :
+                                                    (7 - renderLine)),
                         7 - jj,
                         SPRITE_PALETTE_ADDRESS + (paletteNumber * 4),
                         backgroundColor,
@@ -247,17 +253,45 @@ void PPU::renderScanline(int16_t scanLine,
                     //        a palette of 0. There is the posibility that
                     //        a palette reuses the background color.
                     // Check for sprite hit 0
-                    if (ii == 0 && ptr[pixelPosition] != backgroundColor)
+                    if (ii == 0 && buffer[pixelPosition] != backgroundColor)
                     {
                         mRegisters.getRegister(PPURegisters::PPUSTATUS)
                                 [PPURegisters::SPRITE_HIT_0] = true;
                     }
 
-                    ptr[pixelPosition] = pixel;
-
+                    if (frontOfBackground ||
+                        buffer[pixelPosition] == backgroundColor)
+                    {
+                        buffer[pixelPosition] = pixel;
+                    }
                 }
             }
         }
+    }
+}
+
+/*****************************************************************************/
+void PPU::renderScanline(int16_t scanLine,
+                         uint32_t* buffer)
+{
+    //! Make sure this is renderable scanline
+    if (scanLine <= VBLANK_END || scanLine >= VBLANK_START - 1)
+    {
+        return;
+    }
+
+    uint32_t* const ptr = buffer + (scanLine * SCREEN_WIDTH);
+
+    if (mRegisters.getRegister(PPURegisters::PPUMASK)
+                               [PPURegisters::SHOW_BACKGROUND])
+    {
+        renderBackground(scanLine, ptr);
+    }
+
+    if (mRegisters.getRegister(PPURegisters::PPUMASK)
+                               [PPURegisters::SHOW_SPRITES])
+    {
+        renderSprites(scanLine, ptr);
     }
 }
 

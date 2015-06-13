@@ -30,9 +30,10 @@ namespace nes
 /*****************************************************************************/
 MemoryNROM::MemoryNROM(const ROMBanks& rom,
                        PPURegisters& ppu,
+                       APU& apu,
                        Controller& controller1,
                        Controller& controller2) :
-    MemorySystem(ppu, controller1, controller2)
+    MemorySystem(ppu, apu, controller1, controller2)
 {
     setMemoryBank(0x8000, *rom[0]);
     setMemoryBank(0xC000, *rom[(rom.size() == 2) ? 1 : 0]);

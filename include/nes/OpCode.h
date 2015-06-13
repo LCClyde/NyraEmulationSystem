@@ -123,11 +123,18 @@ public:
         return mOpCode;
     }
 
-protected:
     virtual void op(CPURegisters& registers,
                     CPUInfo& info,
                     MemoryMap& memory) = 0;
 
+    virtual void alt(CPURegisters& registers,
+                     CPUInfo& info,
+                     MemoryMap& memory)
+    {
+        op(registers, info, memory);
+    }
+
+protected:
     const std::string mName;
     const std::string mExtendedName;
     const uint8_t mOpCode;

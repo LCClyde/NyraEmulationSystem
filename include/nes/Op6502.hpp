@@ -1078,6 +1078,21 @@ private:
         }
     }
 
+    void alt(CPURegisters& registers,
+             CPUInfo& info,
+             MemoryMap& )
+    {
+        if (!branchArg(registers.statusRegister))
+        {
+            info.programCounter = mMode->getArg();
+            info.cycles += 3;
+        }
+        else
+        {
+            info.programCounter += 2;
+        }
+    }
+
 };
 
 /*****************************************************************************/

@@ -32,6 +32,7 @@
 #include <nes/PPU.h>
 #include <nes/Disassembly.h>
 #include <nes/Controller.h>
+#include <nes/APU.h>
 
 namespace nyra
 {
@@ -68,6 +69,7 @@ public:
 private:
     const Cartridge mCartridge;
     PPU mPPU;
+    APU mAPU;
     Controller mController1;
     Controller mController2;
     std::shared_ptr<MemoryMap> mMemoryMap;

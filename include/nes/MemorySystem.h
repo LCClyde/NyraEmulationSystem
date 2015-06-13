@@ -27,6 +27,7 @@
 #include <nes/MemoryMap.h>
 #include <nes/PPURegisters.h>
 #include <nes/Controller.h>
+#include <nes/APU.h>
 
 namespace nyra
 {
@@ -37,6 +38,7 @@ class MemorySystem : public MemoryMap
 {
 public:
     MemorySystem(PPURegisters& ppu,
+                 APU& apu,
                  Controller& controller1,
                  Controller& controller2);
 
@@ -45,9 +47,7 @@ public:
 private:
     RAM mZeroPage;
     RAM mRAM;
-    RAM mFill0;
-    RAM mFill1;
-    RAM mFill2;
+    RAM mFill;
 };
 }
 }

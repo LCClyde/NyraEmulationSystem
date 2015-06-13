@@ -15,6 +15,7 @@
     #include "nes/PPU.h"
     #include "nes/Mode.h"
     #include "nes/Controller.h"
+    #include "nes/APU.h"
 
     #include <sstream>
 %}
@@ -37,8 +38,13 @@
 %include "stdint.i"
 %include "std_string.i"
 %include "std_vector.i"
+%include "std_shared_ptr.i"
 
+%shared_ptr(nyra::nes::MemoryMap)
+
+%attribute(nyra::nes::Header, nyra::nes::Mirroring, mirroring, getMirroring)
 %attribute2(nyra::nes::Cartridge, nyra::nes::Header, header, getHeader)
+%attribute2(nyra::nes::Cartridge, nyra::nes::ROMBanks, chr_rom, getChrROM)
 %attribute2(nyra::nes::Disassembly, nyra::nes::OpCode, opcode, getOpCode)
 %attribute2(nyra::nes::Disassembly, nyra::nes::CPUInfo, info, getInfo)
 %attribute2(nyra::nes::Disassembly, nyra::nes::CPURegisters, registers, getRegisters)
@@ -50,6 +56,7 @@
 %attributestring(nyra::nes::Disassembly, std::string, mode_string, getModeString)
 %attribute2(nyra::nes::Emulator, nyra::nes::Controller, controller_1, getController1)
 %attribute2(nyra::nes::Emulator, nyra::nes::Controller, controller_2, getController2)
+%attribute2(nyra::nes::CPU, nyra::nes::CPUInfo, info, getInfo)
 
 %rename("%(undercase)s", %$isfunction) "";
 %rename("%(undercase)s", %$isvariable) "";
@@ -64,6 +71,7 @@
 %include "nes/PPURegisters.h"
 %include "nes/PPU.h"
 %include "nes/Controller.h"
+%include "nes/APU.h"
 %include "nes/MemoryFactory.h"
 %include "nes/Mode.h"
 %include "nes/OpCode.h"
@@ -92,11 +100,11 @@
     }
 };
 
-%extend nyra::nes::Emulator
+%extend nyra::nes::PPU
 {
-    void tick(size_t buffer)
+    void processScanline(CPUInfo& info, const MemoryMap& memory, size_t buffer)
     {
-        self->tick(reinterpret_cast<uint32_t*>(buffer));
+        $self->processScanline(info, memory, reinterpret_cast<uint32_t*>(buffer));
     }
 }
 

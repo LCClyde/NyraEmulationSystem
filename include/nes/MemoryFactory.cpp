@@ -32,12 +32,14 @@ namespace nes
 std::shared_ptr<MemoryMap> createMemoryMap(
         const Cartridge& cart,
         PPU& ppu,
+        APU& apu,
         Controller& controller1,
         Controller& controller2)
 {
     std::shared_ptr<MemoryMap> ret(
             new MemoryNROM(cart.getProgROM(),
                            ppu.getRegisers(),
+                           apu,
                            controller1,
                            controller2));
     ret->lockLookUpTable();

@@ -2,12 +2,13 @@ import pygame
 import ctypes
 
 class Screen:
-    def __init__(self, resolution=(256, 240)):
+    def __init__(self, scale = 4, resolution = (256, 240)):
         pygame.init()
+        self.window_size = (resolution[0] * int(scale), resolution[1] * int(scale))
         self.resolution = resolution
-        self.screen = pygame.display.set_mode(self.resolution)
+        self.screen = pygame.display.set_mode(self.window_size)
         self.texture = pygame.Surface(self.resolution)
-        self.rect = self.texture.get_rect()
+        self.rect = pygame.transform.scale(self.texture, (self.window_size)).get_rect()
 
     @property
     def buffer(self):
@@ -22,7 +23,8 @@ class Screen:
             if event.type == pygame.QUIT:
                 return False
         
-        self.screen.blit(self.texture, self.rect)
+        self.image = pygame.transform.scale(self.texture, (self.window_size))
+        self.screen.blit(self.image, self.rect)
         pygame.display.flip()
         
         return True

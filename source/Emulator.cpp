@@ -33,7 +33,8 @@ namespace nes
 Emulator::Emulator(const std::string& pathname) :
     mCartridge(pathname),
     mPPU(mCartridge.getChrROM(), mCartridge.getHeader().getMirroring()),
-    mMemoryMap(createMemoryMap(mCartridge, mPPU, mController1, mController2)),
+    mMemoryMap(createMemoryMap(
+            mCartridge, mPPU, mAPU, mController1, mController2)),
     mCPU(mMemoryMap->readShort(0xFFFC))
 {
 }
@@ -49,13 +50,13 @@ void Emulator::tick(uint32_t* buffer,
 
     do
     {
-        mCPU.processScanline(*mMemoryMap,
-                             disassembly);
         mPPU.processScanline(mCPU.getInfo(),
                              *mMemoryMap,
                              buffer);
+        mCPU.processScanline(*mMemoryMap,
+                             disassembly);
 
-    } while (mCPU.getInfo().scanLine >= 0);
+    } while (mCPU.getInfo().scanLine != 241);
 }
 }
 }

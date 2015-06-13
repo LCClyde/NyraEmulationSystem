@@ -84,6 +84,12 @@
     <ClInclude Include="..\..\..\include\nes\Controller.h">
       <Filter>Machine</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nes\APU.h">
+      <Filter>APU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nes\APURegisters.h">
+      <Filter>APU</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Cartridge.cpp">
@@ -139,6 +145,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Controller.cpp">
       <Filter>Machine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\APU.cpp">
+      <Filter>APU</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
