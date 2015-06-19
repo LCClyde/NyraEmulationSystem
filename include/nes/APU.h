@@ -25,6 +25,7 @@
 #define __NYRA_NES_APU_H__
 
 #include <nes/Memory.h>
+#include <nes/APURegisters.h>
 
 namespace nyra
 {
@@ -54,6 +55,9 @@ private:
     RAM mRegisters;
     RAM mChannelInfo;
     RAM mFrameCounter;
+
+    Pulse mPulse1;
+    Pulse mPulse2;
 };
 }
 }

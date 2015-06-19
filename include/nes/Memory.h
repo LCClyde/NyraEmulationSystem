@@ -148,6 +148,11 @@ public:
         return ((readByte(address + 1) << 8 | readByte(address)));
     }
 
+    virtual const uint8_t& getAddressRef(size_t address) const
+    {
+        return mBuffer[address];
+    }
+
 protected:
     const std::unique_ptr<const uint8_t[]> mBufferInternal;
     const uint8_t* const mBuffer;

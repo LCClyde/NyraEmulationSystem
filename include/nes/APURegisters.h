@@ -24,15 +24,81 @@
 #ifndef __NYRA_NES_APU_REGISTERS_H__
 #define __NYRA_NES_APU_REGISTERS_H__
 
-#include <nes/Memory.h>
+#include <nes/Constants.h>
 
 namespace nyra
 {
 namespace nes
 {
-class APURegisters
+class Pulse
 {
 public:
+    Pulse(const uint8_t& envelope,
+          const uint8_t& sweep,
+          const uint8_t& timer,
+          const uint8_t& lengthCounter);
+
+    inline uint8_t getDuty() const
+    {
+        return (mEnvelope & 0xC0) >> 6;
+    }
+
+    inline bool getEnvelopLoop() const
+    {
+        return (mEnvelope & 0x20) != 0;
+    }
+
+    inline bool getConstantVolume() const
+    {
+        return (mEnvelope & 0x10) != 0;
+    }
+
+    inline uint8_t getVolume() const
+    {
+        return (mEnvelope & 0x0F);
+    }
+
+    inline bool getSweepUnitEnabled() const
+    {
+        return (mSweep & 0x80) != 0;
+    }
+
+    inline uint8_t getPeriod() const
+    {
+        return (mSweep &  0x70) >> 4;
+    }
+
+    inline bool getNegate() const
+    {
+        return (mSweep & 0x08) != 0;
+    }
+
+    inline uint8_t getSweep() const
+    {
+        return (mSweep & 0x07);
+    }
+
+    inline uint16_t getTimer() const
+    {
+        return static_cast<uint16_t>(mTimer) |
+                (static_cast<uint16_t>(mLengthCounter & 0x07) << 8);
+    }
+
+    inline uint8_t getLengthCounter() const
+    {
+        return mLengthCounter >> 3;
+    }
+
+    inline double getFrequency() const
+    {
+        return CPU_CLOCK / (16.0 * (getTimer() + 1));
+    }
+
+private:
+    const uint8_t& mEnvelope;
+    const uint8_t& mSweep;
+    const uint8_t& mTimer;
+    const uint8_t& mLengthCounter;
 };
 }
 }

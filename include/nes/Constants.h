@@ -43,6 +43,9 @@ static const size_t SCREEN_WIDTH = 256;
 static const size_t SCREEN_HEIGHT = 240;
 static const size_t NUM_PIXELS = SCREEN_WIDTH * SCREEN_HEIGHT;
 
+//! NTSC CPU clock in MHz
+static const double CPU_CLOCK = 1.789773;
+
 /*
  *  \type - ROMBanks
  *  \brief - A vector of ROM objects. This is used to be able to
