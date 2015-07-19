@@ -5,13 +5,11 @@
     #include "nes/Cartridge.h"
     #include "nes/Memory.h"
     #include "nes/CPU.h"
-    #include "nes/Disassembly.h"
     #include "nes/OpCode.h"
     #include "nes/CPUHelper.h"
     #include "nes/MemoryMap.h"
     #include "nes/MemoryFactory.h"
     #include "nes/PPURegisters.h"
-    #include "nes/Emulator.h"
     #include "nes/PPU.h"
     #include "nes/Mode.h"
     #include "nes/Controller.h"
@@ -45,17 +43,10 @@
 %attribute(nyra::nes::Header, nyra::nes::Mirroring, mirroring, getMirroring)
 %attribute2(nyra::nes::Cartridge, nyra::nes::Header, header, getHeader)
 %attribute2(nyra::nes::Cartridge, nyra::nes::ROMBanks, chr_rom, getChrROM)
-%attribute2(nyra::nes::Disassembly, nyra::nes::OpCode, opcode, getOpCode)
-%attribute2(nyra::nes::Disassembly, nyra::nes::CPUInfo, info, getInfo)
-%attribute2(nyra::nes::Disassembly, nyra::nes::CPURegisters, registers, getRegisters)
-%attribute2(nyra::nes::Disassembly, nyra::nes::CPUArgs, args, getArgs)
 %attribute2(nyra::nes::OpCode, nyra::nes::Mode, mode, getMode)
 %attribute(nyra::nes::Mode, bool, uses_arg1, usesArg1)
 %attribute(nyra::nes::Mode, bool, uses_arg2, usesArg2)
 %attributestring(nyra::nes::OpCode, std::string, name, getName)
-%attributestring(nyra::nes::Disassembly, std::string, mode_string, getModeString)
-%attribute2(nyra::nes::Emulator, nyra::nes::Controller, controller_1, getController1)
-%attribute2(nyra::nes::Emulator, nyra::nes::Controller, controller_2, getController2)
 %attribute2(nyra::nes::CPU, nyra::nes::CPUInfo, info, getInfo)
 
 %rename("%(undercase)s", %$isfunction) "";
@@ -75,11 +66,8 @@
 %include "nes/MemoryFactory.h"
 %include "nes/Mode.h"
 %include "nes/OpCode.h"
-%include "nes/Disassembly.h"
 %include "nes/CPU.h"
-%include "nes/Emulator.h"
 
-%template(DisassemblyVector) std::vector<nyra::nes::Disassembly>;
 %template(PixelVector) std::vector<uint32_t>;
 
 %extend nyra::nes::Header

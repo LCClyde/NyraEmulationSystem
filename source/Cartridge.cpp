@@ -22,7 +22,50 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 #include <nes/Cartridge.h>
-#include <core/File.h>
+#include <stdexcept>
+ #include <fstream>
+
+namespace
+{
+/*****************************************************************************/
+size_t getFileSize(const std::string& pathname)
+{
+    std::ifstream stream(pathname, std::ios::ate | std::ios::binary);
+    if (!stream.good())
+    {
+        throw std::runtime_error("Failed to open file: " + pathname);
+    }
+    return static_cast<size_t>(stream.tellg());
+}
+
+/*****************************************************************************/
+std::vector<uint8_t> readBinary(const std::string& pathname)
+{
+    // TODO: Is it better to just use the existing stream here even
+    //       thought we would rewrite some code?
+    const size_t bufferSize = getFileSize(pathname);
+
+    // Return an empty vector if there is nothing to read.
+    if (bufferSize == 0)
+    {
+        return std::vector<uint8_t>();
+    }
+
+    // Open the file in binary mode.
+    std::ifstream stream(pathname, std::ios::binary);
+    if (!stream.good())
+    {
+        throw std::runtime_error("Failed to open file: " + pathname);
+    }
+
+    // Go to the end of the stream to figure out how large it is.
+    std::vector<uint8_t> ret(bufferSize);
+
+    stream.read(reinterpret_cast<char*>(&ret[0]), bufferSize);
+
+    return ret;
+}    
+}
 
 namespace nyra
 {
@@ -34,7 +77,7 @@ static const size_t CHR_ROM_SIZE = 4096;
 
 /*****************************************************************************/
 Cartridge::Cartridge(const std::string& pathname) :
-    mFile(core::readBinary(pathname)),
+    mFile(readBinary(pathname)),
     mHeader(mFile),
     mProgROM(mHeader.getProgRomSize()),
     mChrROM(mHeader.getChrRomSize() * 2)

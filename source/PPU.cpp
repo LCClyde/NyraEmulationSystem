@@ -24,7 +24,6 @@
 #include <nes/PPU.h>
 #include <nes/Constants.h>
 #include <iostream>
-#include <core/StringConvert.h>
 
 namespace
 {

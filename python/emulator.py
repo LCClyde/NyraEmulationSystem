@@ -1,4 +1,4 @@
-from nes import MemoryMap, Cartridge, CPU, PPU, Disassembly, \
+from nes import MemoryMap, Cartridge, CPU, PPU, \
                 Controller, APU, create_memory_map
 from screen import Screen
 
@@ -20,7 +20,7 @@ class Emulator:
     
     def process_scanline(self, buffer):
         self.ppu.process_scanline(self.cpu.info, self.memory_map, buffer)
-        self.cpu.process_scanline(self.memory_map, None)
+        self.cpu.process_scanline(self.memory_map)
         
     def tick(self, screen):
         buffer = screen.buffer

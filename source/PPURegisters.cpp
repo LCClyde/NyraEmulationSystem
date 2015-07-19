@@ -22,8 +22,6 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 #include <nes/PPURegisters.h>
-#include <core/Exception.h>
-#include <core/StringConvert.h>
 
 namespace nyra
 {

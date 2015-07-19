@@ -12,6 +12,7 @@
 *.so
 *.dylib
 *.dll
+*.pyc
 
 # Fortran module files
 *.mod
@@ -32,8 +33,16 @@
 
 Debug/
 Release/
+CMakeFiles/
 *.vcxproj.user
 *.ilk
 *.pdb
 project/win32/Python/_nes.tlog/unsuccessfulbuild
 *.lastbuildstate
+
+python/mario.nes
+swig/nesPYTHON_wrap.cxx
+nes.py
+CMakeCache.txt
+Makefile
+cmake_install.cmake

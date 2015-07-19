@@ -38,8 +38,7 @@ CPU::CPU(uint16_t startAddress) :
 }
 
 /*****************************************************************************/
-void CPU::processScanline(MemoryMap& ram,
-                          std::vector<Disassembly>* disassembly)
+void CPU::processScanline(MemoryMap& ram)
 {
     // Process one scanline
     const int16_t scanline = mInfo.scanLine;
@@ -57,22 +56,7 @@ void CPU::processScanline(MemoryMap& ram,
         ram.getOpInfo(mInfo.programCounter,
                       mArgs);
 
-        if (disassembly)
-        {
-            disassembly->push_back(Disassembly(
-                    *mOpCodes[mArgs.opcode],
-                    mArgs,
-                    mRegisters,
-                    mInfo));
-        }
-
         (*mOpCodes[mArgs.opcode])(mArgs, mRegisters, mInfo, ram);
-
-        if (disassembly)
-        {
-            Disassembly& dis = disassembly->back();
-            dis.setModeString(dis.getOpCode().getMode().toString());
-        }
     }
 }
 }

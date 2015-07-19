@@ -138,7 +138,7 @@ public:
 private:
     const MemoryHandle& getMemoryBank(size_t& address) const;
 
-    std::vector<const MemoryHandle> mMemory;
+    std::vector<MemoryHandle> mMemory;
     std::vector<size_t> mLookUpTable;
 };
 }

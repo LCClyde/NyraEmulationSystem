@@ -28,7 +28,6 @@
 #include <nes/MemoryMap.h>
 #include <nes/CPUHelper.h>
 #include <nes/OpCode.h>
-#include <nes/Disassembly.h>
 
 namespace nyra
 {
@@ -64,13 +63,11 @@ public:
      *         the processed opcode.
      *         Remove this to increase performance.
      */
-    void processScanline(MemoryMap& memory,
-                         std::vector<Disassembly>* disassembly = nullptr);
+    void processScanline(MemoryMap& memory);
 
-    void processScanline(const std::unique_ptr<MemoryMap>& memory,
-                         std::vector<Disassembly>* disassembly = nullptr)
+    void processScanline(const std::unique_ptr<MemoryMap>& memory)
     {
-        processScanline(*memory, disassembly);
+        processScanline(*memory);
     }
 
     /*

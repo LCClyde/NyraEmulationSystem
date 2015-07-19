@@ -57,15 +57,6 @@ public:
     virtual ~Mode();
 
     /*
-     *  \func - toString
-     *  \brief - Outputs the syntax for using this mode.
-     *
-     *  \param args - The args to use when dumping the information.
-     *  \return - The formatted string.
-     */
-    virtual std::string toString() const = 0;
-
-    /*
      *  \func - useArg1
      *  \brief - returns true if this mode uses arg1.
      */

@@ -22,7 +22,7 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 #include <nes/Header.h>
-#include <core/Exception.h>
+ #include <stdexcept>
 
 namespace
 {
@@ -76,7 +76,7 @@ const size_t Header::HEADER_SIZE = 16;
 Header::Header(const std::vector<uint8_t>& binary) :
     mNESIdentifier(binary.size() >= HEADER_SIZE ?
             std::string(reinterpret_cast<const char*>(&binary[0]), 0, 3) :
-            throw core::Exception("Incorrect NES file size")),
+            throw std::runtime_error("Incorrect NES file size")),
     mProgSize(binary[PROG_SIZE_LOCATION]),
     mChrRomSize(binary[CHR_SIZE_LOCATION]),
     mMapperNumber((binary[FLAG_6] >> 4) | (binary[FLAG_7] & 0xF0)),
@@ -91,7 +91,7 @@ Header::Header(const std::vector<uint8_t>& binary) :
 {
     if (mNESIdentifier != "NES")
     {
-        throw core::Exception("Unknown header type: " + mNESIdentifier);
+        throw std::runtime_error("Unknown header type: " + mNESIdentifier);
     }
 }
 

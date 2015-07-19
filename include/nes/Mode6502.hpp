@@ -44,11 +44,6 @@ public:
     {
     }
 
-    std::string toString() const
-    {
-        return "A";
-    }
-
     void operator()(const CPUArgs& ,
                     const CPURegisters& registers,
                     const MemoryMap& ,
@@ -67,13 +62,6 @@ public:
     ModeAbsolute() :
         Mode(true, true)
     {
-    }
-
-    std::string toString() const
-    {
-        const std::string outputString = OutputT ?
-                " = " + core::toHexString<uint8_t>(mValue) : "";
-        return "$" + core::toHexString<uint16_t>(mArg) + outputString;
     }
 
     void operator()(const CPUArgs& args,
@@ -95,12 +83,6 @@ public:
         mOrigArg(0),
         mCorrectArg(0)
     {
-    }
-
-    std::string toString() const
-    {
-        return "($" + core::toHexString<uint16_t>(mOrigArg) + ") = " +
-                core::toHexString<uint16_t>(mCorrectArg);
     }
 
     void operator()(const CPUArgs& args,
@@ -141,14 +123,6 @@ public:
     {
     }
 
-    std::string toString() const
-    {
-        return "($" + core::toHexString<uint8_t>(mOrigArg) + ",X) @ " +
-                core::toHexString<uint8_t>(mModArg) + " = " +
-                core::toHexString<uint16_t>(mArg) + " = " +
-                core::toHexString<uint8_t>(mValue);
-    }
-
     void operator()(const CPUArgs& args,
                     const CPURegisters& registers,
                     const MemoryMap& memory,
@@ -174,15 +148,6 @@ public:
         mOrigArg(0),
         mIndex(index)
     {
-    }
-
-    std::string toString() const
-    {
-        return "$" + core::toHexString<uint8_t>(mOrigArg) +
-                "," + mIndex + " @ " +
-                core::toHexString<uint8_t>(
-                        static_cast<uint8_t>(mArg)) + " = " +
-                core::toHexString<uint8_t>(mValue);
     }
 
     void operator()(const CPUArgs& args,
@@ -249,14 +214,6 @@ public:
     {
     }
 
-    std::string toString() const
-    {
-        return "$" + core::toHexString<uint16_t>(mOrigArg) +
-                "," + mIndex + " @ " +
-                core::toHexString<uint16_t>(mArg) + " = " +
-                core::toHexString<uint8_t>(mValue);
-    }
-
     void operator()(const CPUArgs& args,
                     const CPURegisters& registers,
                     const MemoryMap& memory,
@@ -289,7 +246,7 @@ class ModeAbsoluteY : public ModeAbsoluteN<ExtraCycleT>
 {
 public:
     ModeAbsoluteY() :
-        ModeAbsoluteN('Y')
+        ModeAbsoluteN<ExtraCycleT>('Y')
     {
     }
 
@@ -307,7 +264,7 @@ class ModeAbsoluteX : public ModeAbsoluteN<ExtraCycleT>
 {
 public:
     ModeAbsoluteX() :
-        ModeAbsoluteN('X')
+        ModeAbsoluteN<ExtraCycleT>('X')
     {
     }
 
@@ -329,14 +286,6 @@ public:
         mOrigArg(0),
         mModArg(0)
     {
-    }
-
-    std::string toString() const
-    {
-        return "($" + core::toHexString<uint8_t>(mOrigArg) + "),Y = " +
-                core::toHexString<uint16_t>(mModArg) + " @ " +
-                core::toHexString<uint16_t>(mArg) + " = " +
-                core::toHexString<uint8_t>(mValue);
     }
 
     void operator()(const CPUArgs& args,
@@ -372,11 +321,6 @@ public:
     {
     }
 
-    std::string toString() const
-    {
-        return "$" + core::toHexString<uint16_t>(mArg);
-    }
-
     void operator()(const CPUArgs& args,
                     const CPURegisters& ,
                     const MemoryMap& ,
@@ -397,13 +341,6 @@ public:
     {
     }
 
-    std::string toString() const
-    {
-        return "$" + core::toHexString<uint8_t>(
-                static_cast<uint8_t>(mArg)) + " = " + 
-                core::toHexString<uint8_t>(mValue);
-    }
-
     void operator()(const CPUArgs& args,
                     const CPURegisters& ,
                     const MemoryMap& memory,
@@ -421,11 +358,6 @@ public:
     ModeImmediate() :
         Mode(true, false)
     {
-    }
-
-    std::string toString() const
-    {
-        return "#$" + core::toHexString<uint8_t>(mValue);
     }
 
     void operator()(const CPUArgs& args,

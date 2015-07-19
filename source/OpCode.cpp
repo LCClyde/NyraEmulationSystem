@@ -22,8 +22,6 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 #include <nes/OpCode.h>
-#include <core/StringConvert.h>
-#include <core/Exception.h>
 #include <nes/Op6502.hpp>
 #include <nes/Mode6502.hpp>
 

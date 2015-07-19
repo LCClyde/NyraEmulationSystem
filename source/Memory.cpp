@@ -22,8 +22,7 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 #include <nes/Memory.h>
-#include <core/Exception.h>
-#include <core/StringConvert.h>
+#include <stdexcept>
 
 namespace
 {
@@ -63,23 +62,19 @@ Memory::~Memory()
 void Memory::writeByte(size_t address,
                        uint8_t value)
 {
-    throw core::Exception("Cannot write: " +
-            core::toHexString<uint8_t>(value) + " to: " +
-            core::toHexString<size_t>(address));
+    throw std::runtime_error("Cannot write to ram");
 }
 
 /*****************************************************************************/
 uint8_t Memory::readByte(size_t address)
 {
-    throw core::Exception("Cannot read byte from: " +
-            core::toHexString<size_t>(address));
+    throw std::runtime_error("Cannot read byte from ram");
 }
 
 /*****************************************************************************/
 uint16_t Memory::readShort(size_t address)
 {
-    throw core::Exception("Cannot read short from: " +
-            core::toHexString<size_t>(address));
+    throw std::runtime_error("Cannot read short from ram");
 }
 
 /*****************************************************************************/

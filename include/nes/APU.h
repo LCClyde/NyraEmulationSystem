@@ -56,8 +56,8 @@ private:
     RAM mChannelInfo;
     RAM mFrameCounter;
 
-    Pulse mPulse1;
-    Pulse mPulse2;
+    //Pulse mPulse1;
+    //Pulse mPulse2;
 };
 }
 }
